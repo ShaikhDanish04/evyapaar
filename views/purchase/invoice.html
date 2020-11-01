@@ -1,0 +1,485 @@
+<div class="container-fluid">
+    <form id="save_invoice" action="" method="post">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex">
+                <p class="h3 m-0 mr-3">Purchase Invoice</p>
+                <span class="badge badge-primary badge-sm text-capitalize">
+                    <input type="text" style="width: 50px;" class=" text-center form-control form-control-sm text-light font-weight-bold" readonly name="invoice_id">
+                </span>
+            </div>
+            <div class="d-flex">
+                <button class="btn btn-success mr-2 save_invoice"><i class="fa fa-save"></i> Save Changes</button>
+                <button class="btn btn-danger exit_invoice" type="button"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+        <hr>
+        <div class="alert-holder"></div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="">Select Vendor</label>
+                    <select class="form-control mr-2" name="vendor_id"></select>
+                </div>
+                <div class="p-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <p><strong>Vendor Name : </strong><span class="vendor_name_load"></span></p>
+                            <p><strong>Contact : </strong><span class="vendor_contact_load"></span></p>
+                            <p><strong>Email : </strong><span class="vendor_email_load"></span></p>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>Address : </strong><span class="vendor_address_load"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <p class="h5 mb-0">Product Table</p>
+                <button class="btn btn-primary add-row" type="button"><i class="fa fa-plus"></i> Add Row</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="product_table" class="table table-bordered">
+                        <thead>
+                            <th>Id</th>
+                            <th>HSN</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>GST %</th>
+                            <th>Amount</th>
+                            <th>GST Amount</th>
+                            <th>Total</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><select class="form-control product_id" style="min-width: 300px;" name="products[0][id]"></select></td>
+                                <td><input type="text" readonly class="form-control product_hsn" tabindex="-1" name="products[0][HSN]"></td>
+                                <td><input type="text" style="min-width: 100px;" class="form-control product_price" placeholder="Price" name="products[0][price]"></td>
+                                <td><input type="text" style="min-width: 100px;" class="form-control product_quantity" placeholder="Quantity" name="products[0][quantity]"></td>
+                                <td><input type="text" readonly class="form-control product_gst" tabindex="-1" name="products[0][gst]"></td>
+                                <td><input type="text" readonly class="form-control product_peg" tabindex="-1" name="products[0][peg]"></td>
+                                <td><input type="text" readonly class="form-control product_pga" tabindex="-1" name="products[0][pga]"></td>
+                                <td><input type="text" readonly class="form-control product_total" tabindex="-1" name="products[0][total]"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script>
+            $('.add-row').click(function () {
+                l = $('#product_table').find('tr').length;
+                console.log(l);
+                $('#product_table > tbody:last-child').append(`
+                    <tr>
+                        <td><select class="form-control product_id" style="min-width: 300px;" name="products[${l - 1}][id]">${set_options('./api/product_crud.php?crud=select')}</select></td>
+                        <td><input type="text" readonly class="form-control product_hsn" tabindex="-1" name="products[${l - 1}][HSN]"></td>
+                        <td><input type="text" style="min-width: 100px;" class="form-control product_price" placeholder="Price" name="products[${l - 1}][price]"></td>
+                        <td><input type="text" style="min-width: 100px;" class="form-control product_quantity" placeholder="Quantity" name="products[${l - 1}][quantity]"></td>
+                        <td><input type="text" readonly class="form-control product_gst" tabindex="-1" name="products[${l - 1}][gst]"></td>
+                        <td><input type="text" readonly class="form-control product_peg" tabindex="-1" name="products[${l - 1}][peg]"></td>
+                        <td><input type="text" readonly class="form-control product_pga" tabindex="-1" name="products[${l - 1}][pga]"></td>
+                        <td><input type="text" readonly class="form-control product_total" tabindex="-1" name="products[${l - 1}][total]"></td>
+                    </tr>
+                `);
+            })
+        </script>
+        <style>
+            .form-control[readonly],
+            .form-control[readonly]:focus {
+                background: transparent;
+                outline: 0;
+                border: 0;
+                box-shadow: 0 0 0;
+                min-width: 100px;
+            }
+        </style>
+        <div class="card mb-3">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <p class="h5 mb-0">Tax Table</p>
+                <button class="btn btn-primary set_gst_table" type="button"><i class="fa fa-calculator"></i> Set</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <th>Tax A/c</th>
+                            <th>Taxable Amount</th>
+                            <th>Gst Amount</th>
+                            <th></th>
+                            <th>SGST</th>
+                            <th>CGST</th>
+                        </thead>
+                        <tbody>
+                            <tr class="gst_table 0_per">
+                                <td>GST @0%</td>
+                                <td class="taxable">0.00</td>
+                                <td class="gst_amount">0.00</td>
+                                <td>0%</td>
+                                <td class="sgst">0.00</td>
+                                <td class="cgst">0.00</td>
+                            </tr>
+                            <tr class="gst_table">
+                                <td>GST @05%</td>
+                                <td class="taxable">0.00</td>
+                                <td class="gst_amount">0.00</td>
+                                <td>2.5%</td>
+                                <td class="sgst">0.00</td>
+                                <td class="cgst">0.00</td>
+                            </tr>
+                            <tr class="gst_table">
+                                <td>GST @12%</td>
+                                <td class="taxable">0.00</td>
+                                <td class="gst_amount">0.00</td>
+                                <td>06%</td>
+                                <td class="sgst">0.00</td>
+                                <td class="cgst">0.00</td>
+                            </tr>
+                            <tr class="gst_table">
+                                <td>GST @18%</td>
+                                <td class="taxable">0.00</td>
+                                <td class="gst_amount">0.00</td>
+                                <td>09%</td>
+                                <td class="sgst">0.00</td>
+                                <td class="cgst">0.00</td>
+                            </tr>
+                            <tr class="gst_table">
+                                <td>GST @28%</td>
+                                <td class="taxable">0.00</td>
+                                <td class="gst_amount">0.00</td>
+                                <td>14%</td>
+                                <td class="sgst">0.00</td>
+                                <td class="cgst">0.00</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <th>Total</th>
+                            <th><input type="text" readonly class="form-control font-weight-bold total_taxable_amount" value="0.00"></th>
+                            <th><input type="text" readonly class="form-control font-weight-bold total_gst_amount" value="0.00"></th>
+                            <th></th>
+                            <th><input type="text" readonly name="sgst_amount" class="form-control font-weight-bold total_sgst_amount" value="0.00"></th>
+                            <th><input type="text" readonly name="cgst_amount" class="form-control font-weight-bold total_cgst_amount" value="0.00"></th>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex mb-3 align-items-center justify-content-between">
+                    <p class="m-0">Sub Total : </p>
+                    <p class="m-0 d-flex align-items-center">₹ <input type="text" name="sub_total" value="5000" maxlength="2" readonly class="form-control total_taxable_amount text-right"></p>
+                </div>
+                <div class="d-flex mb-3 form-inline justify-content-between align-items-center">
+                    <label for="">Discount : </label>
+                    <p class="m-0 d-flex align-items-center"><input type="text" name="discount" class="form-control text-right discount"></p>
+                </div>
+                <div class="d-flex mb-3 align-items-center justify-content-between">
+                    <p class="m-0">Net Total : </p>
+                    <p class="m-0 d-flex align-items-center">₹ <input type="text" name="net_total" readonly class="form-control text-right" value="0.00"></p>
+                </div>
+                <hr>
+                <div class="d-flex align-items-center justify-content-between">
+                    <p class="m-0">SGST : </p>
+                    <p class="m-0 d-flex align-items-center">₹ <input type="text" readonly name="sgst_amount" class="form-control text-right font-weight-bold total_sgst_amount" value="0.00"></p>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <p class="m-0">CGST : </p>
+                    <p class="m-0 d-flex align-items-center">₹ <input type="text" readonly name="cgst_amount" class="form-control text-right font-weight-bold total_cgst_amount" value="0.00"></p>
+                </div>
+                <hr>
+                <div class="d-flex align-items-center justify-content-between h5 m-0">
+                    <p class="m-0">Grand Total : </p>
+                    <p class="m-0 d-flex align-items-center">₹ <input type="text" readonly name="grand_total" class="form-control text-right font-weight-bold grand_total" value="0.00"></p>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label for="">Cash In Advance</label>
+                    <input type="text" name="" class="form-control">
+                </div>
+                <hr>
+                <div class="d-flex align-items-center justify-content-between h5 m-0">
+                    <p class="m-0">Balance Amount : </p>
+                    <p class="m-0">₹ <span>0</span></p>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="text-right">
+            <button class="btn btn-primary lock_invoice" type="button"><i class="fa fa-lock"></i> Lock Invoice</button>
+        </div>
+    </form>
+</div>
+<script>
+    function set_options(url) {
+
+        var options = '<option value=""> --- Select --- </options>';
+        $.ajax({
+            type: "GET", url: url, cache: false, dataType: 'json', async: false,
+        }).done(function (response) {
+            JSON.parse(response.data).forEach(value => {
+                options += `<option value="${value.id}">${value.name}</option>`;
+
+            });
+            // $(select).html(options)
+
+        });
+        // console.log(options);
+        return options;
+
+    }
+</script>
+<script>
+    $('[name="vendor_id"]').html(set_options('./api/vendor_crud.php?crud=select'))
+
+    $(document).ready(function () {
+
+        if (localStorage.getItem("invoice_id") === null) {
+            screen_loader('purchase/list');
+        } else {
+            $('[name="invoice_id"]').val(localStorage.getItem('invoice_id'));
+
+            if ($('[name="invoice_id"]') != 'new') {
+                id = $('[name="invoice_id"]').val();
+                $.ajax({
+                    type: "GET", url: './api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                }).done(function (response) {
+
+
+
+                    data = JSON.parse(response.data);
+
+                    vendor = JSON.parse(data.vendor);
+
+                    $('select').val(data.vendor_id);
+                    $('.vendor_name_load').text(vendor.name);
+                    $('.vendor_contact_load').text(vendor.contact);
+                    $('.vendor_email_load').text(vendor.email);
+                    $('.vendor_address_load').text(vendor.address);
+                    console.log(data); // show response from the php script.
+
+                    $('#product_table tbody').html('')
+                    i = 0;
+                    JSON.parse(data.products).forEach(product => {
+                        console.log(product);
+                        $.ajax({
+                            type: "GET", url: './api/product_crud.php?crud=select&id=' + product.id, async: false, cache: false, dataType: 'json'
+                        }).done(function (response) {
+                            data = JSON.parse(response.data);
+
+                            $('#product_table tbody').append(`
+                                <tr>
+                                    <td><select class="form-control product_id" style="min-width: 300px;" name="products[${i}][id]"><option value="${product.id}" selected>${(data.name)}</option>${set_options('./api/product_crud.php?crud=select')}</select></td>
+                                    <td><input type="text" readonly class="form-control product_hsn" tabindex="-1" value="${product.HSN}" name="products[${i}][HSN]"></td>
+                                    <td><input type="text" style="min-width: 100px;" class="form-control product_price" placeholder="Price" value="${product.price}" name="products[${i}][price]"></td>
+                                    <td><input type="text" style="min-width: 100px;" class="form-control product_quantity" placeholder="Quantity" value="${product.quantity}" name="products[${i}][quantity]"></td>
+                                    <td><input type="text" readonly class="form-control product_gst" tabindex="-1" value="${product.gst}" name="products[${i}][gst]"></td>
+                                    <td><input type="text" readonly class="form-control product_peg" tabindex="-1" value="${product.peg}" name="products[${i}][peg]"></td>
+                                    <td><input type="text" readonly class="form-control product_pga" tabindex="-1" value="${product.pga}" name="products[${i}][pga]"></td>
+                                    <td><input type="text" readonly class="form-control product_total" tabindex="-1" value="${product.total}" name="products[${i}][total]"></td>
+                                </tr>
+                            `)
+                            i++;
+                        });
+                    });
+                    $('.total_taxable_amount').val(data.sub_total)
+                    $('.total_gst_amount').val(Number(data.sgst_amount) + Number(data.cgst_amount))
+                    $('.total_sgst_amount').val(data.sgst_amount)
+                    $('.total_cgst_amount').val(data.cgst_amount)
+                    $('[name="net_total"]').val(data.net_total);
+                    $('.discount').val(data.discount);
+                    $('[name="grand_total"]').val(data.grand_total);
+
+                    if (data.status == '1') {
+                        alert('Invoice Locked');
+                        $('.save_invoice').remove();
+                        $('.lock_invoice').remove();
+                    }
+
+
+                });
+            }
+        }
+
+    })
+
+
+    $('[name="vendor_id"]').change(function () {
+        id = $(this).val();
+        $.ajax({
+            type: "GET", url: './api/vendor_crud.php?crud=select&id=' + id, cache: false, dataType: 'json'
+        }).done(function (response) {
+
+            vendor = JSON.parse(response.data);
+            $('.vendor_name_load').text(vendor.name);
+            $('.vendor_contact_load').text(vendor.contact);
+            $('.vendor_email_load').text(vendor.email);
+            $('.vendor_address_load').text(vendor.address);
+            console.log(vendor); // show response from the php script.
+
+        });
+    })
+
+</script>
+<script>
+    $('.product_id').html(set_options('./api/product_crud.php?crud=select'));
+
+    $(document).on('change', '.product_id', function () {
+
+        $tr = $(this).closest('tr');
+        $tr.find('input').val('')
+
+        $.ajax({
+            type: "GET", url: './api/product_crud.php?crud=select&id=' + $(this).val(), cache: false, dataType: 'json'
+        }).done(function (response) {
+            data = JSON.parse(response.data);
+            $hsn = $tr.find('.product_hsn');
+            $gst = $tr.find('.product_gst');
+
+            $hsn.val(data.hsn)
+            $gst.val(data.tax_percent)
+            console.log(data);
+        });
+
+    })
+
+    $(document).on('keyup', '.product_price,.product_quantity', function () {
+
+        $tr = $(this).closest('tr');
+
+        $quantity = $tr.find('.product_quantity').val();
+        $price = $tr.find('.product_price').val();
+        $gst = $tr.find('.product_gst').val();
+
+        $peg = $tr.find('.product_peg')
+        $pga = $tr.find('.product_pga')
+        $total = $tr.find('.product_total');
+
+        $total.val(Number($quantity) * Number($price));
+        $pga.val(percentage($gst, $total.val()));
+        $peg.val(Number($total.val()) + percentage($gst, $total.val()));
+    })
+
+
+
+    $('#save_invoice').submit(function (e) {
+        e.preventDefault();
+
+        var form = $(this);
+        $formObj = $(this).serializeObject();
+
+        console.log($formObj);
+
+        if ($('[name="vendor_id"]').val() != '') {
+            if ($('[name="invoice_id"]').val() == 'new') {
+                $.ajax({
+                    type: "POST",
+                    url: './api/purchase_crud.php?crud=insert',
+                    data: form.serialize(), // serializes the form's elements.
+                    dataType: 'json',
+                }).done(function (response) {
+                    if (response.status) {
+                        localStorage.removeItem('invoice_id');
+                        if (localStorage.getItem("invoice_id") === null) {
+                            screen_loader('purchase/list');
+                        } else {
+                            console.log('error');
+                        }
+                    } else {
+                        $('.alert-holder').html(b_alert('danger', 'Error'));
+                    }
+                });
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: './api/purchase_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
+                    data: form.serialize(), // serializes the form's elements.
+                    dataType: 'json',
+                }).done(function (response) {
+                    if (response.status) {
+                        $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
+                    } else {
+                        $('.alert-holder').html(b_alert('danger', 'Error'));
+                    }
+                });
+
+            }
+
+            // console.log(response); // show response from the php script.
+
+        } else {
+            alert('Select Vendor Id');
+        }
+    })
+
+    $('.set_gst_table').click(function () {
+
+        $formObj = $('#save_invoice').serializeObject();
+
+        taxable_amount = 0;
+        gst_amount = 0;
+        sgst_amount = 0;
+        cgst_amount = 0;
+
+        $formObj.products.forEach(product => {
+            taxable_amount = taxable_amount + Number(product.peg);
+            gst_amount = gst_amount + Number(product.pga);
+            sgst_amount = sgst_amount + (Number(product.pga) / 2);
+            cgst_amount = cgst_amount + (Number(product.pga) / 2);
+
+        })
+
+        $('.total_taxable_amount').val(taxable_amount.toFixed(2))
+        $('.total_gst_amount').val(gst_amount.toFixed(2))
+        $('.total_sgst_amount').val(sgst_amount.toFixed(2))
+        $('.total_cgst_amount').val(cgst_amount.toFixed(2))
+        $('[name="net_total"]').val(Number(taxable_amount.toFixed(2)) + Number(gst_amount.toFixed(2)));
+        $('[name="grand_total"]').val(Number(taxable_amount.toFixed(2)) + Number(gst_amount.toFixed(2)));
+    })
+
+    $('.discount').keyup(function () {
+        console.log(percentage($(this).val(), $('[name="sub_total"]').val()))
+        $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
+
+        $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
+
+    })
+
+    $('.lock_invoice').click(function () {
+        if (confirm('Are You Ready To Lock Invoice ?')) {
+            alert('Invoice Locked');
+            $.ajax({
+                type: "POST",
+                url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
+                data: $('#save_invoice').serialize() + '&status=1', // serializes the form's elements.
+                dataType: 'json',
+            }).done(function (response) {
+                if (response.status) {
+                    localStorage.removeItem('invoice_id');
+                    if (localStorage.getItem("invoice_id") === null) {
+                        screen_loader('purchase/list');
+                    } else {
+                        console.log('error');
+                    }
+                } else {
+                    $('.alert-holder').html(b_alert('danger', 'Error'));
+                }
+            });
+        }
+    })
+</script>
+<script>
+
+    $('.exit_invoice').click(function () {
+        localStorage.removeItem('invoice_id');
+        if (localStorage.getItem("invoice_id") === null) {
+            screen_loader('purchase/list');
+        } else {
+            console.log('error');
+        }
+
+    })
+
+</script>

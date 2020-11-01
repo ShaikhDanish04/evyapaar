@@ -1,0 +1,343 @@
+<div class="container-fluid">
+    <form id="save_invoice" action="" method="post">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex">
+                <p class="h3 m-0 mr-3">Product Checkout</p>
+                <span class="badge badge-primary badge-sm text-capitalize">
+                    <input type="text" style="width: 50px;" class=" text-center form-control form-control-sm text-light font-weight-bold" readonly name="invoice_id">
+                </span>
+            </div>
+            <div class="d-flex">
+                <button class="btn btn-success mr-2 save_invoice" type="button"><i class="fa fa-save"></i> Save Changes</button>
+                <button class="btn btn-danger exit_invoice" type="button"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+        <hr>
+        <script>
+            $(document).ready(function () {
+                if (localStorage.getItem("invoice_id") === null) {
+                    screen_loader('checkout/list');
+                } else {
+                    $('[name="invoice_id"]').val(localStorage.getItem('invoice_id'));
+
+                    if ($('[name="invoice_id"]') != 'new') {
+                        id = $('[name="invoice_id"]').val();
+
+                        $.ajax({
+                            type: "GET", url: './api/checkout_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                        }).done(function (response) {
+                            console.log(response);
+                            invoice = response.data;
+                            $('[name="customer[fullname]"]').val(invoice.customer.fullname);
+                            $('[name="customer[email]"]').val(invoice.customer.email);
+                            $('[name="customer[mobile]"]').val(invoice.customer.mobile);
+                            $('[name="customer[address]"]').val(invoice.customer.address);
+
+                            if (invoice.products.length > 0) {
+                                $('#product_table tbody').html('');
+                            }
+                            i = 0;
+                            invoice.products.forEach(data => {
+                                console.log(data);
+
+                                $('#product_table tbody').append(`
+                                <tr>
+                                    <td class="text-nowrap">
+                                        <input type="hidden" class="form-control" name="products[${i}][id]" value="${data.id}" readonly>
+                                        <input type="text" class="form-control" name="products[${i}][name]" value="${data.name}" readonly>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="products[${i}][HSN]" value="${data.HSN}" readonly></td>
+                                    <td><input type="text" class="form-control" name="products[${i}][barcode]" value="${data.barcode}" readonly></td>                               
+                                    <td><input type="text" class="form-control selling_price" name="products[${i}][selling_price]" style="min-width:80px" value="${data.selling_price}"></td>
+                                    <td><input type="text" class="form-control product_quantity" name="products[${i}][product_quantity]" value="${data.product_quantity}"></td>
+                                    <td><input type="text" readonly class="form-control product_amount" name="products[${i}][product_amount]" value="${data.product_amount}"></td>
+                                    <td class="d-flex align-items-center"><input type="text" readonly class="form-control product_gst" name="products[${i}][product_gst]" value="${data.product_gst}"> %</td>
+                                    <td><input type="text" readonly class="form-control product_total" name="products[${i}][product_total]" value="${data.product_total}"></td>
+                                    
+                                    <td><button class="btn btn-sm btn-danger rounded-circle delete-row" type="button"><i class="fa fa-times"></i></button></td>
+                                    </tr>
+                                    `);
+                                i++;
+                                bottom_sum();
+                            })
+                        });
+                    }
+                }
+            })
+        </script>
+        <div class="alert-holder"></div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="m-0 h5">Customer Details</p>
+                <hr>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Full Name</label>
+                            <input type="text" name="customer[fullname]" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Mobile</label>
+                            <input type="text" name="customer[mobile]" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Email</label>
+                            <input type="text" name="customer[email]" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="">Address</label>
+                    <textarea name="customer[address]" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+        <script>
+            function bottom_sum() {
+                $sum_total = 0;
+                $amount_total = 0;
+                $gst_total = 0;
+
+                for (i = 0; i < $('.product_total').length; i++) {
+                    $sum_total = $sum_total + Number($('.product_total:eq(' + i + ')').val())
+                    $amount_total = $amount_total + Number($('.product_amount:eq(' + i + ')').val())
+                    $gst_total = $gst_total + Number($('.product_gst:eq(' + i + ')').val())
+                }
+                $('.sub_total').val($amount_total)
+                $('.sum_total').val($sum_total)
+                $('.gst_total').val($sum_total - $amount_total)
+            }
+            function set_options(url) {
+                var options = '<option value=""> --- Select --- </options>';
+                $.ajax({
+                    type: "GET", url: url, cache: false, dataType: 'json', async: false,
+                }).done(function (response) {
+                    JSON.parse(response.data).forEach(value => {
+                        options += `<option value="${value.id}">${value.name}</option>`;
+                    });
+                });
+                return options;
+            }
+            $('.product_id_in').html(set_options('./api/product_crud.php?crud=select'));
+
+        </script>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-end justify-content-between">
+                    <div class="col-10 row pr-0">
+                        <div class="col-8 small font-weight-bold align-items-start">
+                            <label for="">Product Name</label>
+                            <select class="form-control product_id_in">
+                                <option value="">--- Select Product ---</option>
+                            </select>
+                        </div>
+                        <div class="col-4 small font-weight-bold align-items-start">
+                            <label for="">Barcode</label>
+                            <input type="text" class="form-control barcode_in">
+                        </div>
+                    </div>
+                    <div class="col-2 flex-column small font-weight-bold pl-0">
+                        <button class="btn btn-primary w-100 append_product" type="button"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                </div>
+                <style>
+                    .form-control[readonly],
+                    .form-control[readonly]:focus {
+                        background: transparent;
+                        outline: 0;
+                        border: 0;
+                        box-shadow: 0 0 0;
+                        min-width: 100px;
+                    }
+                </style>
+                <script>
+                    $(document).ready(function () {
+
+                        console.log($('#product_table tbody').find('.no-data').hasClass('no-data'));
+                        $('.append_product').click(function () {
+                            $('.product_id_in').val();
+
+                            product_id = $('.product_id_in').val();
+
+                            if (product_id != '') {
+                                if ($('#product_table tbody').find('.no-data').hasClass('no-data')) {
+                                    i = 0;
+                                } else {
+                                    i = $('#product_table tbody tr').length;
+                                }
+                                $('#product_table tbody').find('.no-data').remove()
+                                $.ajax({
+                                    type: "GET", url: './api/product_crud.php?crud=select&id=' + product_id, async: false, cache: false, dataType: 'json'
+                                }).done(function (response) {
+                                    data = JSON.parse(response.data);
+
+                                    console.log(data);
+                                    $('#product_table tbody').append(`
+                                    <tr>
+                                        <td class="text-nowrap">
+                                            <input type="hidden" class="form-control" name="products[${i}][id]" value="${data.id}" readonly>
+                                            <input type="text" class="form-control" name="products[${i}][name]" value="${data.name}" readonly>
+                                            </td>
+                                            <td><input type="text" class="form-control" name="products[${i}][HSN]" value="${data.hsn}" readonly></td>
+                                            <td><input type="text" class="form-control" name="products[${i}][barcode]" value="${data.barcode}" readonly></td>                               
+                                            <td><input type="text" class="form-control selling_price" name="products[${i}][selling_price]" style="min-width:80px" value="${data.selling_cost}"></td>
+                                            <td><input type="text" class="form-control product_quantity" name="products[${i}][product_quantity]"></td>
+                                            <td><input type="text" readonly class="form-control product_amount" name="products[${i}][product_amount]"></td>
+                                            <td class="d-flex align-items-center"><input type="text" readonly class="form-control product_gst" name="products[${i}][product_gst]" value="${data.tax_percent}"> %</td>
+                                            <td><input type="text" readonly class="form-control product_total" name="products[${i}][product_total]" value="0"></td>
+                                    
+                                            <td><button class="btn btn-sm btn-danger rounded-circle delete-row" type="button"><i class="fa fa-times"></i></button></td>
+                                            </tr>
+                                            `);
+                                });
+                                bottom_sum();
+                            }
+
+                        })
+                    })
+                    $(document).on('click', '.delete-row', function () {
+                        $(this).closest('tr').remove();
+                        if ($('#product_table tbody tr').length == 1) {
+                            $('#product_table tbody').html('<tr><td colspan="9" class="text-center no-data">No Products Added</td></tr>')
+                        }
+                        bottom_sum();
+                    })
+                </script>
+                <hr>
+                <div class="table-responsive">
+                    <table id="product_table" class="table table-bordered empty-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>HSN</th>
+                                <th>Barcode</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                                <th>GST</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <script>
+                                $(document).on('keyup', '.selling_price,.product_quantity', function () {
+                                    $tr = $(this).closest('tr');
+
+                                    $quantity = $tr.find('.product_quantity').val();
+                                    $price = $tr.find('.selling_price').val();
+                                    $gst = $tr.find('.product_gst').val();
+
+                                    $amount = $tr.find('.product_amount');
+                                    $amount.val(Number($quantity) * Number($price));
+                                    $total = $tr.find('.product_total');
+
+                                    $total.val((Number($quantity) * Number($price)) + percentage($gst, (Number($quantity) * Number($price))));
+
+                                    bottom_sum();
+                                })
+
+                            </script>
+                            <tr>
+                                <td colspan="9" class="text-center no-data">No Products Added</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <p class="m-0 h6">Sub Total :</p>
+                    <span><input readonly type="text" name="sub_total" value="0" class="sub_total form-control text-right"></span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <p class="m-0 h6">GST :</p>
+                    <span><input readonly type="text" name="" value="0" class="gst_total form-control text-right"></span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <p class="m-0 h6">Total :</p>
+                    <span><input readonly type="text" name="grand_total" value="0" class="sum_total form-control text-right"></span>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-end align-items-center">
+            <button class="btn btn-success" type="button"><i class="fa fa-shopping-cart"></i> Checkout</button>
+        </div>
+    </form>
+</div>
+<style>
+    .form-control[readonly],
+    .form-control[readonly]:focus {
+        background: transparent;
+        outline: 0;
+        border: 0;
+        box-shadow: 0 0 0;
+        min-width: 100px;
+    }
+</style>
+<script>
+    $('.save_invoice').click(function (e) {
+        e.preventDefault();
+
+        form = $('#save_invoice');
+
+        $formObj = $('#save_invoice').serializeObject();
+
+        // console.log($formObj);
+
+        if ($('[name="invoice_id"]').val() == 'new') {
+            $.ajax({
+                type: "POST",
+                url: './api/checkout_crud.php?crud=insert',
+                data: form.serialize(), // serializes the form's elements.
+                dataType: 'json',
+            }).done(function (response) {
+                if (response.status) {
+                    localStorage.removeItem('invoice_id');
+                    if (localStorage.getItem("invoice_id") === null) {
+                        screen_loader('purchase/list');
+                    } else {
+                        console.log('error');
+                    }
+                } else {
+                    $('.alert-holder').html(b_alert('danger', 'Error'));
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: './api/checkout_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
+                data: form.serialize(), // serializes the form's elements.
+                dataType: 'json',
+            }).done(function (response) {
+                if (response.status) {
+                    $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
+                } else {
+                    $('.alert-holder').html(b_alert('danger', 'Error'));
+                }
+            });
+
+        }
+
+
+    })
+</script>
+<script>
+
+    $('.exit_invoice').click(function () {
+        localStorage.removeItem('invoice_id');
+        if (localStorage.getItem("invoice_id") === null) {
+            screen_loader('checkout/list');
+        } else {
+            console.log('error');
+        }
+    })
+
+</script>

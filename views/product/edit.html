@@ -1,0 +1,81 @@
+<form id="product_edit_form" action="" class="p-3" method="post">
+    <div class="form-group">
+        <label for="">Product Id</label>
+        <input type="text" name="product_id" class="form-control" readonly required>
+        <small class="text-muted">*Mandatory</small>
+    </div>
+    <div class="form-group">
+        <label for="">Product Name</label>
+        <input type="text" list="products_list" name="name" class="form-control" required>
+        <small class="text-muted">*Mandatory</small>
+        <datalist id="products_list"></datalist>
+    </div>
+    <div class="form-group">
+        <label for="">HSN</label>
+        <input type="text" name="hsn" class="form-control">
+        <small class="text-muted">*Mandatory</small>
+    </div>
+    <div class="form-group">
+        <label for="">Selling_cost / Unit</label>
+        <input type="text" name="selling_cost" class="form-control" required>
+        <small class="text-muted">*Mandatory</small>
+    </div>
+    <div class="form-group">
+        <label for="">GST %</label>
+        <select class="form-control" name="gst"></select>
+        <small class="text-muted">*Mandatory</small>
+    </div>
+    <div class="form-group">
+        <label for="">Bar Code Number</label>
+        <input type="text" name="barcode" class="form-control">
+        <small class="text-muted">*Non Mandatory</small>
+    </div>
+    <div class="form-group d-flex align-items-center justify-content-between">
+        <button class="btn btn-danger" type="button" data-dismiss="modal" z-index="-1">Cancel</button>
+        <button class="btn btn-primary">Save Changes</button>
+    </div>
+</form>
+<script>
+    // this is the id of the form
+    id = $('[data-edit-id]').attr('data-edit-id');
+    $(document).ready(function () {
+
+        $.ajax({
+            type: "GET", url: './api/product_crud.php?crud=select', cache: false, async: false, dataType: 'json'
+        }).done(function (response) {
+            products = JSON.parse(response.data);
+            products.forEach(value => {
+                $('#products_list').append(`<option value="${value.name}">`)
+            });
+            // console.log(response); // show response from the php script.
+        });
+
+        $.ajax({
+            type: "GET", url: './api/gst_slab.php', cache: false, async: false, dataType: 'json'
+        }).done(function (response) {
+            JSON.parse(response.data).forEach(value => {
+                $('[name="gst"]').append(`<option value="${value.id}">${value.tax_percent}% GST</option>`)
+
+            });
+            console.log(response); // show response from the php script.
+        });
+
+
+        $.ajax({
+            type: "GET", url: './api/product_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+        }).done(function (response) {
+
+            product = JSON.parse(response.data);
+            $('[name="product_id"]').val(product.id);
+            $('[name="name"]').val(product.name);
+            $('[name="hsn"]').val(product.hsn);
+            $('[name="selling_cost"]').val(product.selling_cost);
+            $('[name="gst"]').val(product.gst_id).change();
+            $('[name="barcode"]').val(product.barcode);
+            console.log(product); // show response from the php script.
+        });
+
+    })
+
+
+</script>

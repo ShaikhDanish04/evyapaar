@@ -1,0 +1,244 @@
+<div class="container-fluid">
+    <p class="h3 m-0">Dashboard</p>
+    <p>Welcome to Billing System</p>
+    <hr>
+    <style>
+        .pan-block {
+            position: relative;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-align: center;
+            border: 0px;
+            box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15);
+            /* border-bottom: 5px solid rgb(0, 0, 0, 0.2); */
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .pan-block * {
+            transition: .5s all;
+        }
+
+        .pan-block .card-foot {
+            background: rgb(0, 0, 0, 0.2);
+            padding: .5rem;
+            position: absolute;
+            width: 100%;
+            bottom: -35px;
+            border-radius: 0px;
+            color: #fff;
+        }
+
+        .pan-block .card-body {
+            position: relative;
+            top: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .pan-block:hover .card-body {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            position: relative;
+            top: -20px;
+        }
+
+        .pan-block:hover .card-foot {
+            bottom: 0px;
+        }
+    </style>
+    <div class="row mb-3">
+        <div class="col-6 col-lg-3 mb-3">
+            <div class="card pan-block" style="background:linear-gradient(45deg,#ff8772,#ff6e97)">
+                <div class="card-body">
+                    <p class="m-0">Products Available</p>
+                    <h3 class="m-0"><span data-count="./api/product_crud.php?crud=select">0</span></h3>
+                </div>
+                <a href="#" onclick="screen_loader('product/list')" class="card-foot btn">View More</a>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3 mb-3">
+            <div class="card pan-block" style="background:linear-gradient(45deg,#32c9c1,#18a9cb)">
+                <div class="card-body">
+                    <p class="m-0">Purchased Invoice</p>
+                    <h3 class="m-0"><span data-count="./api/purchase_crud.php?crud=select">0</span></h3>
+                </div>
+                <a href="#" onclick="screen_loader('purchase')" class="card-foot btn">View More</a>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3 mb-3">
+            <div class="card pan-block" style="background:linear-gradient(45deg,#58a0df,#8084eb)">
+                <div class="card-body">
+                    <p class="m-0">Available Vendors</p>
+                    <h3 class="m-0"><span data-count="./api/vendor_crud.php?crud=select">0</span></h3>
+                </div>
+                <a href="#" onclick="screen_loader('vendor/list')" class="card-foot btn">View More</a>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3 mb-3">
+            <div class="card pan-block" style="background:linear-gradient(45deg,#e879ed,#8b68e4)">
+                <div class="card-body">
+                    <p class="m-0">Number of Customer </p>
+                    <h3 class="m-0"><span class="customer_available">0</span></h3>
+                </div>
+                <a href="" class="card-foot btn">View More</a>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                for (i = 0; i < $('[data-count]').length; i++) {
+                    $.ajax({ type: "GET", url: $('[data-count]:eq(' + i + ')').attr('data-count'), async: false, cache: false, dataType: 'json' })
+                        .done(function (response) {
+                            console.log(JSON.parse(response.data).length);
+                            $('[data-count]:eq(' + i + ')').html(JSON.parse(response.data).length);
+                        });
+                }
+            })
+        </script>
+        <div class="col-6">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual) </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ 0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Due Amount </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ 0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Area Chart -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-head p-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                             aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Dropdown Header:</div>
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area">
+                        <div class="chartjs-size-monitor">
+                            <div class="chartjs-size-monitor-expand">
+                                <div class=""></div>
+                            </div>
+                            <div class="chartjs-size-monitor-shrink">
+                                <div class=""></div>
+                            </div>
+                        </div>
+                        <canvas id="myAreaChart" width="544" height="366" class="chartjs-render-monitor"
+                                style="display: block; height: 320px; width: 475px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>
+            .master-controls .btn-icon-split {
+                padding: 0;
+                overflow: hidden;
+                display: flex;
+                align-items: stretch;
+                justify-content: space-between;
+                padding: 8px;
+            }
+        </style>
+        <!-- Pie Chart -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4 master-controls">
+                <!-- Card Header - Dropdown -->
+                <div class="card-head p-3 d-flex flex-row align-items-center justify-content-between border-bottom">
+                    <h6 class="m-0 font-weight-bold text-primary">Master Controls</h6>
+                </div>
+                <div class="card-body">
+                    <div class="w-100 mb-3">
+                        <a href="#" class="btn btn-primary btn-icon-split w-100 ">
+                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
+                                <i class="fa fas fa-shopping-cart"></i>
+                            </span>
+                            <span class="text h-100 d-flex align-items-center">Product Checkout</span>
+                        </a>
+                    </div>
+                    <div class="w-100 mb-3">
+                        <a href="#" onclick="screen_loader('purchase')" class="btn btn-success btn-icon-split w-100 ">
+                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
+                                <i class="fa fas fa-credit-card"></i>
+                            </span>
+                            <span class="text h-100 d-flex align-items-center">Product Purchase</span>
+                        </a>
+                    </div>
+                    <div class="w-100 mb-3">
+                        <a href="#" class="btn btn-info btn-icon-split w-100 ">
+                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
+                                <i class="fa fas fa-user-plus"></i>
+                            </span>
+                            <span class="text h-100 d-flex align-items-center">Add New Customer</span>
+                        </a>
+                    </div>
+                    <div class="w-100 mb-3">
+                        <a href="#" onclick="b_input_modal('Add Vendor', 'views/vendor/add.html')" class="btn btn-dark btn-icon-split w-100 ">
+                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
+                                <i class="fa fas fa-user-plus"></i>
+                            </span>
+                            <span class="text h-100 d-flex align-items-center">Add New Vendor</span>
+                        </a>
+                    </div>
+                    <div class="w-100 mb-3">
+                        <a href="#" class="btn btn-danger btn-icon-split w-100 ">
+                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
+                                <i class="fa fas fa-book"></i>
+                            </span>
+                            <span class="text h-100 d-flex align-items-center">Invoice Generater</span>
+                        </a>
+                    </div>
+                    <div class="w-100 mb-3">
+                        <a href="#" class="btn btn-warning btn-icon-split w-100 ">
+                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
+                                <i class="fa fas fa-chart-area"></i>
+                            </span>
+                            <span class="text h-100 d-flex align-items-center">Generate Report</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page level custom scripts -->
+<script src=".assets/js/demo/chart-area-demo.js"></script>
+<!-- <script src=".assets/js/demo/chart-pie-demo.js"></script> -->

@@ -1,0 +1,50 @@
+[
+    {
+        "subMenu": 0,
+        "title": "Dashboard",
+        "link": "dashboard",
+        "icon": "fa-home"
+    },
+    {
+        "subMenu": 0,
+        "title": "Purchase",
+        "icon": "fa-list-alt",
+        "link": "purchase/list"
+    },
+    {
+        "subMenu": 0,
+        "title": "Product Stock",
+        "icon": "fa-list-alt",
+        "link": "product/list"
+    },
+    {
+        "subMenu": 0,
+        "title": "Vendors",
+        "icon": "fa-cube",
+        "link": "vendor/list"
+    },
+    {
+        "subMenu": 0,
+        "title": "Checkout",
+        "icon": "fa-shopping-cart",
+        "link": "checkout/list"
+    },
+    {
+        "subMenu": 0,
+        "title": "Customer / Client",
+        "icon": "fa-users",
+        "link": ""
+    },
+    {
+        "subMenu": 0,
+        "title": "Invoice / Billing",
+        "icon": "fa-cube",
+        "link": "billing"
+    },
+    {
+        "subMenu": 0,
+        "title": "Settings",
+        "icon": "fa-cog",
+        "link": "setting"
+    }
+]

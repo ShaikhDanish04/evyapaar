@@ -1,0 +1,112 @@
+<div class="container-fluid">
+    <p class="h3 m-0">List Products</p>
+    <hr>
+    <div class="card">
+        <div class="card-head p-3 d-flex align-items-center justify-content-between border-bottom">
+            <p class="h5 m-0"><i class="fa fa-list-alt"></i> Product List</p>
+            <div class="d-flex">
+                <button class="btn btn-success mr-1" onclick="b_input_modal('Add Product', 'views/product/add.html')">Add Product</button>
+                <button class="btn btn-primary" onclick="location.reload()"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class=" table-responsive">
+                <table id="product_table" class="table data-table table-bordered " style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Product Name</th>
+                            <th>HSN</th>
+                            <th>Quantity</th>
+                            <th>Selling Cost</th>
+                            <th>GST %</th>
+                            <th>Barcode Number</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function table_data() {
+        $.ajax({ type: "GET", url: './api/product_crud.php?crud=select', async: false, cache: false, dataType: 'json' })
+            .done(function (response) {
+                tableData = "";
+                console.log(response);
+                JSON.parse(response.data).forEach(value => {
+                    tableData += `
+                    <tr>
+                        <td>${value.id}</td>
+                        <td>${value.name}</td>
+                        <td>${value.hsn}</td>
+                        <td>${value.quantity}</td>
+                        <td>${value.selling_cost}</td>
+                        <td>${value.tax_percent}</td>
+                        <td>${value.barcode}</td>
+                        <td class="text-nowrap">
+                            <button class="btn btn-warning btn-sm text-nowrap" data-product-edit-id="${value.id}"><i class="fa fa-edit"></i> Edit</button>
+                            <button class="btn btn-danger btn-sm text-nowrap" data-product-delete-id="${value.id}"><i class="fa fa-times"></i> Delete</button>
+                        </td>
+                    </tr>
+                `;
+
+                    $('#product_table tbody').html(tableData);
+                });
+                console.log(response); // show response from the php script.
+                dt();
+            });
+    }
+
+    $(document).ready(function () {
+
+        table_data();
+
+        $(document).on('click', '[data-product-edit-id]', function () {
+            b_edit_modal($(this).attr('data-product-edit-id'), 'Edit Product', 'views/product/edit.html')
+        })
+
+        $(document).on('submit', "#product_edit_form", function (e) {
+
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+
+            var form = $(this);
+
+            $.ajax({
+                type: "POST",
+                url: './api/product_crud.php?crud=update',
+                data: form.serialize(), // serializes the form's elements.
+                dataType: 'json',
+            }).done(function (response) {
+                console.log(response); // show response from the php script.
+                if (response.updated) {
+                    $('#input_modal').modal('hide');
+                    table_data();
+                } else {
+                    console.log('error');
+                }
+            });
+        });
+
+        $(document).on('click', '[data-product-delete-id]', function () {
+            if (confirm('Are Your Sure Your Want To Delete The Product')) {
+                $.ajax({
+                    type: "GET",
+                    url: './api/product_crud.php?crud=delete&id=' + $(this).attr('data-product-delete-id'),
+                    dataType: 'json',
+                }).done(function (response) {
+                    console.log(response); // show response from the php script.
+                    if (response.deleted) {
+                        table_data();
+                    } else {
+                        console.log('error');
+                    }
+                });
+            }
+        })
+    })
+
+</script>

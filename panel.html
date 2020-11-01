@@ -1,0 +1,380 @@
+<div id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav sidebar sidebar-dark accordion shadow toggled" id="accordionSidebar" style="z-index: 1;background: linear-gradient(45deg, #007bff,#04c8b3);">
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand p-0 d-flex align-items-center justify-content-center bg-light" href="" view-href="dashboard">
+                <img src=".assets/img/logo.png" width="100%" height="100%" alt="">
+            </a>
+            <style>
+                /* .sidebar .nav-link {
+                    background: rgba(0, 0, 0, 0.15);
+                } */
+                .sidebar .nav-link {
+                    background: rgba(0, 0, 0, 0.15);
+                    transition: .5s;
+                    transition-delay: .1s;
+                }
+
+                .sidebar .nav-link.active,
+                .sidebar .nav-link:hover {
+                    margin: 10px 10px;
+                    background: rgba(0, 0, 0, 0.35);
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+                    text-shadow: 0 0 2px;
+                    border-radius: 5px;
+                }
+
+                .sidebar .nav-link.active {
+                    border-right: 5px solid rgba(0, 0, 0, 0.25);
+                    border-radius: 0px;
+                    margin: 0px;
+                }
+
+                .card {
+                    transition: .3s;
+                    border: 0;
+                    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1) !important;
+                }
+
+                .card:hover {
+                    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15) !important;
+                }
+            </style>
+            <div class="json-menu"></div>
+            <script>
+                $(document).ready(function () {
+
+                    $.ajax({ method: 'GET', url: 'data/sidebar.json', async: false, cache: false, dataType: 'json' })
+                        .done(function (data) {
+                            data.forEach(i => {
+                                if (i.subMenu) {
+
+                                    subMenu = "";
+                                    i.menu.forEach(j => {
+                                        subMenu += `<a class="collapse-item menu-link" href="" view-href="${j.link}">${j.title}</a>`;
+
+                                    })
+
+                                    $('.json-menu').append(`
+                                     <li class="nav-item">
+                                        <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#${i.id}"
+                                            aria-expanded="true" aria-controls="${i.id}">
+                                            <i class="fa fas fa-fw ${i.icon}"></i>
+                                            <span>${i.title}</span>
+                                        </a>
+                                        <div id="${i.id}" class="collapse" data-parent="#accordionSidebar">
+                                            <div class="bg-white py-2 collapse-inner rounded">
+                                                <h6 class="collapse-header">${i.title}</h6>
+                                                ${subMenu}
+                                            </div>
+                                        </div>
+                                    </li>
+                                     `);
+                                } else {
+                                    $('.json-menu').append(`
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="" view-href="${i.link}">
+                                            <i class="fa fas fa-fw ${i.icon}"></i>
+                                            <span>${i.title}</span></a>
+                                    </li>`);
+                                }
+                            });
+                        })
+                });
+
+            </script>
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top border-bottom">
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <!-- Topbar Search -->
+                    <form
+                          class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <button class="btn " type="button">
+                                <i class="fa fas fa-search fa-sm"></i>
+                            </button>
+                            <input type="text" class="form-control bg-light border-0 small"
+                                   placeholder="Search transactions, invoice or help" aria-label="Search"
+                                   aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                            </div>
+                        </div>
+                    </form>
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fas fa-search fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                 aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                               placeholder="Search for..." aria-label="Search"
+                                               aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fa fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div class="p-2 rounded text-light"
+                                     style="background:linear-gradient(45deg, #b096ff, #8289ff)">
+                                    <i class="fa fas fa-bell fa-fw"></i>
+                                    <!-- Counter - Alerts -->
+                                    <span class="badge badge-dark p-2 badge-counter alert-count">0</span>
+                                </div>
+                            </a>
+                            <!-- Dropdown - Alerts -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header"> Alerts Center </h6>
+                                <div class="json-action-center"></div>
+                                <script>
+                                    $(document).ready(function () {
+
+                                        $.ajax({ method: 'GET', url: 'data/action_center.json', cache: false, dataType: 'json' })
+                                            .done(function (data) {
+                                                data.forEach(i => {
+                                                    $('.json-action-center').append(`
+                                                     <a class="dropdown-item d-flex align-items-center" href="#">
+                                                        <div>
+                                                            <div class="small text-gray-500">${i.date}</div>
+                                                            <span>${i.text}</span>
+                                                        </div>
+                                                    </a>
+                                                `);
+                                                });
+
+                                                $('.alert-count').text(data.length);
+                                            })
+                                    });
+                                </script>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                            </div>
+                        </li>
+                        <div class="topbar-divider d-none d-sm-block"></div>
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle text-capitalize" href="#" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div class="btn shadow" style="background:#fff">
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+                                    <img class="img-profile rounded-circle" src=".assets/img/user.png">
+                                </div>
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fa fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profile </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fa fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Settings </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fa fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End of Topbar -->
+                <!-- view -->
+                <div class="main-content"></div>
+                <div class="loading-content">
+                    <div class="d-flex align-items-center justify-content-center flex-column" style="min-height: 80vh;">
+                        <!-- <img class="rounded" src="http://placehold.it/250x90/ffffff?text=logo" height="100px" alt=""> -->
+                        <p class="display-3 pt-5">
+                            <i class="fa fa-spinner fa-spin text-gray-800"></i>
+                        </p>
+                        <p class="h3">Loading ...</p>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Main Content -->
+            <script>
+                $(document).ready(function () {
+
+                    if (localStorage.getItem('screen') == '' || localStorage.getItem('screen') == null) {
+                        screen_loader('dashboard');
+                    } else {
+                        screen_loader(localStorage.getItem('screen'));
+                    }
+
+                    $(document).on('click', '[view-href]', function (e) {
+                        e.preventDefault();
+
+                        screen = $(this).attr("view-href");
+                        screen_loader(screen);
+
+                        $(this).addClass('active');
+                    })
+
+                });
+
+
+                function screen_loader(screen) {
+                    if (screen != '') {
+                        $('[view-href]').addClass('disabled');
+                        $('.main-content').hide();
+                        $('.loading-content').show();
+                        $('[view-href]').removeClass('active');
+
+                        $.ajax({ method: "GET", url: "views/" + screen + ".html", cache: false, dataType: "html" })
+                            .done(function (data) {
+                                $('.main-content').html(data);
+                                $('.main-content').fadeIn();
+                                $('.loading-content').fadeOut();
+                                $('[view-href]').removeClass('disabled');
+                                localStorage.setItem('screen', screen);
+                            })
+                            .fail(function () {
+                                $('.main-content').load('views/404.html');
+                                $('.main-content').fadeIn();
+                                $('.loading-content').fadeOut();
+                                $('[view-href]').removeClass('disabled');
+                            })
+                    }
+                }
+
+            </script>
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2020</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fa fas fa-angle-up"></i>
+    </a>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" name="logout"><i class="fa fa-sign-out"
+                           aria-hidden="true"></i>Logout</button>
+                    <script>
+                        $('[name="logout"]').click(function (e) {
+                            e.preventDefault();
+
+                            $.ajax({
+                                method: 'POST', url: './api/connect.php', cache: false, dataType: 'json',
+                                data: {
+                                    logout: true
+                                }
+                            }).done(function (response) {
+                                $('.page').fadeOut()
+                                location.reload();
+
+                            })
+                        })
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+            (function ($) {
+                "use strict"; // Start of use strict
+
+                // Toggle the side navigation
+                $("#sidebarToggle, #sidebarToggleTop").on('click', function (e) {
+                    $("body").toggleClass("sidebar-toggled");
+                    $(".sidebar").toggleClass("toggled");
+                    if ($(".sidebar").hasClass("toggled")) {
+                        $('.sidebar .collapse').collapse('hide');
+                    };
+                });
+
+                // Close any open menu accordions when window is resized below 768px
+                $(window).resize(function () {
+                    if ($(window).width() < 768) {
+                        $('.sidebar .collapse').collapse('hide');
+                    };
+
+                    // Toggle the side navigation when window is resized below 480px
+                    if ($(window).width() < 480 && !$(".sidebar").hasClass("toggled")) {
+                        $("body").addClass("sidebar-toggled");
+                        $(".sidebar").addClass("toggled");
+                        $('.sidebar .collapse').collapse('hide');
+                    };
+                });
+
+                // Prevent the content wrapper from scrolling when the fixed side navigation hovered over
+                $('body.fixed-nav .sidebar').on('mousewheel DOMMouseScroll wheel', function (e) {
+                    if ($(window).width() > 768) {
+                        var e0 = e.originalEvent,
+                            delta = e0.wheelDelta || -e0.detail;
+                        this.scrollTop += (delta < 0 ? 1 : -1) * 30;
+                        e.preventDefault();
+                    }
+                });
+
+                // Scroll to top button appear
+                $(document).on('scroll', function () {
+                    var scrollDistance = $(this).scrollTop();
+                    if (scrollDistance > 100) {
+                        $('.scroll-to-top').fadeIn();
+                    } else {
+                        $('.scroll-to-top').fadeOut();
+                    }
+                });
+
+                // Smooth scrolling using jQuery easing
+                $(document).on('click', 'a.scroll-to-top', function (e) {
+                    var $anchor = $(this);
+                    $('html, body').stop().animate({
+                        scrollTop: ($($anchor.attr('href')).offset().top)
+                    }, 1000, 'easeInOutExpo');
+                    e.preventDefault();
+                });
+
+            })(jQuery); // End of use strict
+
+    </script>
+</div>

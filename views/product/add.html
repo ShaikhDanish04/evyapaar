@@ -1,0 +1,56 @@
+<form id="product_add_form" action="" class="p-3" method="post">
+    <div class="form-group">
+        <label for="">Product Name</label>
+        <input type="text" list="products_list" name="name" class="form-control" required>
+        <small class="text-muted">*Mandatory</small>
+        <datalist id="products_list"></datalist>
+    </div>
+    <div class="form-group">
+        <label for="">HSN</label>
+        <input type="text" name="hsn" class="form-control">
+        <small class="text-muted">*Mandatory</small>
+    </div>
+    <div class="form-group">
+        <label for="">GST %</label>
+        <select class="form-control" name="gst"></select>
+        <small class="text-muted">*Mandatory</small>
+    </div>
+    <div class="form-group">
+        <label for="">Bar Code Number</label>
+        <input type="text" name="barcode" class="form-control">
+        <small class="text-muted">*Non Mandatory</small>
+    </div>
+    <div class="form-group d-flex align-items-center justify-content-between">
+        <button class="btn btn-danger" type="button" data-dismiss="modal" z-index="-1">Cancel</button>
+        <button class="btn btn-primary">Add Product</button>
+    </div>
+</form>
+<script>
+    // this is the id of the form
+    $(document).ready(function () {
+
+        $.ajax({
+            type: "GET", url: './api/product_crud.php?crud=select', async: false, cache: false, dataType: 'json'
+        }).done(function (response) {
+            array = JSON.parse(response.data);
+            array.forEach(value => {
+                $('#products_list').append(`<option value="${value.name}">`)
+            });
+            console.log(response); // show response from the php script.
+        });
+
+
+        $.ajax({
+            type: "GET", url: './api/gst_slab.php', cache: false, dataType: 'json'
+        }).done(function (response) {
+            array = JSON.parse(response.data);
+            array.forEach(value => {
+                $('[name="gst"]').append(`<option value="${value.id}">${value.tax_percent}% GST</option>`)
+
+            });
+            console.log(response); // show response from the php script.
+        });
+
+
+    })
+</script>

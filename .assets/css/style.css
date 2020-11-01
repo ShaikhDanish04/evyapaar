@@ -1,0 +1,33 @@
+.table td, .table th {
+    vertical-align: middle;
+}
+
+body {
+    color: #000;
+}
+
+#wrapper #content-wrapper {
+    background-color: #f2f7fc;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.sidebar-light .nav-item .nav-link:hover {
+    color: #1e1e1e;
+    border-right: 5px solid;
+    background: #f0f0f0;
+}
+
+.sidebar-light .nav-item .nav-link:focus {
+    color: #1e1e1e;
+    border-right: 5px solid;
+    /* background: #f0f0f0; */
+}
+
+.sidebar-light .nav-item .nav-link.active {
+    color: #650bd6;
+    border-right: 5px solid;
+    background: #f0f0f0;
+}
