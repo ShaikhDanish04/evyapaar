@@ -1,3 +1,85 @@
+<script>
+    function autoTable(table_selector, query, skip_header, button_array) {
+        $(table_selector).html('');
+
+        $.ajax({ type: "GET", url: query, async: false, cache: false, dataType: 'json' })
+            .done(function (response) {
+
+                tableData = JSON.parse('[' + response.data.slice(1, -1) + ',' + response.data.slice(1, -1) + ',' + response.data.slice(1, -1) + ']');
+
+                // tableData = JSON.parse(response.data);
+                // console.log(tableData);
+
+                header_array = [];
+                for (header in tableData[0]) {
+                    header_array.push(header);
+                }
+
+                header_array = (header_array.filter(value => !skip_header.includes(value)))
+
+
+                var table = document.querySelector(table_selector);
+                var header = table.createTHead();
+                var body = table.createTBody();
+                var row = header.insertRow(0);
+
+                // console.log(header_array);
+                i = 0;
+                header_array.forEach(header => {
+                    var cell = row.insertCell(i);
+                    cell.innerHTML = `<span class="text-capitalize font-weight-bold">${header}</span>`;
+                    i++;
+                })
+                if (button_array.length > 0) {
+                    var cell = row.insertCell(i);
+                    cell.innerHTML = `<span class="text-capitalize font-weight-bold">Action</span>`;
+                }
+
+                for (row in tableData) {
+                    i = 0;
+                    for (col in tableData[row]) {
+                        if (i == 0) {
+                            $(table_selector + ' tbody').append($('<tr data-row-id="' + tableData[row][header_array[0]] + '">'));
+                        }
+                        if (tableData[row][header_array[i]] != null) {
+                            // console.log(tableData[row][header_array[0]]);
+                            if (i == 0) {
+                                $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>${Number(row) + 1}</td>`);
+                            } else {
+
+                                $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>${tableData[row][header_array[i]]}</td>`);
+                            }
+                        }
+                        i++;
+                    }
+                    if (button_array.length > 0) {
+                        buttonHTML = "";
+                        button_array.forEach(button => {
+                            var search = button.match(/\$@(.*)@/);
+                            if (search.length > 0) {
+                                button = button.replace('$@' + search[1] + '@', tableData[row][search[1]]);
+                            }
+                            buttonHTML += button;
+                        })
+                        $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td><div class="text-nowrap">${buttonHTML}</div></td>`);
+                    }
+                }
+
+                $(table_selector + '').addClass('data-table');
+                dt();
+            })
+    }
+
+
+    function table_data() {
+
+        autoTable('.table', './api/product_crud.php?crud=select', ['gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+            '<button class="btn btn-danger btn-sm text-nowrap" data-product-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
+        ]);
+
+    }
+</script>
+
 <div class="container-fluid">
     <p class="h3 m-0">List Products</p>
     <hr>
@@ -10,86 +92,20 @@
             </div>
         </div>
         <div class="card-body">
-            <div class=" table-responsive">
-                <table id="product_table" class="table data-table table-bordered " style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Product Name</th>
-                            <th>HSN</th>
-                            <th>Quantity</th>
-                            <th>Selling Cost</th>
-                            <th>GST %</th>
-                            <th>Barcode Number</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <div class="table-responsive">
+                <table class="table table-bordered"></table>
             </div>
         </div>
     </div>
 </div>
 <script>
 
-    function table_data() {
-        $.ajax({ type: "GET", url: './api/product_crud.php?crud=select', async: false, cache: false, dataType: 'json' })
-            .done(function (response) {
-                tableData = "";
-                console.log(response);
-                JSON.parse(response.data).forEach(value => {
-                    tableData += `
-                    <tr>
-                        <td>${value.id}</td>
-                        <td>${value.name}</td>
-                        <td>${value.hsn}</td>
-                        <td>${value.quantity}</td>
-                        <td>${value.selling_cost}</td>
-                        <td>${value.tax_percent}</td>
-                        <td>${value.barcode}</td>
-                        <td class="text-nowrap">
-                            <button class="btn btn-warning btn-sm text-nowrap" data-product-edit-id="${value.id}"><i class="fa fa-edit"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm text-nowrap" data-product-delete-id="${value.id}"><i class="fa fa-times"></i> Delete</button>
-                        </td>
-                    </tr>
-                `;
-
-                    $('#product_table tbody').html(tableData);
-                });
-                console.log(response); // show response from the php script.
-                dt();
-            });
-    }
-
     $(document).ready(function () {
-
         table_data();
 
         $(document).on('click', '[data-product-edit-id]', function () {
             b_edit_modal($(this).attr('data-product-edit-id'), 'Edit Product', 'views/product/edit.html')
         })
-
-        $(document).on('submit', "#product_edit_form", function (e) {
-
-            e.preventDefault(); // avoid to execute the actual submit of the form.
-
-            var form = $(this);
-
-            $.ajax({
-                type: "POST",
-                url: './api/product_crud.php?crud=update',
-                data: form.serialize(), // serializes the form's elements.
-                dataType: 'json',
-            }).done(function (response) {
-                console.log(response); // show response from the php script.
-                if (response.updated) {
-                    $('#input_modal').modal('hide');
-                    table_data();
-                } else {
-                    console.log('error');
-                }
-            });
-        });
 
         $(document).on('click', '[data-product-delete-id]', function () {
             if (confirm('Are Your Sure Your Want To Delete The Product')) {

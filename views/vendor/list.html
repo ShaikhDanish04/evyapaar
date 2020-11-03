@@ -64,29 +64,6 @@
             b_edit_modal($(this).attr('data-vendor-edit-id'), 'Edit vendor', 'views/vendor/edit.html')
         })
 
-        $(document).on('submit', "#vendor_edit_form", function (e) {
-
-            e.preventDefault(); // avoid to execute the actual submit of the form.
-
-            var form = $(this);
-
-            $.ajax({
-                type: "POST",
-                url: './api/vendor_crud.php?crud=update',
-                data: form.serialize(), // serializes the form's elements.
-                dataType: 'json',
-            }).done(function (response) {
-                console.log(response); // show response from the php script.
-                if (response.updated) {
-                    $('#input_modal').modal('hide');
-                    table_data();
-                } else {
-                    console.log('error');
-                }
-            });
-        });
-
-
         $(document).on('click', '[data-vendor-delete-id]', function () {
             if (confirm('Are Your Sure Your Want To Delete The vendor')) {
                 $.ajax({

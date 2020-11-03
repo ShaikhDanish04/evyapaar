@@ -1,4 +1,4 @@
-<form id="vendor_add_form" action="" class="p-3" method="post">
+<form id="vendor_add_form" action="./api/vendor_crud.php?crud=insert" class="p-3" method="post">
     <div class="form-group">
         <label for="">Vendor Name</label>
         <input type="text" list="vendors_list" name="name" class="form-control" required>
@@ -28,7 +28,6 @@
 <script>
     // this is the id of the form
     $(document).ready(function () {
-
         $.ajax({
             type: "GET", url: './api/vendor_crud.php?crud=select', cache: false, dataType: 'json'
         }).done(function (response) {
@@ -38,7 +37,5 @@
             });
             console.log(response); // show response from the php script.
         });
-
-
     })
 </script>

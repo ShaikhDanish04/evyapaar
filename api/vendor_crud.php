@@ -35,9 +35,9 @@ if (isset($_GET['crud'])) {
             $result = $conn->query("INSERT INTO `vendor` (`name`, `contact`, `email`, `address`) VALUES ('$name', '$contact', '$email', '$address')");
 
             if ($result == TRUE) {
-                $response->inserted = true;
+                $response->queryStatus = true;
             } else {
-                $response->inserted = false;
+                $response->queryStatus = false;
                 $response->queryError = $conn->error;
             }
             break;
@@ -52,9 +52,9 @@ if (isset($_GET['crud'])) {
             $result = $conn->query("UPDATE `vendor` SET `name`='$name',`contact`='$contact',`email`='$email',`address`='$address' WHERE id='$id'");
 
             if ($result == TRUE) {
-                $response->updated = true;
+                $response->queryStatus = true;
             } else {
-                $response->updated = false;
+                $response->queryStatus = false;
                 $response->queryError = $conn->error;
             }
 

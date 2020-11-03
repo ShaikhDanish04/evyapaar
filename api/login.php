@@ -13,7 +13,10 @@ if ($result == TRUE) {
 
     if ($result->num_rows == 1) {
         $response->login_status = true;
-        $_SESSION['user_in'] = 'danish';
+        $user = $result->fetch_assoc();
+        $user['password'] = '';
+        $_SESSION['user_in'] = $user['username'];
+        $response->user = $user;
     } else {
         $response->login_status = false;
     }

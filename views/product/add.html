@@ -1,4 +1,4 @@
-<form id="product_add_form" action="" class="p-3" method="post">
+<form id="product_add_form" action="./api/product_crud.php?crud=insert" class="p-3" method="post">
     <div class="form-group">
         <label for="">Product Name</label>
         <input type="text" list="products_list" name="name" class="form-control" required>
@@ -22,7 +22,7 @@
     </div>
     <div class="form-group d-flex align-items-center justify-content-between">
         <button class="btn btn-danger" type="button" data-dismiss="modal" z-index="-1">Cancel</button>
-        <button class="btn btn-primary">Add Product</button>
+        <button class="btn btn-primary" type="submit">Add Product</button>
     </div>
 </form>
 <script>

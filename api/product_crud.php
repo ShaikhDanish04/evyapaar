@@ -12,7 +12,7 @@ if (isset($_GET['crud'])) {
                 $result = $conn->query("SELECT product.*,gst_slab.tax_percent FROM product INNER JOIN gst_slab ON product.gst_id = gst_slab.id WHERE product.id = '$id'")->fetch_assoc();
                 $response->data = json_encode($result);
             } else {
-                $result = $conn->query("SELECT product.*,gst_slab.tax_percent FROM product INNER JOIN gst_slab ON product.gst_id = gst_slab.id");
+                $result = $conn->query("SELECT product.*,gst_slab.tax_percent FROM product INNER JOIN gst_slab ON product.gst_id = gst_slab.id ORDER BY product.id ASC");
                 $list = array();
 
                 if ($result == TRUE) {
@@ -36,9 +36,9 @@ if (isset($_GET['crud'])) {
                                      VALUES ('$name', '$hsn', '$gst', '$barcode')");
 
             if ($result == TRUE) {
-                $response->inserted = true;
+                $response->queryStatus = true;
             } else {
-                $response->inserted = false;
+                $response->queryStatus = false;
                 $response->queryError = $conn->error;
             }
             break;
@@ -59,9 +59,9 @@ if (isset($_GET['crud'])) {
                                               WHERE id='$id'");
 
             if ($result == TRUE) {
-                $response->updated = true;
+                $response->queryStatus = true;
             } else {
-                $response->updated = false;
+                $response->queryStatus = false;
                 $response->queryError = $conn->error;
             }
 

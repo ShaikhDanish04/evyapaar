@@ -52,17 +52,17 @@
             }
         }).done(function (response) {
 
-            console.log(response);
-
             if (response.login_status) {
                 $('.login-card').slideUp();
                 $('.alert-holder').html(b_alert('success', 'Successfully Logged In'));
                 $('.page').load('panel.html');
+
+                localStorage.setItem('sidebar', response.user.sidebar);
+                localStorage.setItem('screen', 'dashboard');
 
             } else {
                 $('.alert-holder').html(b_alert('warning', 'Incorrect Username or Password'));
             }
         })
     })
-
 </script>
