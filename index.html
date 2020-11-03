@@ -355,7 +355,7 @@
                         $('#input_modal .modal-body').prepend(b_alert('success', 'Task Successfully'));
                         form.find('button').removeAttr('disabled');
                         // $('#input_modal').modal('hide');
-                        table_data();
+                        // table_data();
                     } else {
                         $('#input_modal .modal-body').prepend(b_alert('danger', 'Operation Error !!! Task Failed, Try Again'));
                     }
@@ -394,6 +394,8 @@
             })
 
             function printAssessment() {
+                $('#section-to-print').html($('.print-content'));
+
                 $('#print_modal').modal('show');
             }
         </script>
@@ -417,6 +419,7 @@
 
             .print-holder {
                 background: #525659;
+                /* overflow: scroll; */
             }
 
             .print-view {
@@ -445,7 +448,8 @@
                 <div class="p-2"><button class="btn btn-dark btn-print"><i class="fa fa-print"></i></button></div>
                 <div class="modal-body print-holder">
                     <div class="print-view">
-                        <div class="print-content" id="section-to-print"> Print Preview</span>
+                        <div id="section-to-print">
+
                         </div>
                     </div>
                 </div>
