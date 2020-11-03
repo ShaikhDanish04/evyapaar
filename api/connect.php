@@ -16,9 +16,9 @@ $response = new stdClass();
 
 // if ($database['type'] == 'local') {
 $servername = 'localhost';
-$dbname = 'evyapaar';
-$username = 'root';
-$password = '';
+$dbname = 'organoen_evyapaar';
+$username = 'organoen_evyapaar';
+$password = 'Root1234';
 // }
 
 
