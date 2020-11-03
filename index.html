@@ -203,6 +203,77 @@
     function percentage(a, b) {
         return (Number(a) / 100) * Number(b);
     }
+    
+    function autoTable(table_selector, query, skip_header, button_array) {
+        $(table_selector).html('');
+
+        $.ajax({ type: "GET", url: query, async: false, cache: false, dataType: 'json' })
+            .done(function (response) {
+
+                tableData = JSON.parse(response.data);
+                // console.log(tableData);
+
+                header_array = [];
+                for (header in tableData[0]) {
+                    header_array.push(header);
+                }
+
+                header_array = (header_array.filter(value => !skip_header.includes(value)))
+
+
+                var table = document.querySelector(table_selector);
+                var header = table.createTHead();
+                var body = table.createTBody();
+                var row = header.insertRow(0);
+
+                // console.log(header_array);
+                i = 0;
+                header_array.forEach(header => {
+                    var cell = row.insertCell(i);
+                    cell.innerHTML = `<span class="text-capitalize font-weight-bold">${header.replace('_',' ')}</span>`;
+                    i++;
+                })
+                if (button_array.length > 0) {
+                    var cell = row.insertCell(i);
+                    cell.innerHTML = `<span class="text-capitalize font-weight-bold">Action</span>`;
+                }
+
+                for (row in tableData) {
+                    i = 0;
+                    for (col in tableData[row]) {
+                        if (i == 0) {
+                            $(table_selector + ' tbody').append($('<tr data-row-id="' + tableData[row][header_array[0]] + '">'));
+                        }
+                        if (tableData[row][header_array[i]] != null) {
+                            // console.log(tableData[row][header_array[0]]);
+                            if (i == 0) {
+                                $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>${Number(row) + 1}</td>`);
+                            } else {
+
+                                $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td class="text-nowrap">${tableData[row][header_array[i]]}</td>`);
+                            }
+                        }
+                        i++;
+                    }
+                    if (button_array.length > 0) {
+                        buttonHTML = "";
+                        button_array.forEach(button => {
+                            var search = button.match(/\$@(.*)@/);
+                            if (search.length > 0) {
+                                button = button.replace('$@' + search[1] + '@', tableData[row][search[1]]);
+                            }
+                            buttonHTML += button;
+                        })
+                        $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td><div class="text-nowrap">${buttonHTML}</div></td>`);
+                    }
+                }
+
+                $(table_selector + '').addClass('data-table');
+                dt();
+            })
+    }
+
+
 </script>
 
 <body>

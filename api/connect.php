@@ -15,10 +15,10 @@ $response = new stdClass();
 // $database = $configJson['database'];
 
 // if ($database['type'] == 'local') {
-    $servername = 'localhost';
-    $dbname = 'evyapaar';
-    $username = 'root';
-    $password = '';
+$servername = 'localhost';
+$dbname = 'evyapaar';
+$username = 'root';
+$password = '';
 // }
 
 
@@ -48,4 +48,29 @@ if (isset($_GET['get'])) {
         $response->session_established = false;
     }
     echo json_encode($response);
+}
+
+
+
+function status($status)
+{
+    switch ($status) {
+        case "active":
+            return '<span class="badge badge-primary px-3 py-2">Active</span>';
+            break;
+        case "unverified":
+            return '<span class="badge badge-warning px-3 py-2">Unverified</span>';
+            break;
+        case "verified":
+            return '<span class="badge badge-success px-3 py-2">Verified</span>';
+            break;
+        case "blocked":
+            return '<span class="badge badge-danger px-3 py-2">Blocked</span>';
+            break;
+    }
+}
+
+function datetime($datetime)
+{
+    return date_format(date_create($datetime), "d M Y - h:m:i A");
 }

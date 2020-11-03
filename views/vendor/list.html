@@ -1,3 +1,13 @@
+<script>
+    function table_data() {
+
+        autoTable('.table', './api/vendor_crud.php?crud=select', [], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-vendor-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+            '<button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
+        ]);
+
+    }
+</script>
+
 <div class="container-fluid">
     <p class="h3 m-0">List vendors</p>
     <hr>
@@ -11,50 +21,12 @@
         </div>
         <div class="card-body">
             <div class=" table-responsive">
-                <table id="vendor_table" class="table data-table table-bordered " style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Contact</th>
-                            <th>Email</th>
-                            <th>Address</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <table class="table data-table table-bordered " style="width:100%"></table>
             </div>
         </div>
     </div>
 </div>
 <script>
-
-    function table_data() {
-        $.ajax({ type: "GET", url: './api/vendor_crud.php?crud=select', async: false, cache: false, dataType: 'json' })
-            .done(function (response) {
-                tableData = "";
-                JSON.parse(response.data).forEach(value => {
-                    tableData += `
-                    <tr>
-                        <td>${value.id}</td>
-                        <td>${value.name}</td>
-                        <td>${value.contact}</td>
-                        <td>${value.email}</td>
-                        <td>${value.address}</td>
-                        <td class="text-nowrap">
-                            <button class="btn btn-warning btn-sm text-nowrap" data-vendor-edit-id="${value.id}"><i class="fa fa-edit"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="${value.id}"><i class="fa fa-times"></i> Delete</button>
-                        </td>
-                    </tr>
-                `;
-
-                    $('#vendor_table tbody').html(tableData);
-                });
-                console.log(response); // show response from the php script.
-                dt();
-            });
-    }
 
     $(document).ready(function () {
 

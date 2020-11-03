@@ -16,11 +16,17 @@ if (isset($_GET['crud'])) {
                 $purchase['vendor'] = json_encode($vendor);
                 $response->data = json_encode($purchase);
             } else {
-                $result = $conn->query("SELECT purchase.*,vendor.name FROM purchase INNER JOIN vendor ON purchase.vendor_id = vendor.id");
+                $result = $conn->query("SELECT purchase.id,vendor.name as vendor_name,purchase.products as products_count,purchase.* FROM purchase INNER JOIN vendor ON purchase.vendor_id = vendor.id");
                 $list = array();
 
                 if ($result == TRUE) {
                     while ($row = $result->fetch_assoc()) {
+                        $row['products_count'] = count(json_decode($row['products_count']));
+
+                        $row['datetime'] = datetime($row['datetime']);
+                        // $row['status'] = ($row['status'] == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>';
+                        $row['status'] = '<span class="status">' . $row['status'] . '</span>';
+
                         array_push($list, $row);
                     }
                     $response->data = json_encode($list);

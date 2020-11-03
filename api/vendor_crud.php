@@ -17,6 +17,20 @@ if (isset($_GET['crud'])) {
 
                 if ($result == TRUE) {
                     while ($row = $result->fetch_assoc()) {
+                        $vendor_id = $row['id'];
+                        $purchase_list = $conn->query("SELECT * FROM purchase WHERE vendor_id = '$vendor_id'");
+
+                        $row['Invoice'] = $purchase_list->num_rows;
+                        $row['Total Purchase'] = 0;
+                        // $row['purchase'] = '';
+
+                        while ($purchase = $purchase_list->fetch_assoc()) {
+                            // $row['purchase'] = json_encode($purchase);
+                            $row['Total Purchase'] = $row['Total Purchase'] + $purchase['grand_total'];
+                        }
+
+
+
                         array_push($list, $row);
                     }
                     $response->data = json_encode($list);
