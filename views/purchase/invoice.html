@@ -25,7 +25,7 @@
         <div class="alert-holder"></div>
         <div class="card mb-3">
             <div class="card-body">
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center vendor-select">
                     <div class="form-group w-100 mr-3">
                         <label for="">Select Vendor</label>
                         <select class="form-control mr-2" name="vendor_id"></select>
@@ -77,7 +77,7 @@
                         }).done(function (response) {
                             data = JSON.parse(response.data);
 
-                            console.log(data);
+
                             $('#product_table tbody').append(`
                             <tr data-row-index="${i}">
                                 <td class="text-nowrap">
@@ -163,6 +163,7 @@
                                     sub_total = 0;
                                     sgst = 0;
                                     cgst = 0;
+
                                     $.each($('table .total_price'), function () {
                                         sub_total = sub_total + Number($(this).val());
                                     })
@@ -181,6 +182,14 @@
 
                                     $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
                                 })
+                                $('.discount').keyup(function () {
+                                    console.log(percentage($(this).val(), $('[name="sub_total"]').val()))
+                                    $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
+
+                                    $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
+
+                                })
+
                             </script>
                             <tr>
                                 <td colspan="11" class="text-center no-data">No Products Added</td>
@@ -261,15 +270,12 @@
     })
 </script>
 <script>
-
-
-
-
     $(document).ready(function () {
 
         if (localStorage.getItem("invoice_id") === null) {
             screen_loader('purchase/list');
-        } else {
+        }
+        else {
             $('[name="invoice_id"]').val(localStorage.getItem('invoice_id'));
 
             if ($('[name="invoice_id"]') != 'new') {
@@ -278,56 +284,63 @@
                     type: "GET", url: './api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
 
-
-
                     data = JSON.parse(response.data);
 
                     vendor = JSON.parse(data.vendor);
-
-                    $('select').val(data.vendor_id);
+                    $('.vendor-select').html('<input value="' + vendor.id + '" type="hidden" name="vendor_id">')
                     $('.vendor_name_load').text(vendor.name);
                     $('.vendor_contact_load').text(vendor.contact);
                     $('.vendor_email_load').text(vendor.email);
                     $('.vendor_address_load').text(vendor.address);
-                    console.log(data); // show response from the php script.
 
-                    $('#product_table tbody').html('')
-                    i = 0;
-                    JSON.parse(data.products).forEach(product => {
-                        console.log(product);
-                        $.ajax({
-                            type: "GET", url: './api/product_crud.php?crud=select&id=' + product.id, async: false, cache: false, dataType: 'json'
-                        }).done(function (response) {
-                            data = JSON.parse(response.data);
+                    $('#product_table tbody').html('');
 
-                            $('#product_table tbody').append(`
-                                <tr>
-                                    <td><select class="form-control product_id" style="min-width: 300px;" name="products[${i}][id]"><option value="${product.id}" selected>${(data.name)}</option>${options('./api/product_crud.php?crud=select')}</select></td>
-                                    <td><input type="text" readonly class="form-control product_hsn" tabindex="-1" value="${product.HSN}" name="products[${i}][HSN]"></td>
-                                    <td><input type="text" style="min-width: 100px;" class="form-control product_price" placeholder="Price" value="${product.price}" name="products[${i}][price]"></td>
-                                    <td><input type="text" style="min-width: 100px;" class="form-control product_quantity" placeholder="Quantity" value="${product.quantity}" name="products[${i}][quantity]"></td>
-                                    <td><input type="text" readonly class="form-control product_gst" tabindex="-1" value="${product.gst}" name="products[${i}][gst]"></td>
-                                    <td><input type="text" readonly class="form-control product_peg" tabindex="-1" value="${product.peg}" name="products[${i}][peg]"></td>
-                                    <td><input type="text" readonly class="form-control product_pga" tabindex="-1" value="${product.pga}" name="products[${i}][pga]"></td>
-                                    <td><input type="text" readonly class="form-control product_total" tabindex="-1" value="${product.total}" name="products[${i}][total]"></td>
-                                </tr>
-                            `)
-                            i++;
-                        });
+                    console.log(data);
+                    JSON.parse(data.products).forEach(data => {
+                        i = $('#product_table tbody tr').length;
+                        $('#product_table tbody').append(`
+                            <tr data-row-index="${i}">
+                                <td class="text-nowrap">
+                                    <input type="hidden" class="form-control" name="products[${i}][id]" value="${data.id}" readonly>
+                                    <input type="text" class="form-control" name="products[${i}][name]" value="${data.name}" readonly>
+                                </td>
+                                <td><input type="text" class="form-control" name="products[${i}][hsn]" value="${data.hsn}" readonly></td>
+                                <td><input type="text" class="form-control price" name="products[${i}][price]" value="${data.price}" style="min-width: 100px;"></td>
+                                <td><input type="text" class="form-control" name="products[${i}][tax_percent]" value="${data.tax_percent}" readonly></td>
+                                <td><input type="text" class="form-control amount" name="products[${i}][amount]" value="${data.amount}" style="min-width: 100px;"></td>
+                                <td><input type="text" class="form-control" name="products[${i}][unit]" value="${data.unit}" style="min-width: 100px;"></td>
+                                <td><input type="text" class="form-control total_price" name="products[${i}][total_price]" value="${data.total_price}" readonly></td>
+                                <td><input type="text" class="form-control total_gst" name="products[${i}][total_gst]" value="${data.total_gst}" readonly></td>
+                                <td><input type="text" class="form-control" name="products[${i}][total_amount]" value="${data.total_amount}" readonly></td>
+                                            
+                                <td><button class="btn btn-sm btn-danger rounded-circle delete-row" type="button"><i class="fa fa-times"></i></button></td>
+
+                            </tr>
+                        `);
                     });
-                    $('.total_taxable_amount').val(data.sub_total)
-                    $('.total_gst_amount').val(Number(data.sgst_amount) + Number(data.cgst_amount))
-                    $('.total_sgst_amount').val(data.sgst_amount)
-                    $('.total_cgst_amount').val(data.cgst_amount)
-                    $('[name="net_total"]').val(data.net_total);
-                    $('.discount').val(data.discount);
-                    $('[name="grand_total"]').val(data.grand_total);
 
-                    if (data.status == '1') {
-                        alert('Invoice Locked');
-                        $('.save_invoice').remove();
-                        $('.lock_invoice').remove();
-                    }
+                    $('[name="discount"]').val(data.discount);
+                    sub_total = 0;
+                    sgst = 0;
+                    cgst = 0;
+                    $.each($('table .total_price'), function () {
+                        sub_total = sub_total + Number($(this).val());
+                    })
+                    $.each($('table .total_gst'), function () {
+                        sgst = sgst + (Number($(this).val()) / 2);
+                    })
+                    $.each($('table .total_gst'), function () {
+                        cgst = cgst + (Number($(this).val()) / 2);
+                    })
+                    $('[name="sub_total"]').val(sub_total.toFixed(2));
+                    $('[name="sgst_amount"]').val(sgst.toFixed(2));
+                    $('[name="cgst_amount"]').val(cgst.toFixed(2));
+
+
+                    $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
+
+                    $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
+
                 });
             }
         }
@@ -339,44 +352,6 @@
 
 </script>
 <script>
-    $('.product_id').html(options('./api/product_crud.php?crud=select'));
-
-    $(document).on('change', '.product_id', function () {
-
-        $tr = $(this).closest('tr');
-        $tr.find('input').val('')
-
-        $.ajax({
-            type: "GET", url: './api/product_crud.php?crud=select&id=' + $(this).val(), cache: false, dataType: 'json'
-        }).done(function (response) {
-            data = JSON.parse(response.data);
-            $hsn = $tr.find('.product_hsn');
-            $gst = $tr.find('.product_gst');
-
-            $hsn.val(data.hsn)
-            $gst.val(data.tax_percent)
-            console.log(data);
-        });
-
-    })
-
-    $(document).on('keyup', '.product_price,.product_quantity', function () {
-
-        $tr = $(this).closest('tr');
-
-        $quantity = $tr.find('.product_quantity').val();
-        $price = $tr.find('.product_price').val();
-        $gst = $tr.find('.product_gst').val();
-
-        $peg = $tr.find('.product_peg')
-        $pga = $tr.find('.product_pga')
-        $total = $tr.find('.product_total');
-
-        $total.val(Number($quantity) * Number($price));
-        $pga.val(percentage($gst, $total.val()));
-        $peg.val(Number($total.val()) + percentage($gst, $total.val()));
-    })
-
 
 
     $('#save_invoice').submit(function (e) {
@@ -386,14 +361,12 @@
         $formObj = $(this).serializeObject();
 
         console.log($formObj);
+        console.log($('[name="vendor_id"]').val());
 
         if ($('[name="vendor_id"]').val() != '') {
             if ($('[name="invoice_id"]').val() == 'new') {
                 $.ajax({
-                    type: "POST",
-                    url: './api/purchase_crud.php?crud=insert',
-                    data: form.serialize(), // serializes the form's elements.
-                    dataType: 'json',
+                    type: "POST", url: './api/purchase_crud.php?crud=insert', data: form.serialize(), dataType: 'json',
                 }).done(function (response) {
                     if (response.status) {
                         localStorage.removeItem('invoice_id');
@@ -408,10 +381,7 @@
                 });
             } else {
                 $.ajax({
-                    type: "POST",
-                    url: './api/purchase_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
-                    data: form.serialize(), // serializes the form's elements.
-                    dataType: 'json',
+                    type: "POST", url: './api/purchase_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(), data: form.serialize(), dataType: 'json',
                 }).done(function (response) {
                     if (response.status) {
                         $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
@@ -429,61 +399,29 @@
         }
     })
 
-    $('.set_gst_table').click(function () {
 
-        $formObj = $('#save_invoice').serializeObject();
-
-        taxable_amount = 0;
-        gst_amount = 0;
-        sgst_amount = 0;
-        cgst_amount = 0;
-
-        $formObj.products.forEach(product => {
-            taxable_amount = taxable_amount + Number(product.peg);
-            gst_amount = gst_amount + Number(product.pga);
-            sgst_amount = sgst_amount + (Number(product.pga) / 2);
-            cgst_amount = cgst_amount + (Number(product.pga) / 2);
-
-        })
-
-        $('.total_taxable_amount').val(taxable_amount.toFixed(2))
-        $('.total_gst_amount').val(gst_amount.toFixed(2))
-        $('.total_sgst_amount').val(sgst_amount.toFixed(2))
-        $('.total_cgst_amount').val(cgst_amount.toFixed(2))
-        $('[name="net_total"]').val(Number(taxable_amount.toFixed(2)) + Number(gst_amount.toFixed(2)));
-        $('[name="grand_total"]').val(Number(taxable_amount.toFixed(2)) + Number(gst_amount.toFixed(2)));
-    })
-
-    $('.discount').keyup(function () {
-        console.log(percentage($(this).val(), $('[name="sub_total"]').val()))
-        $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
-
-        $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
-
-    })
-
-    $('.lock_invoice').click(function () {
-        if (confirm('Are You Ready To Lock Invoice ?')) {
-            alert('Invoice Locked');
-            $.ajax({
-                type: "POST",
-                url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-                data: $('#save_invoice').serialize() + '&status=1', // serializes the form's elements.
-                dataType: 'json',
-            }).done(function (response) {
-                if (response.status) {
-                    localStorage.removeItem('invoice_id');
-                    if (localStorage.getItem("invoice_id") === null) {
-                        screen_loader('purchase/list');
-                    } else {
-                        console.log('error');
-                    }
-                } else {
-                    $('.alert-holder').html(b_alert('danger', 'Error'));
-                }
-            });
-        }
-    })
+    // $('.lock_invoice').click(function () {
+    //     if (confirm('Are You Ready To Lock Invoice ?')) {
+    //         alert('Invoice Locked');
+    //         $.ajax({
+    //             type: "POST",
+    //             url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
+    //             data: $('#save_invoice').serialize() + '&status=1', // serializes the form's elements.
+    //             dataType: 'json',
+    //         }).done(function (response) {
+    //             if (response.status) {
+    //                 localStorage.removeItem('invoice_id');
+    //                 if (localStorage.getItem("invoice_id") === null) {
+    //                     screen_loader('purchase/list');
+    //                 } else {
+    //                     console.log('error');
+    //                 }
+    //             } else {
+    //                 $('.alert-holder').html(b_alert('danger', 'Error'));
+    //             }
+    //         });
+    //     }
+    // })
 </script>
 <script>
 
