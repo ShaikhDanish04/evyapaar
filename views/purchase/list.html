@@ -34,36 +34,6 @@
 <script>
     $(document).ready(function () {
         table_data();
-        // $.ajax({ type: "GET", url: './api/purchase_crud.php?crud=select', async: false, cache: false, dataType: 'json' })
-        //     .done(function (response) {
-        //         console.log(response); // show response from the php script.
-        //         tableData = "";
-        //         JSON.parse(response.data).forEach(value => {
-        //             tableData += `
-        //             <tr>
-        //                 <td>${value.id}</td>
-        //                 <td>${value.name}</td>
-        //                 <td>${(JSON.parse(value.products).length) ? JSON.parse(value.products).length : '0'}</td>
-        //                 <td>${value.sgst_amount}</td>
-        //                 <td>${value.cgst_amount}</td>
-        //                 <td>${value.sub_total}</td>
-        //                 <td>${value.discount}</td>
-        //                 <td>${value.net_total}</td>
-        //                 <td>${value.grand_total}</td>
-        //                 <td>${value.datetime}</td>
-        //                 <td>${(value.status == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>'} </td>
-        //                 <td class="text-nowrap">
-
-        //                     <button class="btn btn-primary btn-sm text-nowrap" data-invoice-view-id="${value.id}"><i class="fa fa-eye"></i> View</button>
-        //                     <button class="btn btn-warning btn-sm text-nowrap" ${(value.status == '1') ? 'disabled' : ''} data-invoice-edit-id="${value.id}"><i class="fa fa-edit"></i> Edit</button>
-        //                 <button class="btn btn-danger btn-sm text-nowrap" data-invoice-delete-id="${value.id}"><i class="fa fa-times"></i> Delete</button>
-        //                 </td>
-        //             </tr>
-        //         `;
-        //             $('#vendor_table tbody').html(tableData);
-        //         });
-        //         dt();
-        //     });
 
         $('.create_invoice').click(function () {
             localStorage.setItem('invoice_id', 'new');
