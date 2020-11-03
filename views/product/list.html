@@ -5,9 +5,7 @@
         $.ajax({ type: "GET", url: query, async: false, cache: false, dataType: 'json' })
             .done(function (response) {
 
-                tableData = JSON.parse('[' + response.data.slice(1, -1) + ',' + response.data.slice(1, -1) + ',' + response.data.slice(1, -1) + ']');
-
-                // tableData = JSON.parse(response.data);
+                tableData = JSON.parse(response.data);
                 // console.log(tableData);
 
                 header_array = [];
