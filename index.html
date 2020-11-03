@@ -203,7 +203,22 @@
     function percentage(a, b) {
         return (Number(a) / 100) * Number(b);
     }
-    
+    function options(url) {
+
+        var options = '<option value=""> --- Select --- </options>';
+        $.ajax({
+            type: "GET", url: url, cache: false, dataType: 'json', async: false,
+        }).done(function (response) {
+            JSON.parse(response.data).forEach(value => {
+                options += `<option value="${value.id}">${value.name}</option>`;
+            });
+            // $(select).html(options)
+
+        });
+        // console.log(options);
+        return options;
+    }
+
     function autoTable(table_selector, query, skip_header, button_array) {
         $(table_selector).html('');
 
@@ -230,7 +245,7 @@
                 i = 0;
                 header_array.forEach(header => {
                     var cell = row.insertCell(i);
-                    cell.innerHTML = `<span class="text-capitalize font-weight-bold">${header.replace('_',' ')}</span>`;
+                    cell.innerHTML = `<span class="text-capitalize font-weight-bold">${header.replace('_', ' ')}</span>`;
                     i++;
                 })
                 if (button_array.length > 0) {
@@ -264,7 +279,9 @@
                             }
                             buttonHTML += button;
                         })
-                        $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td><div class="text-nowrap">${buttonHTML}</div></td>`);
+                        $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>
+        <div class="text-nowrap">${buttonHTML}</div>
+    </td>`);
                     }
                 }
 

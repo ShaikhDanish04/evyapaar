@@ -224,24 +224,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <script>
-                                $(document).on('keyup', '.selling_price,.product_quantity', function () {
-                                    $tr = $(this).closest('tr');
-
-                                    $quantity = $tr.find('.product_quantity').val();
-                                    $price = $tr.find('.selling_price').val();
-                                    $gst = $tr.find('.product_gst').val();
-
-                                    $amount = $tr.find('.product_amount');
-                                    $amount.val(Number($quantity) * Number($price));
-                                    $total = $tr.find('.product_total');
-
-                                    $total.val((Number($quantity) * Number($price)) + percentage($gst, (Number($quantity) * Number($price))));
-
-                                    bottom_sum();
-                                })
-
-                            </script>
                             <tr>
                                 <td colspan="9" class="text-center no-data">No Products Added</td>
                             </tr>
@@ -282,6 +264,24 @@
         min-width: 100px;
     }
 </style>
+<script>
+    $(document).on('keyup', '.selling_price,.product_quantity', function () {
+        $tr = $(this).closest('tr');
+
+        $quantity = $tr.find('.product_quantity').val();
+        $price = $tr.find('.selling_price').val();
+        $gst = $tr.find('.product_gst').val();
+
+        $amount = $tr.find('.product_amount');
+        $amount.val(Number($quantity) * Number($price));
+        $total = $tr.find('.product_total');
+
+        $total.val((Number($quantity) * Number($price)) + percentage($gst, (Number($quantity) * Number($price))));
+
+        bottom_sum();
+    })
+
+</script>
 <script>
     $('.save_invoice').click(function (e) {
         e.preventDefault();
