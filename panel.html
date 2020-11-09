@@ -49,7 +49,7 @@
                     localStorage.setItem('screen', screen);
                 })
                 .fail(function () {
-                    $('.main-content').load('views/404.html');
+                    $('.main-content').load('views/404.html', 'f' + (Math.random() * 1000000));
                     $('.main-content').fadeIn();
                     $('.loading-content').fadeOut();
                     $('[view-href]').removeClass('disabled');

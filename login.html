@@ -31,7 +31,7 @@
                     </div>
                 </form>
                 <hr>
-                <p class="m-0 text-center small">Copyright &copy; Codewindtechnologies</p>
+                <p class="m-0 text-center small">Copyright &copy; Codewindtechnologies 2020</p>
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@
             if (response.login_status) {
                 $('.login-card').slideUp();
                 $('.alert-holder').html(b_alert('success', 'Successfully Logged In'));
-                $('.page').load('panel.html');
+                $('.page').load('panel.html', 'f' + (Math.random() * 1000000));
 
                 localStorage.setItem('sidebar', response.user.sidebar);
                 localStorage.setItem('screen', 'dashboard');

@@ -309,12 +309,12 @@
             }).done(function (response) {
                 $('.page').hide();
                 if (response.session_established) {
-                    $('.page').fadeIn().load('panel.html')
+                    $('.page').fadeIn().load('panel.html', 'f' + (Math.random() * 1000000))
                 } else {
-                    $('.page').fadeIn().load('login.html')
+                    $('.page').fadeIn().load('login.html', 'f' + (Math.random() * 1000000))
                 }
             }).fail(function (e) {
-                $('.page').fadeIn().load('server.html')
+                $('.page').fadeIn().load('server.html', 'f' + (Math.random() * 1000000))
             })
         })
     </script>
