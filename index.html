@@ -207,7 +207,7 @@
 
         var options = '<option value=""> --- Select --- </options>';
         $.ajax({
-            type: "GET", url: url, cache: false, dataType: 'json', async: false,
+            type: "GET", url: url, async: false, cache: false, dataType: 'json',
         }).done(function (response) {
             JSON.parse(response.data).forEach(value => {
                 options += `<option value="${value.id}">${value.name}</option>`;
@@ -449,7 +449,7 @@
                 <div class="modal-body print-holder">
                     <div class="print-view">
                         <div id="section-to-print">
-Preview
+                            Preview
                         </div>
                     </div>
                 </div>
