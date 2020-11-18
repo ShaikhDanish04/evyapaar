@@ -118,7 +118,11 @@
                 <hr>
                 <div class="d-flex align-items-center justify-content-between h5 m-0">
                     <p class="m-0">Grand Total : </p>
-                    <p class="m-0 d-flex align-items-center">₹ <input type="text" readonly name="grand_total" class="form-control text-right font-weight-bold grand_total" value="0.00"></p>
+                    <p class="m-0 d-flex align-items-center"> <input type="text" readonly name="grand_total" class="form-control text-right font-weight-bold grand_total" value="0.00"></p>
+                </div>
+                <div class="d-flex align-items-center justify-content-between h5 m-0">
+                    <p class="h5">In Words : </p>
+                    <p> <span class="form-control amount-in-words text-capitalize" readonly></span></p>
                 </div>
                 <hr>
                 <div class="form-group">
@@ -267,6 +271,9 @@
                     $('[name="cgst_amount"]').val(cgst.toFixed(2));
                     $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
                     $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
+
+                    $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+
                 });
             }
         }
@@ -310,12 +317,17 @@
         $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
 
         $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
+
+        $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+
     })
 
     $('.discount').keyup(function () {
         console.log(percentage($(this).val(), $('[name="sub_total"]').val()))
         $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
         $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
+
+        $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
 
     })
 </script>
