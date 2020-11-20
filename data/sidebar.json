@@ -33,13 +33,7 @@
         "subMenu": 0,
         "title": "Customer / Client",
         "icon": "fa-users",
-        "link": ""
-    },
-    {
-        "subMenu": 0,
-        "title": "Invoice / Billing",
-        "icon": "fa-cube",
-        "link": "billing"
+        "link": "customer/list"
     },
     {
         "subMenu": 0,

@@ -1,1 +1,54 @@
-List
+<script>
+    function table_data() {
+
+        autoTable('.table', './api/customer_crud.php?crud=select', [], []);
+
+    }
+</script>
+
+<div class="container-fluid">
+    <p class="h3 m-0">List Customer</p>
+    <hr>
+    <div class="card">
+        <div class="card-head p-3 d-flex align-items-center justify-content-between border-bottom">
+            <p class="h5 m-0"><i class="fa fa-list-alt"></i> Customer List</p>
+            <div class="d-flex">
+                <button class="btn btn-primary" onclick="location.reload()"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class=" table-responsive">
+                <table class="table data-table table-bordered " style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+
+        table_data();
+
+        $(document).on('click', '[data-vendor-edit-id]', function () {
+            b_edit_modal($(this).attr('data-vendor-edit-id'), 'Edit vendor', 'views/vendor/edit.html')
+        })
+
+        $(document).on('click', '[data-vendor-delete-id]', function () {
+            if (confirm('Are Your Sure Your Want To Delete The vendor')) {
+                $.ajax({
+                    type: "GET",
+                    url: './api/vendor_crud.php?crud=delete&id=' + $(this).attr('data-vendor-delete-id'),
+                    dataType: 'json',
+                }).done(function (response) {
+                    console.log(response); // show response from the php script.
+                    if (response.deleted) {
+                        table_data();
+                    } else {
+                        console.log('error');
+                    }
+                });
+            }
+        })
+    })
+
+</script>

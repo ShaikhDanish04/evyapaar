@@ -16,7 +16,13 @@ if (isset($_GET['crud'])) {
                 $list = array();
 
                 if ($result == TRUE) {
-                    array_push($list, $row);
+                    $i = 0;
+                    $array = array();
+                    while ($row = $result->fetch_assoc()) {
+                        $i++;
+                        $array['sr'] = $i;
+                        array_push($list, array_merge($array, $row));
+                    }
                     $response->data = json_encode($list);
                 } else {
                     $response->queryError = $conn->error;
