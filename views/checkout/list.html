@@ -36,12 +36,15 @@
             .done(function (response) {
                 // console.log(response.data); // show response from the php script.
                 tableData = "";
+
+                console.log(response.data);
                 response.data.forEach(value => {
+                    // customer =
                     // console.log(JSON.parse(value.products).length);
                     tableData += `
                     <tr>
                         <td>${value.id}</td>
-                        <td>${value.customer.fullname}</td>
+                        <td>${JSON.parse(value.customer).fullname}</td>
                         <td>${(JSON.parse(value.products).length) ? JSON.parse(value.products).length : '0'}</td>
                         <td>${value.sgst_amount}</td>
                         <td>${value.cgst_amount}</td>
@@ -49,7 +52,7 @@
                         <td>${value.discount}</td>
                         <td>${value.net_total}</td>
                         <td>${value.grand_total}</td>
-                        <td>${value.datetime}</td>
+                        <td class="text-nowrap">${value.datetime}</td>
                         <td>${(value.status == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>'} </td>
                         <td class="text-nowrap">
                             

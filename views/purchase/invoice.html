@@ -225,6 +225,7 @@
                     type: "GET", url: './api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
 
+                    console.log(response);
                     data = JSON.parse(response.data);
 
                     vendor = JSON.parse(data.vendor);
