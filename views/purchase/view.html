@@ -39,65 +39,6 @@
     </div>
 </div>
 
-<script> // load saved invoice
-    $(document).ready(function () {
-        if (localStorage.getItem("invoice_id") === null) {
-            screen_loader('purchase/list');
-        } else {
-            $('[name="invoice_id"]').val(localStorage.getItem('invoice_id'));
-
-            if ($('[name="invoice_id"]') != 'new') {
-                id = $('[name="invoice_id"]').val();
-                $.ajax({
-                    type: "GET", url: './api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
-                }).done(function (response) {
-
-                    data = JSON.parse(response.data);
-
-
-                    vendor = JSON.parse(data.vendor);
-                    $('.vendor_name_load').text(vendor.name);
-                    $('.vendor_contact_load').text(vendor.contact);
-                    $('.vendor_email_load').text(vendor.email);
-                    $('.vendor_address_load').text(vendor.address);
-
-                    $('#product_table tbody').html('');
-
-                    JSON.parse(data.products).forEach(data => {
-                        console.log(data)
-                        i = $('#product_table tbody tr').length;
-                        $('#product_table tbody').append(`
-                            <tr data-row-index="${i}">
-                                <td class="text-nowrap">${data.name}</td>
-                                <td>${data.hsn}</td>
-                                <td>${data.unit}</td>
-                                <td>${data.price}</td>
-                                <td>${data.tax_percent}</td>
-                                <td>${data.total_price}</td>
-                            </tr>
-                        `);
-                    });
-
-                    sub_total = 0;
-                    sgst = 0;
-                    cgst = 0;
-
-                    $.each($('table .total_price'), function () { sub_total = sub_total + Number($(this).val()) })
-                    $.each($('table .total_gst'), function () { sgst = sgst + (Number($(this).val()) / 2) })
-                    $.each($('table .total_gst'), function () { cgst = cgst + (Number($(this).val()) / 2) })
-
-                    $('[name="discount"]').val(data.discount);
-                    $('[name="sub_total"]').val(sub_total.toFixed(2));
-                    $('[name="sgst_amount"]').val(sgst.toFixed(2));
-                    $('[name="cgst_amount"]').val(cgst.toFixed(2));
-                    $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
-                    $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
-                });
-            }
-        }
-    })
-</script>
-
 <script> // exit invoice
     $('.exit_invoice').click(function () {
         localStorage.removeItem('invoice_id');
