@@ -168,7 +168,7 @@
             </div>
             <hr>
             <div class="d-flex justify-content-end align-items-center">
-                <button class="btn btn-success" type="button"><i class="fa fa-shopping-cart"></i> Checkout</button>
+                <button class="btn btn-success lock_invoice" type="button"><i class="fa fa-shopping-cart"></i> Checkout</button>
             </div>
     </form>
 </div>
@@ -384,6 +384,33 @@
         }
     })
 </script>
+
+<script> //lock invoice
+
+    $('.lock_invoice').click(function () {
+        if (confirm('Are You Ready To Lock Invoice ?')) {
+            alert('Invoice Locked');
+            $.ajax({
+                type: "POST",
+                url: './api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
+                data: $('#save_invoice').serialize() + '&status=1', // serializes the form's elements.
+                dataType: 'json',
+            }).done(function (response) {
+                if (response.status) {
+                    localStorage.removeItem('invoice_id');
+                    if (localStorage.getItem("invoice_id") === null) {
+                    } else {
+                        console.log('error');
+                    }
+                } else {
+                    $('.alert-holder').html(b_alert('danger', 'Error'));
+                }
+                screen_loader('checkout/list');
+            });
+        }
+    })
+</script>
+
 
 <script> // Exit inovice
     $('.exit_invoice').click(function () {

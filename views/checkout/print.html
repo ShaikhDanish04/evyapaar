@@ -1,0 +1,400 @@
+<script>
+    $('[name="invoice_id"]').val(localStorage.getItem('invoice_id'));
+
+    if ($('[name="invoice_id"]') != 'new') {
+        if (localStorage.getItem('screen') == "checkout/view") {
+
+            id = $('[name="invoice_id"]').val();
+            $.ajax({
+                type: "GET", url: './api/checkout_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+
+                data = JSON.parse(response.data);
+                console.log(data);
+
+                customer = JSON.parse(data.customer);
+                console.log(customer);
+
+                $('.invoice_number').text(data.id);
+                $('#vendor_name').text(customer.fullname);
+                $('#vendor_address').text(customer.address);
+                $('#vendor_contact').text(customer.contact);
+                $('#vendor_email').text(customer.email);
+
+                $('.sub_total').text(Number(data.sub_total).toFixed(2));
+                $('.discount').text(Number(data.discount).toFixed(2));
+                $('.net_total').text(Number(data.net_total).toFixed(2));
+                $('.sgst').text(Number(data.sgst_amount).toFixed(2));
+                $('.cgst').text(Number(data.cgst_amount).toFixed(2));
+                $('.grand_total').text(Number(data.grand_total).toFixed(2));
+
+                $('.in_words').text(inWords(Number(data.grand_total)));
+
+
+                var i = 0;
+                JSON.parse(data.products).forEach(product => {
+                    console.log(product);
+
+
+                    $('#my_table > tbody > tr:nth-child(' + (9 + i) + ')').after(`
+                    <tr style="height:13.0pt">
+                            <td style="width:26.2pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${i + 1} </span></p>
+                            </td>
+                            <td colspan=4 style="width:189.45pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.name} </span></p>
+                            </td>
+                            <td colspan=2 style="width:103.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                                <p class="text-center" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.HSN} </span></p>
+                            </td>
+                            <td style="width:31.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.unit} </span></p>
+                            </td>
+                            <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${(product.total_amount / product.unit).toFixed(2)} </span></p>
+                            </td>
+                            <td style="width:27.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.tax_percent} </span></p>
+                            </td>
+                            <td style="width:63.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.total_amount} </span></p>
+                            </td>
+                        </tr>
+                    `)
+                    i++;
+                });
+            });
+        }
+    }
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('table').on('click', 'td', function () {
+            console.log('Row ' + $(this).closest("tr").index());
+            console.log('Column ' + $(this).closest("td").index());
+        });
+    });
+
+</script>
+<input type="hidden" name="invoice_id">
+<img class="mb-3" src=".assets/img/header.jpg" width="100%" alt="">
+<table id="my_table" cellspacing=0 cellpadding=0 style="border-collapse:collapse;border:none;">
+    <tbody>
+
+        <tr>
+            <td colspan=11 style="width:750pt;border:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt">
+                <p style="margin-bottom:0in;text-align:center;line-height:normal"><span style="font-size:14.0pt;font-weight:600">TAX INVOICE</span></p>
+                <p style="margin-bottom:0.05in;text-align:center;line-height:normal"><span style="font-size:9.0pt">CREDIT MEMO</span></p>
+            </td>
+        </tr>
+        <tr style="height:14.2pt">
+            <td colspan=7 rowspan=7 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:14.2pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Buyers Name</span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt" id="vendor_name">ORGANIKO</span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt" id="vendor_address">A/P KAPIL, TAL KARAD, DISST SATARA</span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"><span id="vendor_contact" style="margin-right:50pt">8485863406</span> <span id="vendor_email"></span> </span></span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">State: Maharashtra</span><span style="font-size:9.0pt;margin-right:50pt"> State Code: 27</span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">GST IN: -</span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Place of Supp : </span></p>
+            </td>
+            <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:14.2pt">
+                <p style="margin-bottom:0in;line-height:normal">
+                    <span style="font-size:9.0pt">Invoice No. : <span class="invoice_number"> 0 </span></span>
+                </p>
+            </td>
+        </tr>
+        <tr style="height:13.9pt">
+            <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
+                <p style="margin-bottom:0in;line-height:normal">
+                    <span style="font-size:9.0pt">Date : 08-06-2020</span>
+                </p>
+            </td>
+        </tr>
+        <tr style="height:13.9pt">
+            <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
+                <p style="margin-bottom:0in;line-height:normal">
+                    <span style="font-size:9.0pt">Challan No :<span class="invoice_number"> </span>94</span></p>
+            </td>
+        </tr>
+        <tr style="height:13.9pt">
+            <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
+                <p style="margin-bottom:0in;line-height:normal">
+                    <span style="font-size:9.0pt">Challan Date :<span> </span>08-06-2020</span></p>
+            </td>
+        </tr>
+        <tr style="height:13.9pt">
+            <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
+                <p style="margin-bottom:0in;line-height:normal">
+                    <span style="font-size:9.0pt">P.O. No. :<span> </span>92</span></p>
+            </td>
+        </tr>
+        <tr style="height:13.9pt">
+            <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
+                <p style="margin-bottom:0in;line-height:normal">
+                    <span style="font-size:9.0pt">Vehicle No. :<span> </span> </span></p>
+            </td>
+        </tr>
+        <tr style="height:13.9pt">
+            <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Dt &amp; Time Supp :</span></p>
+            </td>
+        </tr>
+        <tr style="height:13.4pt">
+            <td style="width:26.2pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.4pt">
+                <p style="font-weight:600;text-align:center;margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Sr.</span></p>
+                <p style="font-weight:600;text-align:center;margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">No.</span></p>
+            </td>
+            <td colspan=4 style="width:189.45pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.4pt">
+                <p style="font-weight:600;text-align:center;margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Particulars</span></p>
+            </td>
+            <td colspan=2 style="width:103.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.4pt">
+                <p style="font-weight:600;text-align:center;margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">HSN</span></p>
+            </td>
+            <td style="width:31.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.4pt">
+                <p style="font-weight:600;text-align:center;margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">QTY</span></p>
+            </td>
+            <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.4pt">
+                <p style="font-weight:600;text-align:center;margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">RATE</span></p>
+            </td>
+            <td style="width:27.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.4pt">
+                <p style="font-weight:600;text-align:center;margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">GST %</span></p>
+            </td>
+            <td style="width:63.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.4pt">
+                <p style="font-weight:600;text-align:center;margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Amount</span></p>
+            </td>
+        </tr>
+
+        <tr style="height:17.85pt">
+            <td colspan=7 rowspan=3 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
+                <p style="margin-bottom:0in;line-height:9.5pt"><span style="font-size:7.0pt">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit.</span><span style="font-size:9.0pt"> </span></p>
+            </td>
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Sub Total :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="sub_total">0</span></p>
+            </td>
+        </tr>
+        <tr style="height:17.85pt">
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Discount :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="discount">0</span></p>
+            </td>
+        </tr>
+        <tr style="height:17.85pt">
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">NET TOTAL :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="net_total">0</span></p>
+            </td>
+        </tr>
+        <tr style="height:13.05pt">
+            <td colspan=2 style="width:53.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.05pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">Tax A/c</span></p>
+            </td>
+            <td style="width:80pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.05pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">Taxable Amount</span></p>
+            </td>
+            <td style="width:80pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.05pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">GST Amount</span></p>
+            </td>
+            <td style="width:30pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.05pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:68pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.05pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">SGST</span></p>
+            </td>
+            <td style="width:68pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.05pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">CGST</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.05pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Transport :</span></p>
+            </td>
+            <td colspan=2 style="width:95.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.05pt">
+                <p style="margin-bottom:0in;line-height:normal;text-align:right"><span style="font-size:9.0pt">0.00 </span></p>
+            </td>
+        </tr>
+        <tr style="height:13.0pt">
+            <td colspan=2 style="width:53.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">GST @0%</span></p>
+            </td>
+            <td style="width:1.0in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:58.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:40.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">0 %</span></p>
+            </td>
+            <td style="width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Loading :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal;text-align:right"><span style="font-size:9.0pt"> 0.00</span></p>
+            </td>
+        </tr>
+        <tr style="height:13.0pt">
+            <td colspan=2 style="width:53.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">GST @05%</span></p>
+            </td>
+            <td style="width:1.0in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:58.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:40.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">2.5 %</span></p>
+            </td>
+            <td style="width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">SGST :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal;text-align:right"><span style="font-size:9.0pt" class="sgst">0 </span></p>
+            </td>
+        </tr>
+        <tr style="height:13.0pt">
+            <td colspan=2 style="width:53.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">GST @12%</span></p>
+            </td>
+            <td style="width:1.0in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:58.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:40.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">06 %</span></p>
+            </td>
+            <td style="width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">CGST :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal;text-align:right"><span style="font-size:9.0pt" class="cgst"> </span></p>
+            </td>
+        </tr>
+        <tr style="height:13.0pt">
+            <td colspan=2 style="width:53.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">GST @18%</span></p>
+            </td>
+            <td style="width:1.0in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:58.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:40.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">09 %</span></p>
+            </td>
+            <td style="width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">IGST :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal;text-align:right"><span style="font-size:9.0pt">0.00 </span></p>
+            </td>
+        </tr>
+        <tr style="height:13.0pt">
+            <td colspan=2 style="width:53.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">GST @28%</span></p>
+            </td>
+            <td style="width:1.0in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:58.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:40.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">14 %</span></p>
+            </td>
+            <td style="width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Grand Total :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal;text-align:right"><span style=" font-size:9.0pt" class="grand_total"> </span></p>
+            </td>
+        </tr>
+        <tr style="height:13.0pt">
+            <td colspan=2 style="width:53.65pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;">Total</span></p>
+            </td>
+            <td style="width:1.0in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:58.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:40.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:49.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt;"> </span></p>
+            </td>
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Cash In Advance :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt">0.00</span></p>
+            </td>
+        </tr>
+        <tr style="height:13.0pt">
+            <td colspan=7 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"> </span></p>
+            </td>
+            <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Balance Amount :</span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="grand_total">0.00</span></p>
+            </td>
+        </tr>
+        <tr style="height:13.0pt">
+            <td colspan=9 style="width:404.4pt;border-top:none;border-left:solid windowtext 1.0pt;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Rs. <span class="in_words text-capitalize"></span></span></p>
+            </td>
+            <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"> </span></p>
+            </td>
+        </tr>
+    </tbody>
+
+</table>

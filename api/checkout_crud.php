@@ -20,13 +20,20 @@ if (isset($_GET['crud'])) {
 
                 if ($result == TRUE) {
                     while ($row = $result->fetch_assoc()) {
+
+                        $customer = json_decode($row['customer'], true);
+                        $row['customer'] = $customer['fullname'];
+
+                        $products = json_decode($row['products'], true);
+                        $row['products'] = count($products);
+
                         $row['datetime'] = datetime($row['datetime']);
                         // $row['status'] = ($row['status'] == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>';
                         $row['status'] = '<span class="status">' . $row['status'] . '</span>';
-                        
+
                         array_push($list, $row);
                     }
-                    $response->data = $list;
+                    $response->data = json_encode($list);
                 } else {
                     $response->queryError = $conn->error;
                 }
@@ -92,45 +99,50 @@ if (isset($_GET['crud'])) {
             }
             break;
         case "lock":
-            // $invoice_id = $_POST['invoice_id'];
-            // $vendor_id = $_POST['vendor_id'];
-            // $products = json_encode($_POST['products']);
-            // $datetime = date("Y-m-d H:i:s");
-            // $sgst_amount = $_POST['sgst_amount'];
-            // $cgst_amount = $_POST['cgst_amount'];
-            // $sub_total = $_POST['sub_total'];
-            // $discount = $_POST['discount'];
-            // $net_total = $_POST['net_total'];
-            // $grand_total = $_POST['grand_total'];
-            // $status = $_POST['status'];
+            $invoice_id = $_POST['invoice_id'];
+            $customer = json_encode($_POST['customer']);
+            if (isset($_POST['products'])) $products = json_encode($_POST['products']);
+            else $products = '[]';
+            $datetime = date("Y-m-d H:i:s");
+            $sgst_amount = $_POST['sgst_amount'];
+            $cgst_amount = $_POST['cgst_amount'];
+            $sub_total = $_POST['sub_total'];
+            $discount = $_POST['discount'];
+            $net_total = $_POST['net_total'];
+            $grand_total = $_POST['grand_total'];
+            $status = $_POST['status'];
 
-            // foreach ($_POST['products'] as $product) {
-            //     $product_res = $conn->query("SELECT * FROM product WHERE id='" . $product['id'] . "'")->fetch_assoc();
-            //     $quantity = $product_res['quantity'] + $product['quantity'];
-            //     $product_up = $conn->query("UPDATE `product` SET `quantity` = '$quantity' WHERE id='" . $product['id'] . "'");
-            // }
+            foreach ($_POST['products'] as $product) {
+                $product_res = $conn->query("SELECT * FROM product WHERE id='" . $product['id'] . "'")->fetch_assoc();
+                $quantity = $product_res['quantity'] - $product['unit'];
+                $product_up = $conn->query("UPDATE `product` SET `quantity` = '$quantity' WHERE id='" . $product['id'] . "'");
+            }
 
-            // $result = $conn->query("UPDATE `purchase` SET 
-            //                     `vendor_id` = '$vendor_id',
-            //                     `products` = '$products',
-            //                     `sgst_amount`='$sgst_amount',
-            //                     `cgst_amount`='$cgst_amount',
-            //                     `sub_total`='$sub_total',
-            //                     `discount`='$discount',
-            //                     `net_total`='$net_total',
-            //                     `grand_total`='$grand_total',
-            //                     `datetime`='$datetime', 
-            //                     `status`='$status' 
-            //                 WHERE `id` = '$invoice_id'");
+            $result = $conn->query("UPDATE `checkout` SET 
+                                `products` = '$products',
+                                `sgst_amount`='$sgst_amount',
+                                `cgst_amount`='$cgst_amount',
+                                `sub_total`='$sub_total',
+                                `discount`='$discount',
+                                `net_total`='$net_total',
+                                `grand_total`='$grand_total',
+                                `datetime`='$datetime'
+                            WHERE `id` = '$invoice_id'");
 
 
-            // if ($result == TRUE && $product_res == TRUE && $product_up == TRUE) {
-            //     $response->status = true;
-            // } else {
-            //     $response->status = false;
-            //     $response->queryError = $conn->error;
-            // }
-            // break;
+
+
+            if ($product_res == TRUE && $product_up == TRUE) {
+                $result = $conn->query("UPDATE `checkout` SET `status`='$status' WHERE `id` = '$invoice_id'");
+
+                if ($result == TRUE) {
+                    $response->status = true;
+                }
+            } else {
+                $response->status = false;
+                $response->queryError = $conn->error;
+            }
+            break;
     }
 }
 
