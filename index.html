@@ -394,25 +394,25 @@
     </div>
     <div class="modal fade rounded" id="print_modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="true" aria-labelledby="modelTitleId" aria-hidden="true">
         <script>
-            $(document).keydown(function (event) {
-                if (event.ctrlKey == true && (event.which == '80')) { //cntrl + p
-                    event.preventDefault();
-                    printAssessment();
-                }
-            });
-            $(document).on('click', '.btn-print', function () {
-                print();
-            })
-            $(document).on('click', '.print_preview', function (e) {
-                e.preventDefault();
-                printAssessment();
-            })
+            // $(document).keydown(function (event) {
+            //     if (event.ctrlKey == true && (event.which == '80')) { //cntrl + p
+            //         event.preventDefault();
+            //         printAssessment();
+            //     }
+            // });
+            // $(document).on('click', '.btn-print', function () {
+            //     print();
+            // })
+            // $(document).on('click', '.print_preview', function (e) {
+            //     e.preventDefault();
+            //     printAssessment();
+            // })
 
-            function printAssessment() {
-                $('#section-to-print').html($('.print-content'));
+            // function printAssessment() {
+            //     $('#section-to-print').html($('.print-content'));
 
-                $('#print_modal').modal('show');
-            }
+            //     $('#print_modal').modal('show');
+            // }
         </script>
         <style>
             @media print {
