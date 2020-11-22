@@ -375,28 +375,28 @@
 
 <script> //lock invoice
 
-    // $('.lock_invoice').click(function () {
-    //     if (confirm('Are You Ready To Lock Invoice ?')) {
-    //         alert('Invoice Locked');
-    //         $.ajax({
-    //             type: "POST",
-    //             url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-    //             data: $('#save_invoice').serialize() + '&status=1', // serializes the form's elements.
-    //             dataType: 'json',
-    //         }).done(function (response) {
-    //             if (response.status) {
-    //                 localStorage.removeItem('invoice_id');
-    //                 if (localStorage.getItem("invoice_id") === null) {
-    //                     screen_loader('purchase/list');
-    //                 } else {
-    //                     console.log('error');
-    //                 }
-    //             } else {
-    //                 $('.alert-holder').html(b_alert('danger', 'Error'));
-    //             }
-    //         });
-    //     }
-    // })
+    $('.lock_invoice').click(function () {
+        if (confirm('Are You Ready To Lock Invoice ?')) {
+            alert('Invoice Locked');
+            $.ajax({
+                type: "POST",
+                url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
+                data: $('#save_invoice').serialize() + '&status=1', // serializes the form's elements.
+                dataType: 'json',
+            }).done(function (response) {
+                if (response.status) {
+                    localStorage.removeItem('invoice_id');
+                    if (localStorage.getItem("invoice_id") === null) {
+                    } else {
+                        console.log('error');
+                    }
+                } else {
+                    $('.alert-holder').html(b_alert('danger', 'Error'));
+                }
+                screen_loader('purchase/list');
+            });
+        }
+    })
 </script>
 
 <script> // exit invoice

@@ -105,10 +105,11 @@ if (isset($_GET['crud'])) {
             $net_total = $_POST['net_total'];
             $grand_total = $_POST['grand_total'];
             $status = $_POST['status'];
+            $quantity;
 
             foreach ($_POST['products'] as $product) {
                 $product_res = $conn->query("SELECT * FROM product WHERE id='" . $product['id'] . "'")->fetch_assoc();
-                $quantity = $product_res['quantity'] + $product['quantity'];
+                $quantity = $product_res['quantity'] + $product['unit'];
                 $product_up = $conn->query("UPDATE `product` SET `quantity` = '$quantity' WHERE id='" . $product['id'] . "'");
             }
 
@@ -121,13 +122,17 @@ if (isset($_GET['crud'])) {
                                 `discount`='$discount',
                                 `net_total`='$net_total',
                                 `grand_total`='$grand_total',
-                                `datetime`='$datetime', 
-                                `status`='$status' 
+                                `datetime`='$datetime' 
                             WHERE `id` = '$invoice_id'");
 
 
-            if ($result == TRUE && $product_res == TRUE && $product_up == TRUE) {
-                $response->status = true;
+            if ($product_res == TRUE && $product_up == TRUE) {
+                $result = $conn->query("UPDATE `purchase` SET  `status`='$status' WHERE `id` = '$invoice_id'");
+
+                if ($result == TRUE) {
+
+                    $response->status = true;
+                }
             } else {
                 $response->status = false;
                 $response->queryError = $conn->error;
