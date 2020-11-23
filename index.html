@@ -241,7 +241,7 @@
             .done(function (response) {
 
                 tableData = JSON.parse(response.data);
-                // console.log(tableData);
+                console.log(tableData);
 
                 header_array = [];
                 for (header in tableData[0]) {
@@ -295,8 +295,8 @@
                             buttonHTML += button;
                         })
                         $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>
-        <div class="text-nowrap">${buttonHTML}</div>
-    </td>`);
+                            <div class="text-nowrap">${buttonHTML}</div>
+                        </td>`);
                     }
                 }
 
@@ -400,9 +400,9 @@
             //         printAssessment();
             //     }
             // });
-            // $(document).on('click', '.btn-print', function () {
-            //     print();
-            // })
+            $(document).on('click', '.btn-print', function () {
+                print();
+            })
             // $(document).on('click', '.print_preview', function (e) {
             //     e.preventDefault();
             //     printAssessment();
@@ -434,7 +434,7 @@
 
             .print-holder {
                 background: #525659;
-                /* overflow: scroll; */
+                overflow: scroll;
             }
 
             .print-view {

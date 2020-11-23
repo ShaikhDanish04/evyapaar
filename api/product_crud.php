@@ -17,6 +17,21 @@ if (isset($_GET['crud'])) {
 
                 if ($result == TRUE) {
                     while ($row = $result->fetch_assoc()) {
+                        $row['hsn'] = '<p class="m-0 text-center">' . $row['hsn'] . '</p>';
+
+                        if ($row['quantity'] < 0)
+                            $row['quantity'] = '<p class="m-0 text-center"><span class="badge badge-danger py-2 px-3">' . $row['quantity'] . '</span></p>';
+                        if ($row['quantity'] == 0)
+                            $row['quantity'] = '<p class="m-0 text-center"><span class="badge badge-dark py-2 px-3">' . $row['quantity'] . '</span></p>';
+                        if ($row['quantity'] > 0)
+                            $row['quantity'] = '<p class="m-0 text-center"><span class="badge badge-success py-2 px-3">' . $row['quantity'] . '</span></p>';
+
+
+                        $row['selling_cost'] = '<p class="m-0 text-right">' . $row['selling_cost'] . '</p>';
+                        $row['barcode'] = '<p class="m-0 text-center">' . $row['barcode'] . '</p>';
+                        $row['tax_percent'] = '<p class="m-0 text-center">' . $row['tax_percent'] . ' %</p>';
+
+
                         array_push($list, $row);
                     }
                     $response->data = json_encode($list);
