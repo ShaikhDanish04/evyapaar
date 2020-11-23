@@ -28,7 +28,7 @@ if (isset($_GET['crud'])) {
 
 
                         $row['selling_cost'] = '<p class="m-0 text-right">' . $row['selling_cost'] . '</p>';
-                        $row['barcode'] = '<p class="m-0 text-center">' . $row['barcode'] . '</p>';
+                        $row['barcode'] = '<p class="m-0 text-center barcode_in">' . $row['barcode'] . '</p>';
                         $row['tax_percent'] = '<p class="m-0 text-center">' . $row['tax_percent'] . ' %</p>';
 
 
