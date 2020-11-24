@@ -182,8 +182,8 @@
                             }
                         });
                     });
-                    $('.data-table').fadeIn()
-                    $('.dt-buttons').removeClass('btn-group')
+                    $('.data-table').fadeIn();
+                    $('.dt-buttons').removeClass('btn-group');
                 }
             });
         }
@@ -236,7 +236,7 @@
         return options;
     }
 
-    function autoTable(table_selector, query, skip_header, button_array) {
+    function autoTable(table_selector, query, skip_header, button_array, proc) {
         $(table_selector).html('');
 
         $.ajax({ type: "GET", url: query, async: false, cache: false, dataType: 'json' })
@@ -303,6 +303,7 @@
                 }
 
                 $(table_selector + '').addClass('data-table');
+                proc();
                 dt();
             })
     }

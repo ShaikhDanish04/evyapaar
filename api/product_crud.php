@@ -13,6 +13,9 @@ if (isset($_GET['crud'])) {
                 $response->data = json_encode($result);
             } else {
                 $result = $conn->query("SELECT product.*,gst_slab.tax_percent FROM product INNER JOIN gst_slab ON product.gst_id = gst_slab.id ORDER BY product.id ASC");
+                if (isset($_GET['desc'])) {
+                    $result = $conn->query("SELECT product.*,gst_slab.tax_percent FROM product INNER JOIN gst_slab ON product.gst_id = gst_slab.id ORDER BY product.id DESC");
+                }
                 $list = array();
 
                 if ($result == TRUE) {

@@ -1,7 +1,7 @@
 <script>
     function table_data() {
 
-        autoTable('.table', './api/customer_crud.php?crud=select', [], []);
+        autoTable('.table', './api/customer_crud.php?crud=select', [], [], () => { });
 
     }
 </script>

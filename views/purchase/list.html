@@ -6,7 +6,7 @@
                 '<button class="btn btn-primary btn-sm text-nowrap mr-1" data-invoice-view-id="$@id@"><i class="fa fa-eye"></i> View</button>',
                 '<button class="btn btn-warning btn-sm text-nowrap mr-1" data-invoice-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
                 '<button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
-            ]);
+            ], () => { });
 
         $.each($('.status'), function () {
             if ($(this).text() == '1') {

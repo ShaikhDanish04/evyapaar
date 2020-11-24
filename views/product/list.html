@@ -1,47 +1,23 @@
 <script>
     function table_data() {
 
-        autoTable('.table', './api/product_crud.php?crud=select', ['gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+        autoTable('.table', './api/product_crud.php?crud=select&desc', ['gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
             '<button class="btn btn-danger btn-sm text-nowrap" data-product-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
-        ]);
-
-        $('.barcode_in').each(function () {
-            code = $(this).text();
-            $(this).html($('<p class="m-0"><canvas></p>'));
-            $(this).find('canvas').JsBarcode(code, {
-                height: 30,
-                margin: 2
-
-                // displayValue: false
+        ], () => {
+            $('.barcode_in').each(function () {
+                code = $(this).text();
+                $(this).html($('<p class="m-0"><canvas></p>'));
+                $(this).find('canvas').JsBarcode(code, {
+                    height: 30,
+                    margin: 2
+                });
             });
         });
-
-        $("#example").JsBarcode("jQuery Script", {
-            height: 40,
-        });
-
     }
 </script>
 
 <div class="container-fluid">
     <p class="h3 m-0">List Products</p>
-    <!-- <script src="/path/to/jquery.min.js"></script> -->
-    <!-- <svg id="example"></svg> -->
-    <!-- <canvas id="example"></canvas> -->
-    <!-- <img id="example"> -->
-    <script>
-        $(document).ready(function () {
-            $("#example").JsBarcode("jQuery Script");
-
-            // $('.barcode_in').forEach(e => {
-            //     console.log(e);
-            // })
-
-            console.log($('.barcode_in'));
-        })
-
-    </script>
-
     <hr>
     <div class="card">
         <div class="card-head p-3 d-flex align-items-center justify-content-between border-bottom">
