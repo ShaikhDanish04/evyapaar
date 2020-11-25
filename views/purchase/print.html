@@ -15,7 +15,7 @@
                 vendor = JSON.parse(data.vendor);
                 console.log(vendor);
 
-                $('.invoice_number').text(vendor.id);
+                $('.invoice_number').text(data.id);
                 $('#vendor_name').text(vendor.name);
                 $('#vendor_address').text(vendor.address);
                 $('#vendor_contact').text(vendor.contact);
