@@ -44,9 +44,11 @@ if (isset($_GET['crud'])) {
             $name = $_POST['name'];
             $contact = $_POST['contact'];
             $email = $_POST['email'];
+            $state = $_POST['state'];
             $address = $_POST['address'];
+            $gst_number = $_POST['gst_number'];
 
-            $result = $conn->query("INSERT INTO `vendor` (`name`, `contact`, `email`, `address`) VALUES ('$name', '$contact', '$email', '$address')");
+            $result = $conn->query("INSERT INTO `vendor` (`name`, `contact`, `email`, `state`,`address`,`gst_number`) VALUES ('$name', '$contact', '$email','$state', '$address','$gst_number')");
 
             if ($result == TRUE) {
                 $response->queryStatus = true;
@@ -61,9 +63,11 @@ if (isset($_GET['crud'])) {
             $name = $_POST['name'];
             $contact = $_POST['contact'];
             $email = $_POST['email'];
+            $state = $_POST['state'];
             $address = $_POST['address'];
+            $gst_number = $_POST['gst_number'];
 
-            $result = $conn->query("UPDATE `vendor` SET `name`='$name',`contact`='$contact',`email`='$email',`address`='$address' WHERE id='$id'");
+            $result = $conn->query("UPDATE `vendor` SET `name`='$name',`contact`='$contact',`email`='$email',`state`='$state',`address`='$address',`gst_number`='$gst_number' WHERE id='$id'");
 
             if ($result == TRUE) {
                 $response->queryStatus = true;
