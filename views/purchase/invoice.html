@@ -83,9 +83,9 @@
                             <th></th>
                         </thead>
                         <tbody>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="11" class="text-center no-data">No Products Added</td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>
@@ -207,7 +207,7 @@
     $(document).on('click', '.delete-row', function () {
         $(this).closest('tr').remove();
         if ($('#product_table tbody tr').length == 1) {
-            $('#product_table tbody').html('<tr><td colspan="9" class="text-center no-data">No Products Added</td></tr>')
+            // $('#product_table tbody').html('<tr><td colspan="9" class="text-center no-data">No Products Added</td></tr>')
         }
     })
 </script>
@@ -331,6 +331,8 @@
         $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
 
         $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+        $('.grand_total').text((grand_total).toFixed(2));
+
 
     })
 </script>

@@ -27,10 +27,10 @@ if (isset($_GET['crud'])) {
 
                 if ($result == TRUE) {
                     while ($row = $result->fetch_assoc()) {
-                        $count = count(json_decode($row['products_count']));
+                        $count = count(json_decode($row['products_count'], true));
                         $row['products_count'] = '<p class="m-0 text-center"><span class="badge badge-primary px-3 py-2">' . $count . '</span></p>';
                         if ($count == 0)
-                            $row['count'] = '<p class="m-0 text-center"><span class="badge badge-dark px-3 py-2">' . $count . '</span></p>';
+                            $row['products_count'] = '<p class="m-0 text-center"><span class="badge badge-dark px-3 py-2">' . $count . '</span></p>';
 
                         $row['sgst_amount'] = '<p class="m-0 text-right">' . $row['sgst_amount'] . '</p>';
                         $row['cgst_amount'] = '<p class="m-0 text-right">' . $row['cgst_amount'] . '</p>';

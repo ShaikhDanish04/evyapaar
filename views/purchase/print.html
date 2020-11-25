@@ -61,7 +61,7 @@
                                 <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.tax_percent} </span></p>
                             </td>
                             <td style="width:63.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
-                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${(product.total_price).toFixed(2)} </span></p>
+                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${Number(product.total_price).toFixed(2)} </span></p>
                             </td>
                         </tr>
                     `)
