@@ -149,11 +149,11 @@ if (isset($_GET['crud'])) {
                                             VALUES ('$customer_mobile', '$customer_fullname', '$customer_email', '$customer_address')");
                 }
                 $row = $conn->query("SELECT * FROM checkout ORDER BY `id` DESC LIMIT 1")->fetch_assoc();
-                if ($row['id'] == null) $id = 1;
-                else $id = $row['id'] + 1;
+                if ($row['id'] == null) $invoice_id = 1;
+                else $invoice_id = $row['id'] + 1;
 
                 $conn->query("INSERT INTO `checkout` (`id`, `customer`, `products`, `sgst_amount`, `cgst_amount`, `sub_total`, `discount`, `net_total`, `grand_total`, `datetime`,`status`) 
-                                                VALUES ('$id', '$customer_mobile', '$products', '$sgst_amount', '$cgst_amount', '$sub_total', '$discount', '$net_total', '$grand_total', '$datetime','1')");
+                                                VALUES ('$invoice_id', '$customer_mobile', '$products', '$sgst_amount', '$cgst_amount', '$sub_total', '$discount', '$net_total', '$grand_total', '$datetime','1')");
             }
 
             foreach ($_POST['products'] as $product) {
@@ -179,6 +179,7 @@ if (isset($_GET['crud'])) {
                 $result = $conn->query("UPDATE `checkout` SET `status`='1' WHERE `id` = '$invoice_id'");
 
                 if ($result == TRUE) {
+                    $response->invoice_id = $invoice_id;
                     $response->status = true;
                 }
             } else {
