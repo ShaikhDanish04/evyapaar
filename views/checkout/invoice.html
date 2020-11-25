@@ -232,7 +232,7 @@
         } else {
             $('[name="invoice_id"]').val(localStorage.getItem('invoice_id'));
 
-            if ($('[name="invoice_id"]') != 'new') {        
+            if ($('[name="invoice_id"]') != 'new') {
                 id = $('[name="invoice_id"]').val();
 
                 $.ajax({
@@ -243,15 +243,17 @@
 
                     // invoice = response.data;
                     customer = JSON.parse(data.customer);
-                    $('[name="customer[mobile]"]').attr('readonly', 'true');
-                    $('[name="customer[fullname]"]').attr('readonly', 'true');
-                    $('[name="customer[email]"]').attr('readonly', 'true');
-                    $('[name="customer[address]"]').attr('readonly', 'true');
+                    if (customer != null) {
+                        $('[name="customer[mobile]"]').attr('readonly', 'true');
+                        $('[name="customer[fullname]"]').attr('readonly', 'true');
+                        $('[name="customer[email]"]').attr('readonly', 'true');
+                        $('[name="customer[address]"]').attr('readonly', 'true');
 
-                    $('[name="customer[fullname]"]').val(customer.name);
-                    $('[name="customer[email]"]').val(customer.email);
-                    $('[name="customer[mobile]"]').val(customer.mobile);
-                    $('[name="customer[address]"]').val(customer.address);
+                        $('[name="customer[fullname]"]').val(customer.name);
+                        $('[name="customer[email]"]').val(customer.email);
+                        $('[name="customer[mobile]"]').val(customer.mobile);
+                        $('[name="customer[address]"]').val(customer.address);
+                    }
 
                     $('#product_table tbody').html('');
 
