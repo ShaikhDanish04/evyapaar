@@ -135,7 +135,6 @@ if (isset($_GET['crud'])) {
             $discount = $_POST['discount'];
             $net_total = $_POST['net_total'];
             $grand_total = $_POST['grand_total'];
-            $status = $_POST['status'];
 
             if ($invoice_id == 'new') {
                 $customer_mobile = $_POST['customer']['mobile'];
@@ -175,7 +174,7 @@ if (isset($_GET['crud'])) {
 
 
             if ($product_res == TRUE && $product_up == TRUE) {
-                $result = $conn->query("UPDATE `checkout` SET `status`='$status' WHERE `id` = '$invoice_id'");
+                $result = $conn->query("UPDATE `checkout` SET `status`='1' WHERE `id` = '$invoice_id'");
 
                 if ($result == TRUE) {
                     $response->status = true;

@@ -258,7 +258,7 @@
 
                     if (data.products != null) {
                         $('#product_table tbody').html('');
-                        
+
                         JSON.parse(data.products).forEach(data => {
                             i = $('#product_table tbody tr').length;
                             $('#product_table tbody').append(`
@@ -344,6 +344,14 @@
         $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
 
         $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+
+        $('.discount').keyup(function () {
+            $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
+            $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
+
+            $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+
+        })
     })
 </script>
 
@@ -398,7 +406,7 @@
             $.ajax({
                 type: "POST",
                 url: './api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-                data: $('#save_invoice').serialize() + '&status=1', // serializes the form's elements.
+                data: $('#save_invoice').serialize(), // serializes the form's elements.
                 dataType: 'json',
             }).done(function (response) {
                 if (response.status) {
