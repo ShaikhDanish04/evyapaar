@@ -129,11 +129,11 @@
                     <label for="">Cash In Advance</label>
                     <input type="text" name="" class="form-control">
                 </div>
-                <hr>
-                <div class="d-flex align-items-center justify-content-between h5 m-0">
+                <!-- <hr> -->
+                <!-- <div class="d-flex align-items-center justify-content-between h5 m-0">
                     <p class="m-0">Balance Amount : </p>
                     <p class="m-0">₹ <span class="grand_total">0</span></p>
-                </div>
+                </div> -->
             </div>
         </div>
         <hr>
@@ -146,9 +146,18 @@
 </div>
 
 <script> //vendor details
-    $(document).on('mousedown', '[name="vendor_id"]', function () {
-        if ($('[name="vendor_id"]').html() != options('./api/vendor_crud.php?crud=select')) $('[name="vendor_id"]').html(options('./api/vendor_crud.php?crud=select'))
+    $(document).ready(function () {
+        $('[name="vendor_id"]').html(options('./api/vendor_crud.php?crud=select'))
+        $('.product_id_in').html(options('./api/product_crud.php?crud=select'))
     })
+    $('.modal').on('hide.bs.modal', function () {
+        $('[name="vendor_id"]').html(options('./api/vendor_crud.php?crud=select'))
+        $('.product_id_in').html(options('./api/product_crud.php?crud=select'))
+    })
+
+    // $(document).on('mousedown', '[name="vendor_id"]', function () {
+    //     if ($('[name="vendor_id"]').html() != options('./api/vendor_crud.php?crud=select')) $('[name="vendor_id"]').html(options('./api/vendor_crud.php?crud=select'))
+    // })
     $('[name="vendor_id"]').change(function () {
         id = $(this).val();
         $.ajax({
@@ -164,9 +173,9 @@
 </script>
 
 <script> //product table update
-    $(document).on('mousedown', '.product_id_in', function () {
-        if ($('.product_id_in').html() != options('./api/product_crud.php?crud=select')) $('.product_id_in').html(options('./api/product_crud.php?crud=select'))
-    })
+    // $(document).on('mousedown', '.product_id_in', function () {
+    //     if ($('.product_id_in').html() != options('./api/product_crud.php?crud=select')) $('.product_id_in').html(options('./api/product_crud.php?crud=select'))
+    // })
 
     $('.product_id_in').change(function () {
         product_id = $('.product_id_in').val();
@@ -345,32 +354,37 @@
 
         scrollTo(0, 0);
         if ($('[name="vendor_id"]').val() != '') {
-            if ($('[name="invoice_id"]').val() == 'new') {
-                $.ajax({
-                    type: "POST", url: './api/purchase_crud.php?crud=insert', data: form.serialize(), dataType: 'json',
-                }).done(function (response) {
-                    if (response.status) {
-                        localStorage.removeItem('invoice_id');
-                        if (localStorage.getItem("invoice_id") === null) {
-                            screen_loader('purchase/list');
+            if (form.serializeObject().products != null) {
+                if ($('[name="invoice_id"]').val() == 'new') {
+                    $.ajax({
+                        type: "POST", url: './api/purchase_crud.php?crud=insert', data: form.serialize(), dataType: 'json',
+                    }).done(function (response) {
+                        if (response.status) {
+                            localStorage.removeItem('invoice_id');
+                            if (localStorage.getItem("invoice_id") === null) {
+                                screen_loader('purchase/list');
+                            } else {
+                                console.log('error');
+                            }
                         } else {
-                            console.log('error');
+                            $('.alert-holder').html(b_alert('danger', 'Error'));
                         }
-                    } else {
-                        $('.alert-holder').html(b_alert('danger', 'Error'));
-                    }
-                });
+                    });
+                } else {
+                    $.ajax({
+                        type: "POST", url: './api/purchase_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(), data: form.serialize(), dataType: 'json',
+                    }).done(function (response) {
+                        if (response.status) {
+                            $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
+                        } else {
+                            $('.alert-holder').html(b_alert('danger', 'Error'));
+                        }
+                    });
+                }
             } else {
-                $.ajax({
-                    type: "POST", url: './api/purchase_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(), data: form.serialize(), dataType: 'json',
-                }).done(function (response) {
-                    if (response.status) {
-                        $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
-                    } else {
-                        $('.alert-holder').html(b_alert('danger', 'Error'));
-                    }
-                });
+                alert('Please Add Products');
             }
+
         } else {
             alert('Select Vendor Id');
         }
@@ -380,27 +394,35 @@
 <script> //lock invoice
 
     $('.lock_invoice').click(function () {
-        if (confirm('Are You Ready To Lock Invoice ?')) {
-            alert('Invoice Locked');
-            $.ajax({
-                type: "POST",
-                url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-                data: $('#save_invoice').serialize(), // serializes the form's elements.
-                dataType: 'json',
-            }).done(function (response) {
-                if (response.status) {
-                    localStorage.setItem('invoice_id', response.invoice_id);
-                    if (localStorage.getItem("invoice_id") !== null) {
-                        console.log('ok');
-                        screen_loader('purchase/view');
-                    } else {
-                        console.log('error');
-                    }
-                } else {
-                    $('.alert-holder').html(b_alert('danger', 'Error'));
+        if ($('[name="vendor_id"]').val() != '') {
+            if (form.serializeObject().products != null) {
+                if (confirm('Are You Ready To Lock Invoice ?')) {
+                    alert('Invoice Locked');
+                    $.ajax({
+                        type: "POST",
+                        url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
+                        data: $('#save_invoice').serialize(), // serializes the form's elements.
+                        dataType: 'json',
+                    }).done(function (response) {
+                        if (response.status) {
+                            localStorage.setItem('invoice_id', response.invoice_id);
+                            if (localStorage.getItem("invoice_id") !== null) {
+                                console.log('ok');
+                                screen_loader('purchase/view');
+                            } else {
+                                console.log('error');
+                            }
+                        } else {
+                            $('.alert-holder').html(b_alert('danger', 'Error'));
+                        }
+                        // screen_loader('purchase/list');
+                    });
                 }
-                // screen_loader('purchase/list');
-            });
+            } else {
+                alert('Please Add Products');
+            }
+        } else {
+            alert('Select Vendor Id');
         }
     })
 </script>

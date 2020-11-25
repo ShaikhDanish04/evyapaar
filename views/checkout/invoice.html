@@ -174,7 +174,10 @@
 </div>
 
 <script> // Initial
-    $('.product_id_in').html(options('./api/product_crud.php?crud=select'));
+    $(document).ready(function () {
+        $('.product_id_in').html(options('./api/product_crud.php?crud=select'));
+
+    })
 </script>
 
 <script> // Product Table Update
@@ -366,37 +369,45 @@
 
         $formObj = $('#save_invoice').serializeObject();
 
-        if ($('[name="invoice_id"]').val() == 'new') {
-            $.ajax({
-                type: "POST",
-                url: './api/checkout_crud.php?crud=insert',
-                data: form.serialize(), // serializes the form's elements.
-                dataType: 'json',
-            }).done(function (response) {
-                if (response.status) {
-                    localStorage.removeItem('invoice_id');
-                    if (localStorage.getItem("invoice_id") === null) {
-                        screen_loader('checkout/list');
-                    } else {
-                        console.log('error');
-                    }
-                } else {
-                    $('.alert-holder').html(b_alert('danger', 'Error'));
+        if ($('[name="customer[mobile]"]').val() != '') {
+            if ($('[name="invoice_id"]').val() == 'new') {
+                if (form.serializeObject().products != null) {
+                    $.ajax({
+                        type: "POST",
+                        url: './api/checkout_crud.php?crud=insert',
+                        data: form.serialize(), // serializes the form's elements.
+                        dataType: 'json',
+                    }).done(function (response) {
+                        if (response.status) {
+                            localStorage.removeItem('invoice_id');
+                            if (localStorage.getItem("invoice_id") === null) {
+                                screen_loader('checkout/list');
+                            } else {
+                                console.log('error');
+                            }
+                        } else {
+                            $('.alert-holder').html(b_alert('danger', 'Error'));
+                        }
+                    });
                 }
-            });
+            } else {
+                if (form.serializeObject().products != null) {
+                    $.ajax({
+                        type: "POST",
+                        url: './api/checkout_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
+                        data: form.serialize(), // serializes the form's elements.
+                        dataType: 'json',
+                    }).done(function (response) {
+                        if (response.status) {
+                            $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
+                        } else {
+                            $('.alert-holder').html(b_alert('danger', 'Error'));
+                        }
+                    });
+                }
+            }
         } else {
-            $.ajax({
-                type: "POST",
-                url: './api/checkout_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
-                data: form.serialize(), // serializes the form's elements.
-                dataType: 'json',
-            }).done(function (response) {
-                if (response.status) {
-                    $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
-                } else {
-                    $('.alert-holder').html(b_alert('danger', 'Error'));
-                }
-            });
+            alert('Select Add Customer');
         }
     })
 </script>
@@ -404,27 +415,35 @@
 <script> //lock invoice
 
     $('.lock_invoice').click(function () {
-        if (confirm('Are You Ready To Lock Invoice ?')) {
-            alert('Invoice Locked');
-            $.ajax({
-                type: "POST",
-                url: './api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-                data: $('#save_invoice').serialize(), // serializes the form's elements.
-                dataType: 'json',
-            }).done(function (response) {
-                if (response.status) {
-                    localStorage.setItem('invoice_id', response.invoice_id);
-                    if (localStorage.getItem("invoice_id") !== null) {
-                        console.log('ok');
-                        screen_loader('checkout/view');
-                    } else {
-                        console.log('error');
-                    }
-                } else {
-                    $('.alert-holder').html(b_alert('danger', 'Error'));
+        if ($('[name="customer[mobile]"]').val() != '') {
+            if (form.serializeObject().products != null) {
+                if (confirm('Are You Ready To Lock Invoice ?')) {
+                    alert('Invoice Locked');
+                    $.ajax({
+                        type: "POST",
+                        url: './api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
+                        data: $('#save_invoice').serialize(), // serializes the form's elements.
+                        dataType: 'json',
+                    }).done(function (response) {
+                        if (response.status) {
+                            localStorage.setItem('invoice_id', response.invoice_id);
+                            if (localStorage.getItem("invoice_id") !== null) {
+                                console.log('ok');
+                                screen_loader('checkout/view');
+                            } else {
+                                console.log('error');
+                            }
+                        } else {
+                            $('.alert-holder').html(b_alert('danger', 'Error'));
+                        }
+                        // screen_loader('checkout/list');
+                    });
                 }
-                // screen_loader('checkout/list');
-            });
+            } else {
+                alert('Please Add Products');
+            }
+        } else {
+            alert('Select Add Customer');
         }
     })
 </script>
