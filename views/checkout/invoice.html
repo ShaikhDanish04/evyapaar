@@ -257,27 +257,30 @@
 
                     $('#product_table tbody').html('');
 
-                    JSON.parse(data.products).forEach(data => {
-                        i = $('#product_table tbody tr').length;
-                        $('#product_table tbody').append(`
-                            <tr data-row-index="${i}">
-                                <td class="text-nowrap">
-                                    <input type="hidden" class="form-control" name="products[${i}][id]" value="${data.id}" readonly>
-                                    <input type="text" class="form-control" name="products[${i}][name]" value="${data.name}" readonly>
-                                </td>
-                                <td><input type="text" class="form-control" name="products[${i}][HSN]" value="${data.HSN}" readonly></td>
-                                    <td><input type="text" class="form-control" name="products[${i}][barcode]" value="${data.barcode}" readonly></td>                               
-                                <td><input type="text" class="form-control price" name="products[${i}][price]" value="${data.price}" style="min-width: 100px;"></td>
-                                <td><input type="text" class="form-control" name="products[${i}][tax_percent]" value="${data.tax_percent}" readonly></td>
-                                <td><input type="text" class="form-control amount" name="products[${i}][amount]" value="${data.amount}" style="min-width: 100px;"></td>
-                                <td><input type="text" class="form-control" name="products[${i}][unit]" value="${data.unit}" style="min-width: 100px;"></td>
-                                <td><input type="text" class="form-control total_price" name="products[${i}][total_price]" value="${data.total_price}" readonly></td>
-                                <td><input type="text" class="form-control total_gst" name="products[${i}][total_gst]" value="${data.total_gst}" readonly></td>
-                                <td><input type="text" class="form-control" name="products[${i}][total_amount]" value="${data.total_amount}" readonly></td>
-                                <td><button class="btn btn-sm btn-danger rounded-circle delete-row" type="button"><i class="fa fa-times"></i></button></td>
-                            </tr>
-                        `);
-                    });
+                    if(data.products != null) {
+                        JSON.parse(data.products).forEach(data => {
+                            i = $('#product_table tbody tr').length;
+                            $('#product_table tbody').append(`
+                                <tr data-row-index="${i}">
+                                    <td class="text-nowrap">
+                                        <input type="hidden" class="form-control" name="products[${i}][id]" value="${data.id}" readonly>
+                                        <input type="text" class="form-control" name="products[${i}][name]" value="${data.name}" readonly>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="products[${i}][HSN]" value="${data.HSN}" readonly></td>
+                                        <td><input type="text" class="form-control" name="products[${i}][barcode]" value="${data.barcode}" readonly></td>                               
+                                    <td><input type="text" class="form-control price" name="products[${i}][price]" value="${data.price}" style="min-width: 100px;"></td>
+                                    <td><input type="text" class="form-control" name="products[${i}][tax_percent]" value="${data.tax_percent}" readonly></td>
+                                    <td><input type="text" class="form-control amount" name="products[${i}][amount]" value="${data.amount}" style="min-width: 100px;"></td>
+                                    <td><input type="text" class="form-control" name="products[${i}][unit]" value="${data.unit}" style="min-width: 100px;"></td>
+                                    <td><input type="text" class="form-control total_price" name="products[${i}][total_price]" value="${data.total_price}" readonly></td>
+                                    <td><input type="text" class="form-control total_gst" name="products[${i}][total_gst]" value="${data.total_gst}" readonly></td>
+                                    <td><input type="text" class="form-control" name="products[${i}][total_amount]" value="${data.total_amount}" readonly></td>
+                                    <td><button class="btn btn-sm btn-danger rounded-circle delete-row" type="button"><i class="fa fa-times"></i></button></td>
+                                </tr>
+                            `);
+                        });
+                    }
+
 
                     sub_total = 0;
                     sgst = 0;
