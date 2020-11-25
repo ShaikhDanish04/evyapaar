@@ -255,9 +255,10 @@
                         $('[name="customer[address]"]').val(customer.address);
                     }
 
-                    $('#product_table tbody').html('');
 
-                    if(data.products != null) {
+                    if (data.products != null) {
+                        $('#product_table tbody').html('');
+                        
                         JSON.parse(data.products).forEach(data => {
                             i = $('#product_table tbody tr').length;
                             $('#product_table tbody').append(`
