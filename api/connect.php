@@ -72,5 +72,13 @@ function status($status)
 
 function datetime($datetime)
 {
-    return date_format(date_create($datetime), "d M Y - h:m:i A");
+    return date_format(date_create($datetime), "d M Y - h:i:s A");
+}
+function pdate($datetime)
+{
+    return date_format(date_create($datetime), "d M Y");
+}
+function ptime($datetime)
+{
+    return date_format(date_create($datetime), "h:i:s A");
 }

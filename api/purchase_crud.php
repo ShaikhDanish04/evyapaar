@@ -11,6 +11,9 @@ if (isset($_GET['crud'])) {
                 $id = $_GET['id'];
                 $purchase = $conn->query("SELECT * FROM `purchase` WHERE id = '$id'")->fetch_assoc();
                 $vendor_id = $purchase['vendor_id'];
+                $purchase['date'] = pdate($purchase['datetime']);
+                $purchase['time'] = ptime($purchase['datetime']);
+
                 $vendor = $conn->query("SELECT * FROM `vendor` WHERE id = '$vendor_id'")->fetch_assoc();
 
                 $purchase['vendor'] = json_encode($vendor);
