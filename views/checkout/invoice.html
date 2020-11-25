@@ -232,7 +232,7 @@
         } else {
             $('[name="invoice_id"]').val(localStorage.getItem('invoice_id'));
 
-            if ($('[name="invoice_id"]') != 'new') {
+            if ($('[name="invoice_id"]') != 'new') {        
                 id = $('[name="invoice_id"]').val();
 
                 $.ajax({
@@ -248,7 +248,7 @@
                     $('[name="customer[email]"]').attr('readonly', 'true');
                     $('[name="customer[address]"]').attr('readonly', 'true');
 
-                    $('[name="customer[fullname]"]').val(customer.fullname);
+                    $('[name="customer[fullname]"]').val(customer.name);
                     $('[name="customer[email]"]').val(customer.email);
                     $('[name="customer[mobile]"]').val(customer.mobile);
                     $('[name="customer[address]"]').val(customer.address);
@@ -341,7 +341,6 @@
     })
 </script>
 
-
 <script> // Save Invoice
     $('.save_invoice').click(function (e) {
         e.preventDefault();
@@ -410,7 +409,6 @@
         }
     })
 </script>
-
 
 <script> // Exit inovice
     $('.exit_invoice').click(function () {
