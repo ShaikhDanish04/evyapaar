@@ -389,15 +389,21 @@
                 dataType: 'json',
             }).done(function (response) {
                 if (response.status) {
-                    localStorage.removeItem('invoice_id');
-                    if (localStorage.getItem("invoice_id") === null) {
+                    if (localStorage.getItem("invoice_id") !== null) {
+                        console.log('ok');
+                        screen_loader('purchase/view');
                     } else {
                         console.log('error');
                     }
+                    // localStorage.removeItem('invoice_id');
+                    // if (localStorage.getItem("invoice_id") === null) {
+                    // } else {
+                    //     console.log('error');
+                    // }
                 } else {
                     $('.alert-holder').html(b_alert('danger', 'Error'));
                 }
-                screen_loader('purchase/list');
+                // screen_loader('purchase/list');
             });
         }
     })
