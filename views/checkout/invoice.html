@@ -322,9 +322,9 @@
         if (input.hasClass('price')) amount.val((Number(price.val()) + percentage(tax.val(), price.val())).toFixed(2));
         if (input.hasClass('amount')) price.val((amount.val() / Number(tax.val() / 100 + Number(1))).toFixed(2));
 
-        total_price.val((price.val() * unit.val()).toFixed());
-        total_gst.val(((amount.val() - price.val()) * unit.val()).toFixed());
-        total_amount.val((amount.val() * unit.val()).toFixed());
+        total_price.val((Number(price.val()) * Number(unit.val())));
+        total_gst.val(((Number(amount.val()) - Number(price.val())) * Number(unit.val())).toFixed(2));
+        total_amount.val((Number(amount.val()) * Number(unit.val())).toFixed(2));
 
         sub_total = 0;
         sgst = 0;
@@ -340,10 +340,12 @@
 
 
         $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
+        grand_total = Number($('[name="net_total"]').val()) + sgst + cgst;
 
-        $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
+        $('[name="grand_total"]').val((grand_total).toFixed(2));
+        $('.grand_total').text((grand_total).toFixed(2));
 
-        $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+        $('.amount-in-words').html(inWords(grand_total));
 
         $('.discount').keyup(function () {
             $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))

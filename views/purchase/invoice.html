@@ -383,7 +383,7 @@
             $.ajax({
                 type: "POST",
                 url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-                data: $('#save_invoice').serialize() + '&status=1', // serializes the form's elements.
+                data: $('#save_invoice').serialize(), // serializes the form's elements.
                 dataType: 'json',
             }).done(function (response) {
                 if (response.status) {

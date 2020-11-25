@@ -123,7 +123,6 @@ if (isset($_GET['crud'])) {
             $discount = $_POST['discount'];
             $net_total = $_POST['net_total'];
             $grand_total = $_POST['grand_total'];
-            $status = $_POST['status'];
 
             if ($invoice_id == 'new') {
                 $row = $conn->query("SELECT * FROM purchase ORDER BY `id` DESC LIMIT 1")->fetch_assoc();
@@ -153,7 +152,7 @@ if (isset($_GET['crud'])) {
 
 
             if ($product_res == TRUE && $product_up == TRUE) {
-                $result = $conn->query("UPDATE `purchase` SET  `status`='$status' WHERE `id` = '$invoice_id'");
+                $result = $conn->query("UPDATE `purchase` SET  `status`='1' WHERE `id` = '$invoice_id'");
 
                 if ($result == TRUE) {
 

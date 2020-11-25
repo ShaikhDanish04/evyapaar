@@ -12,6 +12,8 @@ if (isset($_GET['crud'])) {
                 $checkout = $conn->query("SELECT * FROM `checkout` WHERE id = '$id'")->fetch_assoc();
                 $customer_id = $checkout['customer'];
                 $customer = $conn->query("SELECT * FROM `customer` WHERE mobile = '$customer_id'")->fetch_assoc();
+                $checkout['date'] = pdate($checkout['datetime']);
+                $checkout['time'] = ptime($checkout['datetime']);
 
                 $checkout['customer'] = json_encode($customer);
                 $checkout['products'] = $checkout['products'];

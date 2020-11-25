@@ -20,6 +20,8 @@
                 $('#vendor_address').text(customer.address);
                 $('#vendor_contact').text(customer.contact);
                 $('#vendor_email').text(customer.email);
+                $('.IN_date').text(data.date);
+                $('.IN_time').text(data.time);
 
                 $('.sub_total').text(Number(data.sub_total).toFixed(2));
                 $('.discount').text(Number(data.discount).toFixed(2));
@@ -51,13 +53,13 @@
                                 <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.unit} </span></p>
                             </td>
                             <td style="width:.75in;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
-                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${(product.total_amount / product.unit).toFixed(2)} </span></p>
+                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${(product.price / product.unit).toFixed(2)} </span></p>
                             </td>
                             <td style="width:27.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
                                 <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.tax_percent} </span></p>
                             </td>
                             <td style="width:63.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
-                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${product.total_amount} </span></p>
+                                <p class="text-right" style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">${Number(product.total_price).toFixed(2)} </span></p>
                             </td>
                         </tr>
                     `)
@@ -90,15 +92,15 @@
             </td>
         </tr>
         <tr style="height:14.2pt">
-            <td colspan=7 rowspan=7 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:14.2pt">
-                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Buyers Name</span></p>
+            <td colspan=7 rowspan=7 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:14.2pt;vertical-align: baseline;">
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:10.0pt;font-weight:600">Buyers Name</span></p>
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt" id="vendor_name">ORGANIKO</span></p>
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt" id="vendor_address">A/P KAPIL, TAL KARAD, DISST SATARA</span></p>
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"></p>
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"><span id="vendor_contact" style="margin-right:50pt">8485863406</span> <span id="vendor_email"></span> </span></span></p>
-                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">State: Maharashtra</span><span style="font-size:9.0pt;margin-right:50pt"> State Code: 27</span></p>
-                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">GST IN: -</span></p>
-                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Place of Supp : </span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">State: </span></span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"></span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"></span></p>
             </td>
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:14.2pt">
                 <p style="margin-bottom:0in;line-height:normal">
@@ -109,26 +111,26 @@
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Date : 08-06-2020</span>
+                    <span style="font-size:9.0pt">Date : <span class="IN_date"></span></span>
                 </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Challan No :<span class="invoice_number"> </span>94</span></p>
+                    <span style="font-size:9.0pt">Time : <span class="IN_time"> </span></span></p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Challan Date :<span> </span>08-06-2020</span></p>
+                    <span style="font-size:9.0pt">Challan No :<span class="invoice_number"> </span></span></p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">P.O. No. :<span> </span>92</span></p>
+                    <span style="font-size:9.0pt">P.O. No. :<span> </span></span></p>
             </td>
         </tr>
         <tr style="height:13.9pt">
@@ -139,7 +141,7 @@
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
-                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Dt &amp; Time Supp :</span></p>
+                <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt"></span></p>
             </td>
         </tr>
         <tr style="height:13.4pt">
