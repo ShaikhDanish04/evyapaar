@@ -14,8 +14,10 @@ $conn = new mysqli($_ENV['mysql']['host'], $_ENV['mysql']['username'], $_ENV['my
 // Check connection
 if ($conn->connect_error) {
     $response->connection_status = "Connection failed: " . $conn->connect_error;
+    $response->session_established = false;
 } else {
     $response->connection_status = "Connected";
+    $response->session_established = true;
 }
 
 date_default_timezone_set('Asia/Kolkata');
