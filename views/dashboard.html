@@ -66,7 +66,7 @@
                     <p class="m-0">Purchased Invoice</p>
                     <h3 class="m-0"><span data-count="./api/purchase_crud.php?crud=select">0</span></h3>
                 </div>
-                <a href="#" onclick="screen_loader('purchase')" class="card-foot btn">View More</a>
+                <a href="#" onclick="screen_loader('purchase/list')" class="card-foot btn">View More</a>
             </div>
         </div>
         <div class="col-6 col-lg-3 mb-3">
@@ -82,9 +82,9 @@
             <div class="card pan-block" style="background:linear-gradient(45deg,#e879ed,#8b68e4)">
                 <div class="card-body">
                     <p class="m-0">Number of Customer </p>
-                    <h3 class="m-0"><span class="customer_available">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/customer_crud.php?crud=select">0</span></h3>
                 </div>
-                <a href="" class="card-foot btn">View More</a>
+                <a href="#" onclick="screen_loader('customer/list')" class="card-foot btn">View More</a>
             </div>
         </div>
         <script>
@@ -187,7 +187,7 @@
                 </div>
                 <div class="card-body">
                     <div class="w-100 mb-3">
-                        <a href="#" onclick="screen_loader('checkout/invoice')" class="btn btn-primary btn-icon-split w-100 ">
+                        <a href="#" onclick="localStorage.setItem('invoice_id','new'); screen_loader('checkout/invoice')" class="btn btn-primary btn-icon-split w-100 ">
                             <span class="btn-circle icon text-white-50 d-flex align-items-center">
                                 <i class="fa fas fa-shopping-cart"></i>
                             </span>
@@ -195,7 +195,7 @@
                         </a>
                     </div>
                     <div class="w-100 mb-3">
-                        <a href="#" onclick="screen_loader('purchase/invoice')" class="btn btn-success btn-icon-split w-100 ">
+                        <a href="#" onclick="localStorage.setItem('invoice_id','new'); screen_loader('purchase/invoice')" class="btn btn-success btn-icon-split w-100 ">
                             <span class="btn-circle icon text-white-50 d-flex align-items-center">
                                 <i class="fa fas fa-credit-card"></i>
                             </span>
