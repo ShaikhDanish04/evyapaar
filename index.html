@@ -328,10 +328,15 @@
                 method: 'GET', url: './api/connect.php?get', asysnc: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 $('.page').hide();
-                if (response.session_established) {
-                    $('.page').fadeIn().load('panel.html', 'f' + (Math.random() * 1000000))
+                console.log(response);
+                if (response.env) {
+                    if (response.session_established) {
+                        $('.page').fadeIn().load('panel.html', 'f' + (Math.random() * 1000000))
+                    } else {
+                        $('.page').fadeIn().load('login.html', 'f' + (Math.random() * 1000000))
+                    }
                 } else {
-                    $('.page').fadeIn().load('login.html', 'f' + (Math.random() * 1000000))
+                    $('.page').fadeIn().load('server.html', 'f' + (Math.random() * 1000000))
                 }
             }).fail(function (e) {
                 $('.page').fadeIn().load('server.html', 'f' + (Math.random() * 1000000))

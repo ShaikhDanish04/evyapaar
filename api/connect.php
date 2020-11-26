@@ -1,10 +1,11 @@
 <?php
 
 $response = new stdClass();
-if (file_exists(include('env.php'))) {
+if (file_exists('env.php')) {
     include('env.php');
+    $response->env = true;
 } else {
-    $response->session_established = false;
+    $response->env = false;
 }
 
 
