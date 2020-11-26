@@ -416,13 +416,14 @@
 
     $('.lock_invoice').click(function () {
         if ($('[name="customer[mobile]"]').val() != '') {
+            form = $('#save_invoice');
             if (form.serializeObject().products != null) {
                 if (confirm('Are You Ready To Lock Invoice ?')) {
                     alert('Invoice Locked');
                     $.ajax({
                         type: "POST",
                         url: './api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-                        data: $('#save_invoice').serialize(), // serializes the form's elements.
+                        data: form.serialize(), // serializes the form's elements.
                         dataType: 'json',
                     }).done(function (response) {
                         if (response.status) {
