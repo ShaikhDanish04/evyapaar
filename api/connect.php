@@ -1,30 +1,15 @@
 <?php
 
 $response = new stdClass();
-// get domain name from config file
-
-// $string = "";
-// $myfile = fopen("../../config.json", "r") or die("Unable to open file!");
-// while (!feof($myfile)) {
-//     $string .= fgets($myfile);
-// }
-// fclose($myfile);
-// $configJson = json_decode($string, true);
-
-
-// $database = $configJson['database'];
-
-// if ($database['type'] == 'local') {
-$servername = 'localhost';
-$dbname = 'organoen_evyapaar';
-$username = 'organoen_evyapaar';
-$password = 'Root1234';
-// }
-
+if (file_exists(include('env.php'))) {
+    include('env.php');
+} else {
+    $response->session_established = false;
+}
 
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($_ENV['mysql']['host'], $_ENV['mysql']['username'], $_ENV['mysql']['password'], $_ENV['mysql']['database']);
 // Check connection
 if ($conn->connect_error) {
     $response->connection_status = "Connection failed: " . $conn->connect_error;
@@ -49,8 +34,6 @@ if (isset($_GET['get'])) {
     }
     echo json_encode($response);
 }
-
-
 
 function status($status)
 {
