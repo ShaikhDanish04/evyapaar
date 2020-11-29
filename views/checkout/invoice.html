@@ -197,6 +197,7 @@
                 type: "GET", url: './api/product_crud.php?crud=select&id=' + product_id, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 data = JSON.parse(response.data);
+                console.log(data);
 
                 $('#product_table tbody').append(`
                     <tr data-row-index="${i}">
@@ -206,9 +207,9 @@
                             </td>
                         <td><input type="text" class="form-control" name="products[${i}][HSN]" value="${data.hsn}" readonly></td>
                         <td><input type="text" class="form-control" name="products[${i}][barcode]" value="${data.barcode}" readonly></td>                               
-                       <td><input type="text" class="form-control price" name="products[${i}][price]" style="min-width: 100px;"></td>
+                       <td><input type="text" class="form-control price" name="products[${i}][price]" style="min-width: 100px;" value="${Number(data.selling_cost / Number(data.tax_percent / Number(100) + Number(1))).toFixed(2)}"></td>
                         <td><input type="text" class="form-control" name="products[${i}][tax_percent]" value="${data.tax_percent}" readonly></td>
-                        <td><input type="text" class="form-control amount" name="products[${i}][amount]" style="min-width: 100px;"></td>
+                        <td><input type="text" class="form-control amount" name="products[${i}][amount]" style="min-width: 100px;" value="${data.selling_cost}"></td>
                         <td><input type="text" class="form-control" name="products[${i}][unit]" value="1" style="min-width: 100px;"></td>
                         <td><input type="text" class="form-control total_price" name="products[${i}][total_price]" value="0" readonly></td>
                         <td><input type="text" class="form-control total_gst" name="products[${i}][total_gst]" value="0" readonly></td>
