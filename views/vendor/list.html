@@ -32,6 +32,10 @@
 
         table_data();
 
+        $('.modal').on('hide.bs.modal', function () {
+            table_data();
+        })
+
         $(document).on('click', '[data-vendor-edit-id]', function () {
             b_edit_modal($(this).attr('data-vendor-edit-id'), 'Edit vendor', 'views/vendor/edit.html')
         })

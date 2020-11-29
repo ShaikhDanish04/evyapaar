@@ -379,7 +379,7 @@
                     if (response.queryStatus) {
                         $('#input_modal .modal-body').prepend(b_alert('success', 'Task Successfully'));
                         form.find('button').removeAttr('disabled');
-                        // $('#input_modal').modal('hide');
+                        $('#input_modal').modal('hide');
                         // table_data();
                     } else {
                         $('#input_modal .modal-body').prepend(b_alert('danger', 'Operation Error !!! Task Failed, Try Again'));

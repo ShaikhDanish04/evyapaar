@@ -6,11 +6,15 @@
         ], () => {
             $('.barcode_in').each(function () {
                 code = $(this).text();
-                $(this).html($('<p class="m-0"><canvas></p>'));
-                $(this).find('canvas').JsBarcode(code, {
-                    height: 30,
-                    margin: 2
-                });
+                if (code != '0') {
+                    $(this).html($('<p class="m-0"></p>'));
+                } else {
+                    $(this).html($('<p class="m-0"><canvas></p>'));
+                    $(this).find('canvas').JsBarcode(code, {
+                        height: 30,
+                        margin: 2
+                    });
+                }
             });
         });
     }
@@ -38,6 +42,10 @@
 
     $(document).ready(function () {
         table_data();
+
+        $('.modal').on('hide.bs.modal', function () {
+            table_data();
+        })
 
         $(document).on('click', '[data-product-edit-id]', function () {
             b_edit_modal($(this).attr('data-product-edit-id'), 'Edit Product', 'views/product/edit.html')
