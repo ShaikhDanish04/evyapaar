@@ -66,7 +66,7 @@
                     <p class="m-0">Purchased Invoice</p>
                     <h3 class="m-0"><span data-count="./api/purchase_crud.php?crud=select">0</span></h3>
                 </div>
-                <a href="#" onclick="screen_loader('purchase/list')" class="card-foot btn">View More</a>
+                <a href="#" onclick="screen_loader('purchaselist')" class="card-foot btn">View More</a>
             </div>
         </div>
         <div class="col-6 col-lg-3 mb-3">
@@ -89,49 +89,101 @@
         </div>
         <script>
             $(document).ready(function () {
+                var formatter = new Intl.NumberFormat('en-US', {
+                    currency: 'INR',
+                });
                 for (i = 0; i < $('[data-count]').length; i++) {
                     $.ajax({ type: "GET", url: $('[data-count]:eq(' + i + ')').attr('data-count'), async: false, cache: false, dataType: 'json' })
                         .done(function (response) {
-                            console.log(JSON.parse(response.data).length);
+                            // console.log(JSON.parse(response.data).length);
                             $('[data-count]:eq(' + i + ')').html(JSON.parse(response.data).length);
                         });
                 }
+                for (i = 0; i < $('[data-grand-total]').length; i++) {
+                    // var total = 0;
+
+                    $.ajax({ type: "GET", url: $('[data-grand-total]:eq(' + i + ')').attr('data-grand-total'), async: false, cache: false, dataType: 'json' })
+                        .done(function (response) {
+                            total = 0;
+
+                            JSON.parse(response.data).forEach(row => {
+                                // row.grand_total;
+                                var grand_total = document.createElement("div");
+                                grand_total.innerHTML = row.grand_total;
+                                total = Number(grand_total.innerText) + total;
+                            });
+                            $('[data-grand-total]:eq(' + i + ')').text(formatter.format(total));
+                        });
+
+                }
             })
         </script>
-        <div class="col-6">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual) </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ 0</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Due Amount </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ 0</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="row">
         <!-- Area Chart -->
         <div class="col-xl-8 col-lg-7">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-success text-uppercase mb-1">Purchase <span class="text-xs">(Total Earnings) </span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span data-grand-total="./api/purchase_crud.php?crud=select"></span></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-success text-uppercase mb-1">Checkout <span class="text-xs">(Total Earnings) </span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span data-grand-total="./api/checkout_crud.php?crud=select"></span></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-6 mb-3">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-danger text-uppercase mb-1">Purchase <span class="text-xs">(Total Due) </span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ 0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-danger text-uppercase mb-1">Checkout <span class="text-xs">(Total Due) </span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ 0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-head p-3 d-flex flex-row align-items-center justify-content-between">
@@ -195,12 +247,10 @@
                         </a>
                     </div>
                     <div class="w-100 mb-3">
-                        <a href="#" onclick="localStorage.setItem('invoice_id','new'); screen_loader('purchase/invoice')" class="btn btn-success btn-icon-split w-100 ">
-                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
+                        <a href="#" onclick="localStorage.setItem('invoice_id','new'); screen_loader('purchaseinvoice')" class="btn btn-success btn-icon-split w-100 "><span class="btn-circle icon text-white-50 d-flex align-items-center">
                                 <i class="fa fas fa-credit-card"></i>
                             </span>
-                            <span class="text h-100 d-flex align-items-center">Product Purchase</span>
-                        </a>
+                            <span class="text h-100 d-flex align-items-center">Product Purchasespan></a>
                     </div>
                     <div class="w-100 mb-3">
                         <a href="#" onclick="b_input_modal('Add Vendor', 'views/product/add.html')" class="btn btn-info btn-icon-split w-100 ">
@@ -226,14 +276,14 @@
                             <span class="text h-100 d-flex align-items-center">View Billing</span>
                         </a>
                     </div>
-                    <div class="w-100 mb-3">
+                    <!-- <div class="w-100 mb-3">
                         <a href="#" class="btn btn-warning btn-icon-split w-100 ">
                             <span class="btn-circle icon text-white-50 d-flex align-items-center">
                                 <i class="fa fas fa-chart-area"></i>
                             </span>
                             <span class="text h-100 d-flex align-items-center">Generate Report</span>
                         </a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
