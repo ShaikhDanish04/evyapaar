@@ -6,8 +6,8 @@
         ], () => {
             $('.barcode_in').each(function () {
                 code = $(this).text();
-                if (code != '0') {
-                    $(this).html($('<p class="m-0"></p>'));
+                if (code == '0') {
+                    $(this).html($('<p class="m-0">No Barcode</p>'));
                 } else {
                     $(this).html($('<p class="m-0"><canvas></p>'));
                     $(this).find('canvas').JsBarcode(code, {
