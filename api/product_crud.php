@@ -48,9 +48,10 @@ if (isset($_GET['crud'])) {
             $name = $_POST['name'];
             $hsn = $_POST['hsn'];
             $gst = $_POST['gst'];
+            $selling_cost = $_POST['selling_cost'];
             $barcode = $_POST['barcode'];
 
-            $result = $conn->query("INSERT INTO `product` ( `name`, `hsn`, `gst_id`, `barcode`) 
+            $result = $conn->query("INSERT INTO `product` ( `name`, `hsn`, `gst_id`,`selling_cost`, `barcode`) 
                                      VALUES ('$name', '$hsn', '$gst', '$barcode')");
 
             if ($result == TRUE) {
