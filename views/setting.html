@@ -1,34 +1,68 @@
 <div class="container-fluid">
     <p class="h3 m-0">Settings</p>
     <hr>
-    <div class="card mb-3">
-        <div class="card-header">
-            <p class="h6 m-0">Invoice Header</p>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label for="">Invoice Header Image</label>
-                <input type="file" name="" id="" class="form-control border-0" placeholder="" aria-describedby="helpId">
-                <small id="helpId" class="text-muted">*Image Only</small>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <p class="h6 m-0">Brand Logo</p>
+                </div>
+                <div class="card-body">
+                    <div class="text-center bg-dark rounded p-3 mb-3">
+                        <img src=".assets/img/logo.png" height="100px" alt="">
+                    </div>
+                    <div class="form-group">
+
+                        <input type="file" name="" id="" class="form-control border-0" placeholder="" aria-describedby="helpId">
+                        <small id="helpId" class="text-muted">*Image Only</small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-success">Upload</button>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <button class="btn btn-success">Upload</button>
+        </div>
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <p class="h6 m-0">Invoice Header</p>
+                </div>
+                <div class="card-body">
+                    <div class="text-center bg-dark rounded p-3 mb-3">
+                        <img src=".assets/img/header.jpg" height="100px" alt="">
+                    </div>
+                    <div class="form-group">
+                        <input type="file" name="" id="" class="form-control border-0" placeholder="" aria-describedby="helpId">
+                        <small id="helpId" class="text-muted">*Image Only</small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-success">Upload</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="card mb-3">
+    <div class="card">
         <div class="card-header">
-            <p class="h6 m-0">Brand Logo</p>
+            <p class="h6 m-0">Invoice Description</p>
         </div>
         <div class="card-body">
             <div class="form-group">
-                <label for="">Brand Logo</label>
-                <input type="file" name="" id="" class="form-control border-0" placeholder="" aria-describedby="helpId">
-                <small id="helpId" class="text-muted">*Image Only</small>
+                <label for="">Invoice Description</label>
+                <textarea class="form-control" maxlength="450" name="invoice_desc" rows="3"></textarea>
             </div>
             <div class="form-group">
-                <button class="btn btn-success">Upload</button>
+                <button class="btn btn-success">Update</button>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            method: 'GET', url: './api/connect.php?get', asysnc: false, cache: false, dataType: 'json'
+        }).done(function (response) {
+            $('[name="invoice_desc"]').text(response.user.invoice_desc);
+        })
+    })
+</script>

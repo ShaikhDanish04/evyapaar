@@ -152,13 +152,14 @@
                     init: function (api, node, config) {
                         $(node).removeClass('btn-secondary')
                     },
-                }, {
-                    extend: 'print',
-                    className: 'btn-sm',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                }
+                },
+                    // {
+                    //     extend: 'print',
+                    //     className: 'btn-sm',
+                    //     exportOptions: {
+                    //         columns: ':visible'
+                    //     }
+                    // }
                 ],
                 initComplete: function () {
                     this.api().columns().every(function () {
