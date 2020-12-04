@@ -52,7 +52,7 @@ if (isset($_GET['crud'])) {
             $barcode = $_POST['barcode'];
 
             $result = $conn->query("INSERT INTO `product` ( `name`, `hsn`, `gst_id`,`selling_cost`, `barcode`) 
-                                     VALUES ('$name', '$hsn', '$gst', '$barcode')");
+                                     VALUES ('$name', '$hsn', '$gst','$selling_cost', '$barcode')");
 
             if ($result == TRUE) {
                 $response->queryStatus = true;
