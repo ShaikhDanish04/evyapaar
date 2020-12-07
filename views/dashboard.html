@@ -50,6 +50,61 @@
             bottom: 0px;
         }
     </style>
+
+    <script>
+        query = {
+            select: 'product',
+        }
+
+        class GetData {
+
+            constructor() {
+                this.obj = {};
+                this.param();
+            }
+
+            select(tableName) {
+                Object.assign(this.obj, { select: tableName })
+                return this;
+            }
+            where(where) {
+                Object.assign(this.obj, { where: where })
+                return this;
+            }
+            limit(limit) {
+                Object.assign(this.obj, { limit: limit })
+                return this;
+            }
+            param() {
+                return Object.keys(this.obj).map(key => `${key}=${this.obj[key]}`).join('&');
+            }
+
+        }
+        const getData = new GetData();
+
+        console.log(getData.select('products').limit(30).param());
+
+        // q = getData.select('products').where({ id: '1' }).limit(30).query;
+        // console.log($.param(q));
+
+
+
+        $.ajax({
+            type: "POST", url: 'http://localhost/evyapaar/api/table.php?' + $.param(query), async: false, cache: false, dataType: 'json',
+            data: {
+                where: {
+                    id: '4'
+                },
+                column: {
+                    name: 'product new',
+                    selling_cost: '45',
+                    quantity: '8',
+                }
+            }
+        }).done(function (response) {
+            console.log(response.query.data);
+        });
+    </script>
     <div class="row mb-3">
         <div class="col-6 col-lg-3 mb-3">
             <div class="card pan-block" style="background:linear-gradient(45deg,#ff8772,#ff6e97)">
@@ -229,7 +284,8 @@
         </style>
         <!-- Pie Chart -->
         <div class="col-xl-4 col-lg-5">
-            <div class="card shadow mb-4 master-controls">
+
+            <div class="card shadow mb-4 master-controls mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-head p-3 d-flex flex-row align-items-center justify-content-between border-bottom">
                     <h6 class="m-0 font-weight-bold text-primary">Master Controls</h6>
