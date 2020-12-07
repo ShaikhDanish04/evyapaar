@@ -14,15 +14,15 @@ if (isset($_GET['select'])) {
     $where = '';
     $orderby = '';
     $limit = '';
-    $response->query['query'] = $_GET;
+    $response->query['query'] = $_REQUEST;
 
-    if (isset($_GET['desc'])) {
-        $orderby = ' ORDER BY `' . $_GET['desc'] . '` DESC ';
+    if (isset($_POST['desc'])) {
+        $orderby = ' ORDER BY `' . $_POST['desc'] . '` DESC ';
     }
-    if (isset($_GET['where'])) {
-        $length = count($_GET['where']);
+    if (isset($_POST['where'])) {
+        $length = count($_POST['where']);
         $i = 0;
-        foreach ($_GET['where'] as $key => $val) {
+        foreach ($_POST['where'] as $key => $val) {
             if ($i == 0) $where .= ' WHERE';
 
             $where .= ' `' . $key . '`=\'' . $val . '\' ';
@@ -30,8 +30,8 @@ if (isset($_GET['select'])) {
             if ($i < $length) $where .= ' AND';
         }
     }
-    if (isset($_GET['limit'])) {
-        $limit = ' LIMIT ' . $_GET['limit'];
+    if (isset($_POST['limit'])) {
+        $limit = ' LIMIT ' . $_POST['limit'];
     }
 
     $result = $conn->query("SELECT * FROM $table_name $where $orderby $limit");

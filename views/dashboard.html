@@ -56,11 +56,11 @@
             select: 'product',
         }
 
-        class GetData {
+        class ApiCall {
 
             constructor() {
                 this.obj = {};
-                this.param();
+                // this.exec();
             }
 
             select(tableName) {
@@ -75,35 +75,36 @@
                 Object.assign(this.obj, { limit: limit })
                 return this;
             }
-            param() {
-                return Object.keys(this.obj).map(key => `${key}=${this.obj[key]}`).join('&');
+            exec(arg) {
+                // Object.assign(arg, { data: this.obj })
+                $.ajax(arg).done(function (response) {
+                    console.log(response);
+                });
+                console.log(arg);
+                // console.log(arg);
+                return this;
+                // return Object.keys(this.obj).map(key => `${key}=${this.obj[key]}`).join('&');
             }
 
         }
-        const getData = new GetData();
+        const apiCall = new ApiCall();
 
-        console.log(getData.select('products').limit(30).param());
+        a = apiCall.exec({
+            url: 'http://localhost/evyapaar/api/table.php?select=product',
+            type: "POST", async: false, cache: false, dataType: 'json', data: { limit: 3 }
+        });
+        // console.log(a);
 
-        // q = getData.select('products').where({ id: '1' }).limit(30).query;
+        // q = apiCall.select('products').where({ id: '1' }).limit(30).query;
         // console.log($.param(q));
 
 
 
-        $.ajax({
-            type: "POST", url: 'http://localhost/evyapaar/api/table.php?' + $.param(query), async: false, cache: false, dataType: 'json',
-            data: {
-                where: {
-                    id: '4'
-                },
-                column: {
-                    name: 'product new',
-                    selling_cost: '45',
-                    quantity: '8',
-                }
-            }
-        }).done(function (response) {
-            console.log(response.query.data);
-        });
+        // $.ajax({
+        //     type: "POST", url: 'http://localhost/evyapaar/api/table.php?' + $.param(query), async: false, cache: false, dataType: 'json'
+        // }).done(function (response) {
+        //     console.log(response.query.data);
+        // });
     </script>
     <div class="row mb-3">
         <div class="col-6 col-lg-3 mb-3">
