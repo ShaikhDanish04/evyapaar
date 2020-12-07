@@ -1,0 +1,51 @@
+<script>
+    function table_data() {
+
+        autoTable('.table', './api/due_crud.php?crud=select', [], [
+            '<button class="btn btn-primary btn-sm text-nowrap mr-1" data-due-pay-id="$@id@"><i class="fa fa-money"></i> Pay</button>'
+        ], () => {
+
+            $('[data-status]').each(function () {
+                tr = $(this).closest('tr');
+                pay = $(this).attr('data-status');
+                if (pay == '1') {
+                    tr.find('[data-due-pay-id]').attr('disabled', 'true')
+                }
+            });
+        });
+
+    }
+</script>
+
+<div class="container-fluid">
+    <p class="h3 m-0">Due List</p>
+    <hr>
+    <div class="card">
+        <div class="card-head p-3 d-flex align-items-center justify-content-between border-bottom">
+            <p class="h5 m-0"><i class="fa fa-list-alt"></i> Due List</p>
+            <div class="d-flex">
+                <button class="btn btn-primary" onclick="location.reload()"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class=" table-responsive">
+                <table class="table data-table table-bordered " style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+
+        table_data();
+
+        $(document).on('click', '[data-due-pay-id]', function () {
+            console.log('due');
+        })
+
+        
+
+    })
+
+</script>
