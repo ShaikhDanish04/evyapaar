@@ -16,6 +16,7 @@ if (isset($_GET['select'])) {
     $limit = '';
     $response->query['query'] = $_REQUEST;
 
+
     if (isset($_POST['desc'])) {
         $orderby = ' ORDER BY `' . $_POST['desc'] . '` DESC ';
     }
@@ -35,6 +36,33 @@ if (isset($_GET['select'])) {
     }
 
     $result = $conn->query("SELECT * FROM $table_name $where $orderby $limit");
+
+    $list = array();
+    if ($result == TRUE) {
+        $response->query['status'] = true;
+        while ($row = $result->fetch_assoc()) {
+            foreach ($row as $a => $b) {
+                if (strpos($b, '{')) {
+                    $row[$a] = json_decode($b, true);
+                }
+            }
+            array_push($list,  $row);
+        }
+        $response->query['data'] = $list;
+    } else {
+        $response->query['status'] = false;
+        $response->query['error'] = $conn->error;
+    }
+}
+
+if (isset($_POST['join'])) {
+    $table1 = $_POST['join']['table1'];
+    $table2 = $_POST['join']['table2'];
+    $id1 = $_POST['join']['id1'];
+    $id2 = $_POST['join']['id2'];
+    $order = $_POST['join']['order'];
+
+    $result = $conn->query("SELECT * FROM $table1 INNER JOIN $table2 ON $table1.$id1 = $table2.$id2 ORDER BY $order");
 
     $list = array();
     if ($result == TRUE) {
