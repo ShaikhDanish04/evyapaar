@@ -52,59 +52,14 @@
     </style>
 
     <script>
-        query = {
-            select: 'product',
-        }
 
-        class ApiCall {
 
-            constructor() {
-                this.obj = {};
-                // this.exec();
-            }
-
-            select(tableName) {
-                Object.assign(this.obj, { select: tableName })
-                return this;
-            }
-            where(where) {
-                Object.assign(this.obj, { where: where })
-                return this;
-            }
-            limit(limit) {
-                Object.assign(this.obj, { limit: limit })
-                return this;
-            }
-            exec(arg) {
-                // Object.assign(arg, { data: this.obj })
-                $.ajax(arg).done(function (response) {
-                    console.log(response);
-                });
-                console.log(arg);
-                // console.log(arg);
-                return this;
-                // return Object.keys(this.obj).map(key => `${key}=${this.obj[key]}`).join('&');
-            }
-
-        }
-        const apiCall = new ApiCall();
-
-        a = apiCall.exec({
+        $.ajax({
             url: 'http://localhost/evyapaar/api/table.php?select=product',
             type: "POST", async: false, cache: false, dataType: 'json', data: { limit: 3 }
+        }).done(function (response) {
+            console.log(response.query.data);
         });
-        // console.log(a);
-
-        // q = apiCall.select('products').where({ id: '1' }).limit(30).query;
-        // console.log($.param(q));
-
-
-
-        // $.ajax({
-        //     type: "POST", url: 'http://localhost/evyapaar/api/table.php?' + $.param(query), async: false, cache: false, dataType: 'json'
-        // }).done(function (response) {
-        //     console.log(response.query.data);
-        // });
     </script>
     <div class="row mb-3">
         <div class="col-6 col-lg-3 mb-3">
