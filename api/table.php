@@ -61,8 +61,13 @@ if (isset($_POST['join'])) {
     $id1 = $_POST['join']['id1'];
     $id2 = $_POST['join']['id2'];
     $order = $_POST['join']['order'];
+    $seq = '*';
 
-    $result = $conn->query("SELECT * FROM $table1 INNER JOIN $table2 ON $table1.$id1 = $table2.$id2 ORDER BY $order");
+    if (isset($_POST['join']['seq'])) {
+        $seq = $_POST['join']['seq'];
+    }
+
+    $result = $conn->query("SELECT $seq FROM $table1 INNER JOIN $table2 ON $table1.$id1 = $table2.$id2 ORDER BY $order");
 
     $list = array();
     if ($result == TRUE) {

@@ -1,7 +1,28 @@
 <script>
     function table_data() {
 
-        autoTable('.table', './api/checkout_crud.php?crud=select&desc', ['customer'],
+        $.ajax({
+            url: 'http://localhost/evyapaar/api/table.php',
+            type: "POST", async: false, cache: false, dataType: 'json',
+            data: { join: { table1: 'checkout', table2: 'customer', id1: 'customer', id2: 'mobile', order: 'checkout.id DESC', seq: 'checkout.id,customer.name as customer_name,customer as mobile,checkout.*' } }
+        }).done(function (response) {
+            data = response.query.data;
+
+            data.forEach(el => {
+                // console.log(product);
+                el.sgst_amount = '<p class="m-0 text-right">' + el.sgst_amount + '</p>';
+                el.cgst_amount = '<p class="m-0 text-right">' + el.cgst_amount + '</p>';
+                el.sub_total = '<p class="m-0 text-right">' + el.sub_total + '</p>';
+                el.discount = '<p class="m-0 text-right">' + el.discount + ' %</p>';
+                el.net_total = '<p class="m-0 text-right">' + el.net_total + '</p>';
+                el.grand_total = '<p class="m-0 text-right">' + el.grand_total + '</p>';
+                el.status = '<span class="status">' + el.status + '</span>';
+
+            });
+
+        });
+
+        autoTable('.table', data, ['customer', 'products'],
             [
                 '<button class="btn btn-primary btn-sm text-nowrap mr-1" data-invoice-view-id="$@id@"><i class="fa fa-eye"></i> View</button>',
                 '<button class="btn btn-warning btn-sm text-nowrap mr-1" data-invoice-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
@@ -9,9 +30,8 @@
             ], () => { });
 
         $.each($('.status'), function () {
-            if ($(this).text() == '1') {
-                console.log($(this).closest('tr').find('[data-invoice-edit-id],[data-vendor-delete-id]').attr('disabled', 'true'));
-            }
+            if ($(this).text() == '1') $(this).closest('tr').find('[data-invoice-edit-id],[data-vendor-delete-id]').attr('disabled', 'true');
+
             $(this).html(($(this).text() == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>');
         })
 
