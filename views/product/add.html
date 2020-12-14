@@ -35,21 +35,10 @@
     $(document).ready(function () {
 
         $.ajax({
-            type: "GET", url: './api/product_crud.php?crud=select', async: false, cache: false, dataType: 'json'
+            type: "GET", url: './api/table.php?select=gst_slab', cache: false, dataType: 'json'
         }).done(function (response) {
-            array = JSON.parse(response.data);
-            array.forEach(value => {
-                $('#products_list').append(`<option value="${value.name}">`)
-            });
-            console.log(response); // show response from the php script.
-        });
-
-
-        $.ajax({
-            type: "GET", url: './api/gst_slab.php', cache: false, dataType: 'json'
-        }).done(function (response) {
-            array = JSON.parse(response.data);
-            array.forEach(value => {
+            data = response.query.data;
+            data.forEach(value => {
                 $('[name="gst"]').append(`<option value="${value.id}">${value.tax_percent}% GST</option>`)
 
             });

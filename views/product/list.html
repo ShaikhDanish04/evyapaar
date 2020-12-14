@@ -6,7 +6,6 @@
             data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent', order: 'product.id desc' } }
         }).done(function (response) {
             data = response.query.data;
-            console.log(data);
 
             data.forEach(product => {
                 product.hsn = '<p class="m-0 text-center">' + product.hsn + '</p>';
@@ -64,7 +63,8 @@
         table_data();
 
         $('.modal').on('hide.bs.modal', function () {
-            table_data();
+            if (localStorage.screen == 'product/list') table_data();
+
         })
 
         $(document).on('click', '[data-product-edit-id]', function () {

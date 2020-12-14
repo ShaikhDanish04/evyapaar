@@ -59,7 +59,7 @@
         table_data();
 
         $('.modal').on('hide.bs.modal', function () {
-            table_data();
+            if (localStorage.screen == 'vendor/list') table_data();
         })
 
         $(document).on('click', '[data-vendor-edit-id]', function () {
