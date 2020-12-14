@@ -102,7 +102,6 @@ if (isset($_POST['join'])) {
     }
 }
 
-
 if (isset($_GET['update'])) {
     $response->query['query'] = $_REQUEST;
 
@@ -154,5 +153,60 @@ if (isset($_GET['update'])) {
         $response->query['status'] = false;
         $response->query['error'] = $conn->error;
     }
+}
+
+if (isset($_GET['getMax'])) {
+    $column_name = $_GET['getMax'];
+    $table_name = $_GET['from'];
+
+    $row = $conn->query("SELECT * FROM $table_name ORDER BY $column_name DESC LIMIT 1")->fetch_assoc();
+    if ($row[$column_name] == null) $data = 0;
+    else $data = $row[$column_name];
+
+    if ($row == TRUE) {
+        $response->query['data'] = $data;
+        $response->query['status'] = true;
+    } else {
+        $response->query['status'] = false;
+        $response->query['error'] = $conn->error;
+    }
+}
+
+if (isset($_GET['insert'])) {
+    $response->query['query'] = $_REQUEST;
+
+    $table_name = $_GET['insert'];
+    $col = '';
+    $value = '';
+
+    if (isset($_POST['column'])) {
+        $length = count($_POST['column']);
+        $i = 0;
+        foreach ($_POST['column'] as $key => $val) {
+            if ($i == 0) {
+                $col .= ' (';
+                $value .= ' (';
+            }
+            $col .= $key;
+            $i++;
+            if ($i < $length) {
+                $col .= ',';
+                $value .= '\'' . $val . '\',';
+            } else {
+                $value .= '\'' . $val . '\')';
+                $col .= ')';
+            }
+        }
+    }
+
+    $response->query['sample'] = "INSERT INTO $table_name $col VALUES $value";
+    // $response->query['sample'] = "INSERT INTO $table_name $col VALUES ('2', '3', '2', '1', '4', '1', '2')";
+
+    // if ($result == TRUE) {
+    //     $response->query['status'] = true;
+    // } else {
+    // $response->query['status'] = false;
+    // $response->query['error'] = $conn->error;
+    // }
 }
 echo json_encode($response);

@@ -35,38 +35,7 @@ if (isset($_GET['crud'])) {
                 $response->queryError = $conn->error;
             }
             break;
-        case "update":
-            $invoice_id = $_POST['invoice_id'];
-            $vendor_id = $_POST['vendor_id'];
-            if (isset($_POST['products'])) $products = json_encode($_POST['products']);
-            else $products = '[]';
-            $datetime = date("Y-m-d H:i:s");
-            $sgst_amount = $_POST['sgst_amount'];
-            $cgst_amount = $_POST['cgst_amount'];
-            $sub_total = $_POST['sub_total'];
-            $discount = $_POST['discount'];
-            $net_total = $_POST['net_total'];
-            $grand_total = $_POST['grand_total'];
-
-            $result = $conn->query("UPDATE `purchase` SET 
-                                `vendor_id` = '$vendor_id',
-                                `products` = '$products',
-                                `sgst_amount`='$sgst_amount',
-                                `cgst_amount`='$cgst_amount',
-                                `sub_total`='$sub_total',
-                                `discount`='$discount',
-                                `net_total`='$net_total',
-                                `grand_total`='$grand_total',
-                                `datetime`='$datetime' 
-                            WHERE `id` = '$invoice_id'");
-
-            if ($result == TRUE) {
-                $response->status = true;
-            } else {
-                $response->status = false;
-                $response->queryError = $conn->error;
-            }
-            break;
+      
         case "lock":
             $invoice_id = $_POST['invoice_id'];
             $vendor_id = $_POST['vendor_id'];
