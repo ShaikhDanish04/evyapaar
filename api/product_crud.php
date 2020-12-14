@@ -25,30 +25,6 @@ if (isset($_GET['crud'])) {
             }
             break;
 
-        case "update":
-            $id = $_POST['product_id'];
-            $name = $_POST['name'];
-            $hsn = $_POST['hsn'];
-            $selling_cost = $_POST['selling_cost'];
-            $gst = $_POST['gst'];
-            $barcode = $_POST['barcode'];
-
-            $result = $conn->query("UPDATE `product` SET `name`='$name',
-                                              `hsn`='$hsn',
-                                              `selling_cost`='$selling_cost',
-                                              `gst_id`='$gst',
-                                              `barcode`='$barcode' 
-                                              WHERE id='$id'");
-
-            if ($result == TRUE) {
-                $response->queryStatus = true;
-            } else {
-                $response->queryStatus = false;
-                $response->queryError = $conn->error;
-            }
-
-            break;
-
         case "delete":
             // print_r($_POST);
             $id = $_GET['id'];

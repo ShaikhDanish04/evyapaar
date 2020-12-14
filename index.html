@@ -362,30 +362,6 @@
                         $('#input_modal').modal('show');
                     })
             }
-
-            $(document).on('submit', "#input_modal form", function (e) {
-                e.preventDefault(); // avoid to execute the actual submit of the form.
-
-                $(this).find('button').attr('disabled', 'true');
-                var form = $(this);
-                var action = $(this).attr('action');
-
-                $.ajax({
-                    type: "POST", url: action, data: form.serialize(), dataType: 'json'
-                }).done(function (response) {
-                    if (response.queryStatus) {
-                        $('#input_modal .modal-body').prepend(b_alert('success', 'Task Successfully'));
-                        form.find('button').removeAttr('disabled');
-                        $('#input_modal').modal('hide');
-                        // table_data();
-                    } else {
-                        $('#input_modal .modal-body').prepend(b_alert('danger', 'Operation Error !!! Task Failed, Try Again'));
-                    }
-                }).fail(function () {
-                    $('#input_modal .modal-body').prepend(b_alert('danger', 'Connection Error !!! Try Again'));
-                });
-            });
-
         </script>
         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">

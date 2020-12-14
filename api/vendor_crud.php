@@ -25,26 +25,6 @@ if (isset($_GET['crud'])) {
             }
             break;
 
-        case "update":
-            $id = $_POST['vendor_id'];
-            $name = $_POST['name'];
-            $contact = $_POST['contact'];
-            $email = $_POST['email'];
-            $state = $_POST['state'];
-            $address = $_POST['address'];
-            $gst_number = $_POST['gst_number'];
-
-            $result = $conn->query("UPDATE `vendor` SET `name`='$name',`contact`='$contact',`email`='$email',`state`='$state',`address`='$address',`gst_number`='$gst_number' WHERE id='$id'");
-
-            if ($result == TRUE) {
-                $response->queryStatus = true;
-            } else {
-                $response->queryStatus = false;
-                $response->queryError = $conn->error;
-            }
-
-            break;
-
         case "delete":
             // print_r($_POST);
             $id = $_GET['id'];

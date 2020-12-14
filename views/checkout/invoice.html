@@ -195,8 +195,7 @@
             $.ajax({
                 url: './api/table.php',
                 type: "POST", async: false, cache: false, dataType: 'json',
-                data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent', where: { 'product.id': product_id } } }
-                // type: "POST", url: './api/table.php?select=product', data: { where: { id: product_id } }, async: false, cache: false, dataType: 'json'
+                data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent' }, where: { 'product.id': product_id } }
             }).done(function (response) {
                 // data = JSON.parse(response.data);
                 data = response.query.data[0];
