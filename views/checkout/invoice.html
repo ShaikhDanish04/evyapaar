@@ -404,13 +404,26 @@
                 }
             } else {
                 if (form.serializeObject().products != null) {
+                    data = {
+                        column: {
+                            sub_total: $('[name="sub_total"]').val(),
+                            discount: $('[name="discount"]').val(),
+                            customer: JSON.stringify(form.serializeObject().customer),
+                            products: JSON.stringify(form.serializeObject().products),
+                            net_total: $('[name="net_total"]').val(),
+                            sgst_amount: $('[name="sgst_amount"]').val(),
+                            cgst_amount: $('[name="cgst_amount"]').val(),
+                            grand_total: $('[name="grand_total"]').val(),
+                            due_amount: $('[name="due_amount"]').val(),
+                            datetime: getDatetime(),
+                        },
+                        where: { id: $('[name="invoice_id"]').val() }
+                    }
+                    // console.log(data);
                     $.ajax({
-                        type: "POST",
-                        url: './api/checkout_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
-                        data: form.serialize(), // serializes the form's elements.
-                        dataType: 'json',
+                        type: "POST", url: './api/table.php?update=checkout', data: data, dataType: 'json',
                     }).done(function (response) {
-                        if (response.status) {
+                        if (response.query.status) {
                             $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
                         } else {
                             $('.alert-holder').html(b_alert('danger', 'Error'));
