@@ -84,15 +84,17 @@
 
 
         $.ajax({
-            type: "GET", url: './api/vendor_crud.php?crud=select&id=' + id, cache: false, dataType: 'json'
+            type: "POST", url: './api/table.php?select=vendor', data: { where: { id: id } }, cache: false, dataType: 'json'
         }).done(function (response) {
 
-            vendor = JSON.parse(response.data);
+            // vendor = JSON.parse(response.data);
+            vendor = response.query.data[0];
             $('[name="vendor_id"]').val(vendor.id);
             $('[name="name"]').val(vendor.name);
             $('[name="contact"]').val(vendor.contact);
             $('[name="email"]').val(vendor.email);
             $('[name="address"]').val(vendor.address);
+            $('[name="gst_number"]').val(vendor.gst_number);
             // console.log(vendor); // show response from the php script.
         });
 

@@ -40,32 +40,33 @@
     id = $('[data-edit-id]').attr('data-edit-id');
     $(document).ready(function () {
 
-        $.ajax({
-            type: "GET", url: './api/product_crud.php?crud=select', cache: false, async: false, dataType: 'json'
-        }).done(function (response) {
-            products = JSON.parse(response.data);
-            products.forEach(value => {
-                $('#products_list').append(`<option value="${value.name}">`)
-            });
-            // console.log(response); // show response from the php script.
-        });
+        // $.ajax({
+        //     type: "GET", url: './api/product_crud.php?crud=select', cache: false, async: false, dataType: 'json'
+        // }).done(function (response) {
+        //     products = JSON.parse(response.data);
+        //     products.forEach(value => {
+        //         $('#products_list').append(`<option value="${value.name}">`)
+        //     });
+        //     // console.log(response); // show response from the php script.
+        // });
 
         $.ajax({
-            type: "GET", url: './api/gst_slab.php', cache: false, async: false, dataType: 'json'
+            type: "GET", url: './api/table.php?select=gst_slab', cache: false, async: false, dataType: 'json'
         }).done(function (response) {
-            JSON.parse(response.data).forEach(value => {
+            console.log(response)
+            response.query.data.forEach(value => {
                 $('[name="gst"]').append(`<option value="${value.id}">${value.tax_percent}% GST</option>`)
 
             });
             console.log(response); // show response from the php script.
         });
 
-
         $.ajax({
-            type: "GET", url: './api/product_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+            type: "POST", url: './api/table.php?select=product', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
         }).done(function (response) {
 
-            product = JSON.parse(response.data);
+            // product = JSON.parse(response.data);
+            product = response.query.data[0];
             $('[name="product_id"]').val(product.id);
             $('[name="name"]').val(product.name);
             $('[name="hsn"]').val(product.hsn);
@@ -74,6 +75,7 @@
             $('[name="barcode"]').val(product.barcode);
             console.log(product); // show response from the php script.
         });
+
 
     })
 

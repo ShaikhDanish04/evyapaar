@@ -3,9 +3,10 @@
         $.ajax({
             url: 'http://localhost/evyapaar/api/table.php',
             type: "POST", async: false, cache: false, dataType: 'json',
-            data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', order: 'product.id desc' } }
+            data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent', order: 'product.id desc' } }
         }).done(function (response) {
             data = response.query.data;
+            console.log(data);
 
             data.forEach(product => {
                 product.hsn = '<p class="m-0 text-center">' + product.hsn + '</p>';
