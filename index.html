@@ -229,7 +229,7 @@
         $.ajax({
             type: "GET", url: url, async: false, cache: false, dataType: 'json',
         }).done(function (response) {
-            JSON.parse(response.data).forEach(value => {
+            response.query.data.forEach(value => {
                 options += `<option value="${value.id}">${value.name}</option>`;
             });
             // $(select).html(options)

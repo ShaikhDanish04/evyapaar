@@ -67,9 +67,10 @@
                     if (this.value.length == 10) {
                         input.attr('disabled', 'true')
                         $.ajax({
-                            type: "GET", url: './api/customer_crud.php?crud=select&id=' + input.val(), async: false, cache: false, dataType: 'json'
+                            type: "GET", url: './api/table.php?select=customer', data: { where: { id: input.val() } }, async: false, cache: false, dataType: 'json'
                         }).done(function (response) {
-                            data = JSON.parse(response.data);
+                            // data = JSON.parse(response.data);
+                            data = response.query.data[0];
                             console.log(data);
 
                             if (data != null) {
@@ -173,7 +174,7 @@
 
 <script> // Initial
     $(document).ready(function () {
-        $('.product_id_in').html(options('./api/product_crud.php?crud=select'));
+        $('.product_id_in').html(options('./api/table.php?select=product'));
 
     })
 </script>
@@ -192,9 +193,13 @@
             }
             $('#product_table tbody').find('.no-data').remove()
             $.ajax({
-                type: "GET", url: './api/product_crud.php?crud=select&id=' + product_id, async: false, cache: false, dataType: 'json'
+                url: './api/table.php',
+                type: "POST", async: false, cache: false, dataType: 'json',
+                data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent', where: { 'product.id': product_id } } }
+                // type: "POST", url: './api/table.php?select=product', data: { where: { id: product_id } }, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
-                data = JSON.parse(response.data);
+                // data = JSON.parse(response.data);
+                data = response.query.data[0];
                 console.log(data);
 
                 $('#product_table tbody').append(`
@@ -238,32 +243,39 @@
                 id = $('[name="invoice_id"]').val();
 
                 $.ajax({
-                    type: "GET", url: './api/checkout_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                    type: "POST", url: './api/table.php?select=checkout', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
-                    data = JSON.parse(response.data);
+                    // data = JSON.parse(response.data);
+                    data = response.query.data[0];
                     console.log(data);
 
-                    // invoice = response.data;
-                    customer = JSON.parse(data.customer);
-                    if (customer != null) {
-                        $('[name="customer[mobile]"]').attr('readonly', 'true');
-                        $('[name="customer[fullname]"]').attr('readonly', 'true');
-                        $('[name="customer[email]"]').attr('readonly', 'true');
-                        $('[name="customer[address]"]').attr('readonly', 'true');
+                    if (data != null) {
+                        $.ajax({
+                            type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: data.customer } }, async: false, cache: false, dataType: 'json'
+                        }).done(function (response) {
+                            // invoice = response.data;
+                            // customer = JSON.parse(data.customer);
+                            customer = response.query.data[0];
+                            if (customer != null) {
+                                $('[name="customer[mobile]"]').attr('readonly', 'true');
+                                $('[name="customer[fullname]"]').attr('readonly', 'true');
+                                $('[name="customer[email]"]').attr('readonly', 'true');
+                                $('[name="customer[address]"]').attr('readonly', 'true');
 
-                        $('[name="customer[fullname]"]').val(customer.name);
-                        $('[name="customer[email]"]').val(customer.email);
-                        $('[name="customer[mobile]"]').val(customer.mobile);
-                        $('[name="customer[address]"]').val(customer.address);
-                    }
+                                $('[name="customer[fullname]"]').val(customer.name);
+                                $('[name="customer[email]"]').val(customer.email);
+                                $('[name="customer[mobile]"]').val(customer.mobile);
+                                $('[name="customer[address]"]').val(customer.address);
+                            }
+                        })
 
 
-                    if (data.products != null) {
-                        $('#product_table tbody').html('');
+                        if (data.products != null) {
+                            $('#product_table tbody').html('');
 
-                        JSON.parse(data.products).forEach(data => {
-                            i = $('#product_table tbody tr').length;
-                            $('#product_table tbody').append(`
+                            data.products.forEach(data => {
+                                i = $('#product_table tbody tr').length;
+                                $('#product_table tbody').append(`
                                 <tr data-row-index="${i}">
                                     <td class="text-nowrap">
                                         <input type="hidden" class="form-control" name="products[${i}][id]" value="${data.id}" readonly>
@@ -281,26 +293,28 @@
                                     <td><button class="btn btn-sm btn-danger rounded-circle delete-row" type="button"><i class="fa fa-times"></i></button></td>
                                 </tr>
                             `);
-                        });
+                            });
+                        }
+
+
+                        sub_total = 0;
+                        sgst = 0;
+                        cgst = 0;
+
+                        $.each($('table .total_price'), function () { sub_total = sub_total + Number($(this).val()) })
+                        $.each($('table .total_gst'), function () { sgst = sgst + (Number($(this).val()) / 2) })
+                        $.each($('table .total_gst'), function () { cgst = cgst + (Number($(this).val()) / 2) })
+
+                        $('[name="discount"]').val(data.discount);
+                        $('[name="sub_total"]').val(sub_total.toFixed(2));
+                        $('[name="sgst_amount"]').val(sgst.toFixed(2));
+                        $('[name="cgst_amount"]').val(cgst.toFixed(2));
+                        $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
+                        $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
+
+                        $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
                     }
 
-
-                    sub_total = 0;
-                    sgst = 0;
-                    cgst = 0;
-
-                    $.each($('table .total_price'), function () { sub_total = sub_total + Number($(this).val()) })
-                    $.each($('table .total_gst'), function () { sgst = sgst + (Number($(this).val()) / 2) })
-                    $.each($('table .total_gst'), function () { cgst = cgst + (Number($(this).val()) / 2) })
-
-                    $('[name="discount"]').val(data.discount);
-                    $('[name="sub_total"]').val(sub_total.toFixed(2));
-                    $('[name="sgst_amount"]').val(sgst.toFixed(2));
-                    $('[name="cgst_amount"]').val(cgst.toFixed(2));
-                    $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
-                    $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
-
-                    $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
                 });
             }
         }

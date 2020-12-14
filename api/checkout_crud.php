@@ -6,57 +6,7 @@ require('connect.php');
 
 if (isset($_GET['crud'])) {
     switch ($_GET['crud']) {
-        case "select":
-            if (isset($_GET['id'])) {
-                $id = $_GET['id'];
-                $checkout = $conn->query("SELECT * FROM `checkout` WHERE id = '$id'")->fetch_assoc();
-                $customer_id = $checkout['customer'];
-                $customer = $conn->query("SELECT * FROM `customer` WHERE mobile = '$customer_id'")->fetch_assoc();
-                $checkout['date'] = pdate($checkout['datetime']);
-                $checkout['time'] = ptime($checkout['datetime']);
-
-                $checkout['customer'] = json_encode($customer);
-                $checkout['products'] = $checkout['products'];
-                $response->data = json_encode($checkout);
-            } else {
-                $result = $conn->query("SELECT checkout.id,customer.name as customer_name,customer as mobile,checkout.* FROM checkout INNER JOIN customer ON checkout.customer = customer.mobile");
-                if (isset($_GET['desc'])) {
-                    $result = $conn->query("SELECT checkout.id,customer.name as customer_name,customer as mobile,checkout.* FROM checkout INNER JOIN customer ON checkout.customer = customer.mobile ORDER BY checkout.id DESC");
-                }
-                $list = array();
-
-                if ($result == TRUE) {
-                    while ($row = $result->fetch_assoc()) {
-
-                        // print_r($row);
-                        $customer = json_decode($row['customer'], true);
-                        $row['customer'] = $customer['fullname'];
-
-                        $products = json_decode($row['products'], true);
-                        $count = count($products);
-
-                        $row['products'] = '<p class="m-0 text-center"><span class="badge badge-primary px-3 py-2">' . $count . '</span></p>';
-                        if ($count == 0)
-                            $row['products'] = '<p class="m-0 text-center"><span class="badge badge-dark px-3 py-2">' . $count . '</span></p>';
-                        $row['sgst_amount'] = '<p class="m-0 text-right">' . $row['sgst_amount'] . '</p>';
-                        $row['cgst_amount'] = '<p class="m-0 text-right">' . $row['cgst_amount'] . '</p>';
-                        $row['sub_total'] = '<p class="m-0 text-right">' . $row['sub_total'] . '</p>';
-                        $row['discount'] = '<p class="m-0 text-right">' . $row['discount'] . ' %</p>';
-                        $row['net_total'] = '<p class="m-0 text-right">' . $row['net_total'] . '</p>';
-                        $row['grand_total'] = '<p class="m-0 text-right">' . $row['grand_total'] . '</p>';
-
-                        $row['datetime'] = datetime($row['datetime']);
-                        // $row['status'] = ($row['status'] == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>';
-                        $row['status'] = '<span class="status">' . $row['status'] . '</span>';
-
-                        array_push($list, $row);
-                    }
-                    $response->data = json_encode($list);
-                } else {
-                    $response->queryError = $conn->error;
-                }
-            }
-            break;
+       
         case "insert":
             $invoice_id = $_POST['invoice_id'];
             $customer = json_encode($_POST['customer']);

@@ -10,6 +10,12 @@
 
             data.forEach(el => {
                 // console.log(product);
+                const datetime = new Date(Date.parse(el.datetime));
+                let [month, day, year] = datetime.toLocaleDateString("en-US").split("/");
+                let [hour, minute, second] = datetime.toLocaleTimeString("en-US").split(/:| /);
+
+                el.datetime = '<p class="m-0 text-right">' + day + ' / ' + month + ' / ' + year + ' - ' + hour + ':' + minute + ':' + second + '</p>';
+
                 el.sgst_amount = '<p class="m-0 text-right">' + el.sgst_amount + '</p>';
                 el.cgst_amount = '<p class="m-0 text-right">' + el.cgst_amount + '</p>';
                 el.sub_total = '<p class="m-0 text-right">' + el.sub_total + '</p>';

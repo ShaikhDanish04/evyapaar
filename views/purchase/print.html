@@ -6,24 +6,34 @@
 
             id = $('[name="invoice_id"]').val();
             $.ajax({
-                type: "GET", url: './api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                type: "POST", url: './api/table.php?select=purchase', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
 
-                data = JSON.parse(response.data);
+                data = response.query.data[0];
                 console.log(data);
 
-                vendor = JSON.parse(data.vendor);
-                console.log(vendor);
-
                 $('.invoice_number').text(data.id);
-                $('#vendor_name').text(vendor.name);
-                $('#vendor_address').text(vendor.address);
-                $('#vendor_contact').text(vendor.contact);
-                $('#vendor_state').text(vendor.state);
-                $('#vendor_email').text(vendor.email);
-                $('#gst_number').text(vendor.gst_number);
-                $('.IN_date').text(data.date);
-                $('.IN_time').text(data.time);
+                id = data.vendor_id;
+                $.ajax({
+                    type: "POST", url: './api/table.php?select=vendor', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
+                }).done(function (response) {
+
+                    vendor = response.query.data[0];
+                    console.log(vendor);
+                    $('#vendor_name').text(vendor.name);
+                    $('#vendor_address').text(vendor.address);
+                    $('#vendor_contact').text(vendor.contact);
+                    $('#vendor_state').text(vendor.state);
+                    $('#vendor_email').text(vendor.email);
+                    $('#gst_number').text(vendor.gst_number);
+                })
+
+                const datetime = new Date(Date.parse(data.datetime));
+                let [month, day, year] = datetime.toLocaleDateString("en-US").split("/");
+                let [hour, minute, second] = datetime.toLocaleTimeString("en-US").split(/:| /)
+
+                $('.IN_date').text(day + ' / ' + month + ' / ' + year);
+                $('.IN_time').text(hour + ' : ' + minute + ' : ' + second);
 
                 $('.sub_total').text(Number(data.sub_total).toFixed(2));
                 $('.discount').text(Number(data.discount).toFixed(2));
@@ -47,7 +57,8 @@
                     { tax: 28, tax_amount: 0, gst_amount: 0 }
                 ];
 
-                JSON.parse(data.products).forEach(product => {
+
+                data.products.forEach(product => {
                     console.log(product);
                     gst_slab.forEach(g => {
                         if (Number(product.tax_percent) == Number(g.tax)) {

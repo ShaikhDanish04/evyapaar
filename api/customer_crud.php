@@ -6,30 +6,7 @@ require('connect.php');
 
 if (isset($_GET['crud'])) {
     switch ($_GET['crud']) {
-        case "select":
-            if (isset($_GET['id'])) {
-                $id = $_GET['id'];
-                $result = $conn->query("SELECT * FROM customer WHERE mobile = '$id'")->fetch_assoc();
-                $response->data = json_encode($result);
-            } else {
-                $result = $conn->query("SELECT * FROM customer");
-                $list = array();
-
-                if ($result == TRUE) {
-                    $i = 0;
-                    $array = array();
-                    while ($row = $result->fetch_assoc()) {
-                        $i++;
-                        $array['sr'] = $i;
-                        array_push($list, array_merge($array, $row));
-                    }
-                    $response->data = json_encode($list);
-                } else {
-                    $response->queryError = $conn->error;
-                }
-            }
-            break;
-
+     
         case "insert":
             $name = $_POST['name'];
             $contact = $_POST['contact'];

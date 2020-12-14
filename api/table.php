@@ -60,14 +60,29 @@ if (isset($_POST['join'])) {
     $table2 = $_POST['join']['table2'];
     $id1 = $_POST['join']['id1'];
     $id2 = $_POST['join']['id2'];
-    $order = $_POST['join']['order'];
+    $order = (isset($_POST['join']['order'])) ? ' ORDER BY ' . $_POST['join']['order'] : '';
     $seq = '*';
+
+    $where = '';
 
     if (isset($_POST['join']['seq'])) {
         $seq = $_POST['join']['seq'];
     }
 
-    $result = $conn->query("SELECT $seq FROM $table1 INNER JOIN $table2 ON $table1.$id1 = $table2.$id2 ORDER BY $order");
+    if (isset($_POST['where'])) {
+        $length = count($_POST['where']);
+        $i = 0;
+        foreach ($_POST['where'] as $key => $val) {
+            if ($i == 0) $where .= ' WHERE';
+
+            $where .= ' ' . $key . '=\'' . $val . '\' ';
+            $i++;
+            if ($i < $length) $where .= ' AND';
+        }
+    }
+
+    $result = $conn->query("SELECT $seq FROM $table1 INNER JOIN $table2 ON $table1.$id1 = $table2.$id2 $where $order ");
+    // $result = $conn->query("SELECT $seq FROM $table1 INNER JOIN $table2 ON $table1.$id1 = $table2.$id2 WHERE $where_in = '2' $order ");
 
     $list = array();
     if ($result == TRUE) {

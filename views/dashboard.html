@@ -51,22 +51,12 @@
         }
     </style>
 
-    <script>
-
-
-        $.ajax({
-            url: 'http://localhost/evyapaar/api/table.php?select=product',
-            type: "POST", async: false, cache: false, dataType: 'json', data: { limit: 3 }
-        }).done(function (response) {
-            console.log(response.query.data);
-        });
-    </script>
     <div class="row mb-3">
         <div class="col-6 col-lg-3 mb-3">
             <div class="card pan-block" style="background:linear-gradient(45deg,#ff8772,#ff6e97)">
                 <div class="card-body">
                     <p class="m-0">Products Available</p>
-                    <h3 class="m-0"><span data-count="./api/product_crud.php?crud=select">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/table.php?select=product">0</span></h3>
                 </div>
                 <a href="#" onclick="screen_loader('product/list')" class="card-foot btn">View More</a>
             </div>
@@ -75,16 +65,16 @@
             <div class="card pan-block" style="background:linear-gradient(45deg,#32c9c1,#18a9cb)">
                 <div class="card-body">
                     <p class="m-0">Purchased Invoice</p>
-                    <h3 class="m-0"><span data-count="./api/purchase_crud.php?crud=select">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/table.php?select=purchase">0</span></h3>
                 </div>
-                <a href="#" onclick="screen_loader('purchaselist')" class="card-foot btn">View More</a>
+                <a href="#" onclick="screen_loader('purchase/list')" class="card-foot btn">View More</a>
             </div>
         </div>
         <div class="col-6 col-lg-3 mb-3">
             <div class="card pan-block" style="background:linear-gradient(45deg,#58a0df,#8084eb)">
                 <div class="card-body">
                     <p class="m-0">Available Vendors</p>
-                    <h3 class="m-0"><span data-count="./api/vendor_crud.php?crud=select">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/table.php?select=vendor">0</span></h3>
                 </div>
                 <a href="#" onclick="screen_loader('vendor/list')" class="card-foot btn">View More</a>
             </div>
@@ -93,7 +83,7 @@
             <div class="card pan-block" style="background:linear-gradient(45deg,#e879ed,#8b68e4)">
                 <div class="card-body">
                     <p class="m-0">Number of Customer </p>
-                    <h3 class="m-0"><span data-count="./api/customer_crud.php?crud=select">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/table.php?select=customer">0</span></h3>
                 </div>
                 <a href="#" onclick="screen_loader('customer/list')" class="card-foot btn">View More</a>
             </div>
@@ -106,18 +96,19 @@
                 for (i = 0; i < $('[data-count]').length; i++) {
                     $.ajax({ type: "GET", url: $('[data-count]:eq(' + i + ')').attr('data-count'), async: false, cache: false, dataType: 'json' })
                         .done(function (response) {
-                            // console.log(JSON.parse(response.data).length);
-                            $('[data-count]:eq(' + i + ')').html(JSON.parse(response.data).length);
+
+                            // console.log(response.query.data.length);
+                            $('[data-count]:eq(' + i + ')').html(response.query.data.length);
                         });
                 }
                 for (i = 0; i < $('[data-grand-total]').length; i++) {
-                    // var total = 0;
+                    var total = 0;
 
                     $.ajax({ type: "GET", url: $('[data-grand-total]:eq(' + i + ')').attr('data-grand-total'), async: false, cache: false, dataType: 'json' })
                         .done(function (response) {
                             total = 0;
 
-                            JSON.parse(response.data).forEach(row => {
+                            response.query.data.forEach(row => {
                                 // row.grand_total;
                                 var grand_total = document.createElement("div");
                                 grand_total.innerHTML = row.grand_total;
@@ -160,7 +151,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="font-weight-bold text-primary text-uppercase mb-1">Purchase <span class="text-xs">(Total Earnings) </span></div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span class="purchase_total" data-grand-total="./api/purchase_crud.php?crud=select"></span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span class="purchase_total" data-grand-total="./api/table.php?select=purchase"></span></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -175,7 +166,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="font-weight-bold text-success text-uppercase mb-1">Checkout <span class="text-xs">(Total Earnings) </span></div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span class="checkout_total" data-grand-total="./api/checkout_crud.php?crud=select"></span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span class="checkout_total" data-grand-total="./api/table.php?select=checkout"></span></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
