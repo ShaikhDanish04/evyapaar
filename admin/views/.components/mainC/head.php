@@ -5,6 +5,7 @@
 <meta name="author" content="">
 
 <title>eVyapaar - Admin Panel</title>
+<link rel="icon" href="views/.assets/img/evyapaar.png" type="image/png" sizes="16x16">
 
 <!-- Custom fonts for this template-->
 <link href="<?php echo $addr_space ?>views/.assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
