@@ -45,7 +45,7 @@
         e.preventDefault();
 
         $.ajax({
-            method: 'POST', url: './api/login.php', async: false, cache: false, dataType: 'json',
+            method: 'POST', url: 'api/login.php', async: false, cache: false, dataType: 'json',
             data: {
                 username: $('[name="username"]').val(),
                 password: $('[name="password"]').val()

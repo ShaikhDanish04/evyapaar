@@ -147,21 +147,21 @@
 
 <script> //vendor details
     $(document).ready(function () {
-        $('[name="vendor_id"]').html(options('./api/vendor_crud.php?crud=select'))
-        $('.product_id_in').html(options('./api/product_crud.php?crud=select'))
+        $('[name="vendor_id"]').html(options('api/vendor_crud.php?crud=select'))
+        $('.product_id_in').html(options('api/product_crud.php?crud=select'))
     })
     $('.modal').on('hide.bs.modal', function () {
-        $('[name="vendor_id"]').html(options('./api/vendor_crud.php?crud=select'))
-        $('.product_id_in').html(options('./api/product_crud.php?crud=select'))
+        $('[name="vendor_id"]').html(options('api/vendor_crud.php?crud=select'))
+        $('.product_id_in').html(options('api/product_crud.php?crud=select'))
     })
 
     // $(document).on('mousedown', '[name="vendor_id"]', function () {
-    //     if ($('[name="vendor_id"]').html() != options('./api/vendor_crud.php?crud=select')) $('[name="vendor_id"]').html(options('./api/vendor_crud.php?crud=select'))
+    //     if ($('[name="vendor_id"]').html() != options('api/vendor_crud.php?crud=select')) $('[name="vendor_id"]').html(options('api/vendor_crud.php?crud=select'))
     // })
     $('[name="vendor_id"]').change(function () {
         id = $(this).val();
         $.ajax({
-            type: "GET", url: './api/vendor_crud.php?crud=select&id=' + id, cache: false, dataType: 'json'
+            type: "GET", url: 'api/vendor_crud.php?crud=select&id=' + id, cache: false, dataType: 'json'
         }).done(function (response) {
             vendor = JSON.parse(response.data);
             $('.vendor_name_load').text(vendor.name);
@@ -174,7 +174,7 @@
 
 <script> //product table update
     // $(document).on('mousedown', '.product_id_in', function () {
-    //     if ($('.product_id_in').html() != options('./api/product_crud.php?crud=select')) $('.product_id_in').html(options('./api/product_crud.php?crud=select'))
+    //     if ($('.product_id_in').html() != options('api/product_crud.php?crud=select')) $('.product_id_in').html(options('api/product_crud.php?crud=select'))
     // })
 
     $('.product_id_in').change(function () {
@@ -187,7 +187,7 @@
             $('#product_table tbody').find('.no-data').remove();
 
             $.ajax({
-                type: "GET", url: './api/product_crud.php?crud=select&id=' + product_id, async: false, cache: false, dataType: 'json'
+                type: "GET", url: 'api/product_crud.php?crud=select&id=' + product_id, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 data = JSON.parse(response.data);
 
@@ -231,7 +231,7 @@
             if ($('[name="invoice_id"]') != 'new') {
                 id = $('[name="invoice_id"]').val();
                 $.ajax({
-                    type: "GET", url: './api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                    type: "GET", url: 'api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
 
                     console.log(response);
@@ -357,7 +357,7 @@
             if (form.serializeObject().products != null) {
                 if ($('[name="invoice_id"]').val() == 'new') {
                     $.ajax({
-                        type: "POST", url: './api/purchase_crud.php?crud=insert', data: form.serialize(), dataType: 'json',
+                        type: "POST", url: 'api/purchase_crud.php?crud=insert', data: form.serialize(), dataType: 'json',
                     }).done(function (response) {
                         if (response.status) {
                             localStorage.removeItem('invoice_id');
@@ -372,7 +372,7 @@
                     });
                 } else {
                     $.ajax({
-                        type: "POST", url: './api/purchase_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(), data: form.serialize(), dataType: 'json',
+                        type: "POST", url: 'api/purchase_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(), data: form.serialize(), dataType: 'json',
                     }).done(function (response) {
                         if (response.status) {
                             $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
@@ -401,7 +401,7 @@
                     alert('Invoice Locked');
                     $.ajax({
                         type: "POST",
-                        url: './api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
+                        url: 'api/purchase_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
                         data: form.serialize(), // serializes the form's elements.
                         dataType: 'json',
                     }).done(function (response) {

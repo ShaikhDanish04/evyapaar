@@ -1,4 +1,4 @@
-<form id="product_add_form" action="./api/product_crud.php?crud=insert" class="p-3" method="post">
+<form id="product_add_form" action="api/product_crud.php?crud=insert" class="p-3" method="post">
     <div class="form-group">
         <label for="">Product Name</label>
         <input type="text" list="products_list" name="name" class="form-control" required>
@@ -30,7 +30,7 @@
     $(document).ready(function () {
 
         $.ajax({
-            type: "GET", url: './api/product_crud.php?crud=select', async: false, cache: false, dataType: 'json'
+            type: "GET", url: 'api/product_crud.php?crud=select', async: false, cache: false, dataType: 'json'
         }).done(function (response) {
             array = JSON.parse(response.data);
             array.forEach(value => {
@@ -41,7 +41,7 @@
 
 
         $.ajax({
-            type: "GET", url: './api/gst_slab.php', cache: false, dataType: 'json'
+            type: "GET", url: 'api/gst_slab.php', cache: false, dataType: 'json'
         }).done(function (response) {
             array = JSON.parse(response.data);
             array.forEach(value => {

@@ -1,4 +1,4 @@
-<form id="vendor_edit_form" action="./api/vendor_crud.php?crud=update" class="p-3" method="post">
+<form id="vendor_edit_form" action="api/vendor_crud.php?crud=update" class="p-3" method="post">
     <div class="form-group">
         <label for="">Vendor Id</label>
         <input type="text" name="vendor_id" class="form-control" required readonly>
@@ -84,7 +84,7 @@
 
 
         $.ajax({
-            type: "GET", url: './api/vendor_crud.php?crud=select&id=' + id, cache: false, dataType: 'json'
+            type: "GET", url: 'api/vendor_crud.php?crud=select&id=' + id, cache: false, dataType: 'json'
         }).done(function (response) {
 
             vendor = JSON.parse(response.data);

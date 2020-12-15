@@ -1,4 +1,4 @@
-<form id="product_edit_form" action="./api/product_crud.php?crud=update" class="p-3" method="post">
+<form id="product_edit_form" action="api/product_crud.php?crud=update" class="p-3" method="post">
     <div class="form-group">
         <label for="">Product Id</label>
         <input type="text" name="product_id" class="form-control" readonly required>
@@ -41,7 +41,7 @@
     $(document).ready(function () {
 
         $.ajax({
-            type: "GET", url: './api/product_crud.php?crud=select', cache: false, async: false, dataType: 'json'
+            type: "GET", url: 'api/product_crud.php?crud=select', cache: false, async: false, dataType: 'json'
         }).done(function (response) {
             products = JSON.parse(response.data);
             products.forEach(value => {
@@ -51,7 +51,7 @@
         });
 
         $.ajax({
-            type: "GET", url: './api/gst_slab.php', cache: false, async: false, dataType: 'json'
+            type: "GET", url: 'api/gst_slab.php', cache: false, async: false, dataType: 'json'
         }).done(function (response) {
             JSON.parse(response.data).forEach(value => {
                 $('[name="gst"]').append(`<option value="${value.id}">${value.tax_percent}% GST</option>`)
@@ -62,7 +62,7 @@
 
 
         $.ajax({
-            type: "GET", url: './api/product_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+            type: "GET", url: 'api/product_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
         }).done(function (response) {
 
             product = JSON.parse(response.data);
