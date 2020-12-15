@@ -83,7 +83,7 @@
 
 
         $.ajax({
-            type: "POST", url: './api/table.php?getMax=id&from=vendor', data: data, dataType: 'json'
+            type: "POST", url: './api/table.php?getMax=id&from=vendor', dataType: 'json'
         }).done(function (response) {
             console.log(response);
             data = {
@@ -96,8 +96,7 @@
                     address: $('[name="address"]').val(),
                     gst_number: $('[name="gst_number"]').val(),
 
-                },
-                where: { id: $('[name="vendor_id"').val() }
+                }
             }
             $.ajax({
                 type: "POST", url: './api/table.php?insert=vendor', data: data, dataType: 'json'
@@ -109,6 +108,7 @@
                     $('#input_modal').modal('hide');
                 } else {
                     $('#input_modal .modal-body').prepend(b_alert('danger', 'Operation Error !!! Task Failed, Try Again'));
+                    form.find('button').removeAttr('disabled');
                 }
             }).fail(function () {
                 $('#input_modal .modal-body').prepend(b_alert('danger', 'Connection Error !!! Try Again'));

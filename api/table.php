@@ -6,6 +6,7 @@ header("Content-type: application/json; charset=utf-8");
 require('connect.php');
 
 $domain = $_SESSION['domain'];
+// $domain = 'admin';
 
 foreach ($_GET as $key => $value) {
     $_GET[$key] = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $value);
@@ -15,7 +16,11 @@ if (isset($_GET['select'])) {
 
     $table_name = $_GET['select'];
     // $where = '';
-    $where = ' WHERE domain = \'' . $domain . '\'';
+    if (isset($_GET['common'])) {
+        $where = ' WHERE 1=1 ';
+    } else {
+        $where = ' WHERE domain = \'' . $domain . '\'';
+    }
     $orderby = '';
     $limit = '';
     $response->query['query'] = $_REQUEST;
@@ -114,7 +119,9 @@ if (isset($_GET['update'])) {
 
     $table_name = $_GET['update'];
     $set = '';
-    $where = '';
+    // $where = '';
+    $where = ' WHERE domain = \'' . $domain . '\'';
+
 
     if (isset($_POST['column'])) {
         $length = count($_POST['column']);
@@ -130,7 +137,8 @@ if (isset($_GET['update'])) {
         $length = count($_POST['where']);
         $i = 0;
         foreach ($_POST['where'] as $key => $val) {
-            if ($i == 0) $where .= ' WHERE';
+            // if ($i == 0) $where .= ' WHERE';
+            if ($i == 0) $where .= ' AND';
 
             $where .= ' `' . $key . '`=\'' . $val . '\' ';
             $i++;
@@ -166,7 +174,7 @@ if (isset($_GET['getMax'])) {
     $column_name = $_GET['getMax'];
     $table_name = $_GET['from'];
 
-    $row = $conn->query("SELECT * FROM $table_name ORDER BY $column_name DESC LIMIT 1")->fetch_assoc();
+    $row = $conn->query("SELECT * FROM $table_name WHERE domain = '$domain' ORDER BY $column_name DESC LIMIT 1")->fetch_assoc();
     if ($row[$column_name] == null) $data = 0;
     else $data = $row[$column_name];
 
@@ -191,8 +199,8 @@ if (isset($_GET['insert'])) {
         $i = 0;
         foreach ($_POST['column'] as $key => $val) {
             if ($i == 0) {
-                $col .= ' (';
-                $value .= ' (';
+                $col .= ' (domain,';
+                $value .= ' (\'' . $domain . '\',';
             }
             $col .= $key;
             $i++;

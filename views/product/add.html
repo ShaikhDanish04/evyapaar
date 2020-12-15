@@ -1,9 +1,8 @@
-<form id="product_add_form" action="./api/product_crud.php?crud=insert" class="p-3" method="post">
+<form id="product_add_form" class="p-3" method="post">
     <div class="form-group">
         <label for="">Product Name</label>
-        <input type="text" list="products_list" name="name" class="form-control" required>
+        <input type="text" name="name" class="form-control" required>
         <small class="text-muted">*Mandatory</small>
-        <datalist id="products_list"></datalist>
     </div>
     <div class="form-group">
         <label for="">HSN</label>
@@ -12,7 +11,7 @@
     </div>
     <div class="form-group">
         <label for="">GST %</label>
-        <select class="form-control" name="gst"></select>
+        <select class="form-control" name="gst" required></select>
         <small class="text-muted">*Mandatory</small>
     </div>
     <div class="form-group">
@@ -31,10 +30,51 @@
     </div>
 </form>
 <script>
+    $(document).on('submit', "#product_add_form", function (e) {
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        $(this).find('button').attr('disabled', 'true');
+        var form = $(this);
+
+        // console.log(form.serializeObject());
+
+
+        $.ajax({
+            type: "POST", url: './api/table.php?getMax=id&from=product', dataType: 'json'
+        }).done(function (response) {
+            console.log(response);
+            data = {
+                column: {
+                    id: Number(response.query.data) + 1,
+                    name: $('[name="name"]').val(),
+                    hsn: $('[name="hsn"]').val(),
+                    gst_id: $('[name="gst"]').val(),
+                    selling_cost: $('[name="selling_cost"]').val(),
+                    barcode: $('[name="barcode"]').val(),
+                }
+            }
+            $.ajax({
+                type: "POST", url: './api/table.php?insert=product', data: data, dataType: 'json'
+            }).done(function (response) {
+                console.log(response);
+                if (response.query.status) {
+                    $('#input_modal .modal-body').prepend(b_alert('success', 'Task Successfully'));
+                    form.find('button').removeAttr('disabled');
+                    $('#input_modal').modal('hide');
+                } else {
+                    $('#input_modal .modal-body').prepend(b_alert('danger', 'Operation Error !!! Task Failed, Try Again'));
+                }
+            }).fail(function () {
+                $('#input_modal .modal-body').prepend(b_alert('danger', 'Connection Error !!! Try Again'));
+            });
+        })
+    });
+</script>
+<script>
     // this is the id of the form
     $(document).ready(function () {
         $.ajax({
-            type: "GET", url: './api/table.php?select=gst_slab', cache: false, dataType: 'json'
+            type: "GET", url: './api/table.php?select=gst_slab&common', cache: false, dataType: 'json'
         }).done(function (response) {
             data = response.query.data;
             data.forEach(value => {

@@ -74,7 +74,7 @@
     $(document).ready(function () {
 
         $.ajax({
-            type: "GET", url: './api/table.php?select=gst_slab', cache: false, async: false, dataType: 'json'
+            type: "GET", url: './api/table.php?select=gst_slab&common', cache: false, async: false, dataType: 'json'
         }).done(function (response) {
             console.log(response)
             response.query.data.forEach(value => {
