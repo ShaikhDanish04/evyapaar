@@ -6,7 +6,7 @@
 
             id = $('[name="invoice_id"]').val();
             $.ajax({
-                type: "GET", url: 'api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                type: "GET", url: './api/purchase_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
 
                 data = JSON.parse(response.data);

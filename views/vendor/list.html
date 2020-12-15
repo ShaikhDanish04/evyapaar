@@ -1,7 +1,7 @@
 <script>
     function table_data() {
 
-        autoTable('.table', 'api/vendor_crud.php?crud=select', [], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-vendor-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+        autoTable('.table', './api/vendor_crud.php?crud=select', [], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-vendor-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
             '<button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
         ], () => { });
 
@@ -44,7 +44,7 @@
             if (confirm('Are Your Sure Your Want To Delete The vendor')) {
                 $.ajax({
                     type: "GET",
-                    url: 'api/vendor_crud.php?crud=delete&id=' + $(this).attr('data-vendor-delete-id'),
+                    url: './api/vendor_crud.php?crud=delete&id=' + $(this).attr('data-vendor-delete-id'),
                     dataType: 'json',
                 }).done(function (response) {
                     console.log(response); // show response from the php script.

@@ -67,7 +67,7 @@
                     if (this.value.length == 10) {
                         input.attr('disabled', 'true')
                         $.ajax({
-                            type: "GET", url: 'api/customer_crud.php?crud=select&id=' + input.val(), async: false, cache: false, dataType: 'json'
+                            type: "GET", url: './api/customer_crud.php?crud=select&id=' + input.val(), async: false, cache: false, dataType: 'json'
                         }).done(function (response) {
                             data = JSON.parse(response.data);
                             console.log(data);
@@ -173,7 +173,7 @@
 
 <script> // Initial
     $(document).ready(function () {
-        $('.product_id_in').html(options('api/product_crud.php?crud=select'));
+        $('.product_id_in').html(options('./api/product_crud.php?crud=select'));
 
     })
 </script>
@@ -192,7 +192,7 @@
             }
             $('#product_table tbody').find('.no-data').remove()
             $.ajax({
-                type: "GET", url: 'api/product_crud.php?crud=select&id=' + product_id, async: false, cache: false, dataType: 'json'
+                type: "GET", url: './api/product_crud.php?crud=select&id=' + product_id, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 data = JSON.parse(response.data);
                 console.log(data);
@@ -238,7 +238,7 @@
                 id = $('[name="invoice_id"]').val();
 
                 $.ajax({
-                    type: "GET", url: 'api/checkout_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                    type: "GET", url: './api/checkout_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
                     data = JSON.parse(response.data);
                     console.log(data);
@@ -373,7 +373,7 @@
                 if (form.serializeObject().products != null) {
                     $.ajax({
                         type: "POST",
-                        url: 'api/checkout_crud.php?crud=insert',
+                        url: './api/checkout_crud.php?crud=insert',
                         data: form.serialize(), // serializes the form's elements.
                         dataType: 'json',
                     }).done(function (response) {
@@ -393,7 +393,7 @@
                 if (form.serializeObject().products != null) {
                     $.ajax({
                         type: "POST",
-                        url: 'api/checkout_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
+                        url: './api/checkout_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
                         data: form.serialize(), // serializes the form's elements.
                         dataType: 'json',
                     }).done(function (response) {
@@ -421,7 +421,7 @@
                     alert('Invoice Locked');
                     $.ajax({
                         type: "POST",
-                        url: 'api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
+                        url: './api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
                         data: form.serialize(), // serializes the form's elements.
                         dataType: 'json',
                     }).done(function (response) {

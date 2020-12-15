@@ -1,7 +1,7 @@
 <script>
     function table_data() {
 
-        autoTable('.table', 'api/product_crud.php?crud=select&desc', ['gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+        autoTable('.table', './api/product_crud.php?crud=select&desc', ['gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
             '<button class="btn btn-danger btn-sm text-nowrap" data-product-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
         ], () => {
             $('.barcode_in').each(function () {
@@ -55,7 +55,7 @@
             if (confirm('Are Your Sure Your Want To Delete The Product')) {
                 $.ajax({
                     type: "GET",
-                    url: 'api/product_crud.php?crud=delete&id=' + $(this).attr('data-product-delete-id'),
+                    url: './api/product_crud.php?crud=delete&id=' + $(this).attr('data-product-delete-id'),
                     dataType: 'json',
                 }).done(function (response) {
                     console.log(response); // show response from the php script.

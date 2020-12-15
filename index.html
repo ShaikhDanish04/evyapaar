@@ -325,7 +325,7 @@
     <script>
         $(document).ready(function () {
             $.ajax({
-                method: 'GET', url: 'api/connect.php?get', asysnc: false, cache: false, dataType: 'json'
+                method: 'GET', url: './api/connect.php?get', asysnc: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 $('.page').hide();
                 console.log(response);

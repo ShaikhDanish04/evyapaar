@@ -108,7 +108,7 @@
     $(document).on('click', '[name="logout"]', function (e) {
         e.preventDefault();
 
-        $.ajax({ method: 'POST', url: 'api/connect.php', cache: false, dataType: 'json', data: { logout: true } })
+        $.ajax({ method: 'POST', url: './api/connect.php', cache: false, dataType: 'json', data: { logout: true } })
             .done(function (response) {
                 $('.page').fadeOut()
                 location.reload();
