@@ -27,7 +27,7 @@ if (isset($_GET['select'])) {
 
 
     if (isset($_POST['desc'])) {
-        $orderby = ' ORDER BY `' . $_POST['desc'] . '` DESC ';
+        $orderby = ' ORDER BY ' . $_POST['desc'] . ' DESC ';
     }
     if (isset($_POST['where'])) {
         $length = count($_POST['where']);
