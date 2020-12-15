@@ -11,7 +11,7 @@ $domain = $_SESSION['domain'];
 foreach ($_GET as $key => $value) {
     $_GET[$key] = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $value);
 }
-$response->dump = $domain;
+$response->dump = $_SERVER['HTTP_REFERER'];
 if (isset($_GET['select'])) {
 
     $table_name = $_GET['select'];
