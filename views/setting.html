@@ -1,6 +1,7 @@
 <div class="container-fluid">
     <p class="h3 m-0">Settings</p>
     <hr>
+    <div class="alert-holder"></div>
     <div class="row">
         <div class="col-md-4">
             <div class="card mb-3">
@@ -11,14 +12,16 @@
                     <div class="text-center bg-dark rounded p-3 mb-3">
                         <img src=".assets/img/logo.png" height="100px" alt="">
                     </div>
-                    <div class="form-group">
+                    <form id="uploadLogo" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
 
-                        <input type="file" name="" id="" class="form-control border-0" placeholder="" aria-describedby="helpId">
-                        <small id="helpId" class="text-muted">*Image Only</small>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-success disabled">Upload</button>
-                    </div>
+                            <input type="file" name="logo" class="form-control border-0" placeholder="" aria-describedby="helpId">
+                            <small id="helpId" class="text-muted">*Image Only</small>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success">Upload</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -31,13 +34,17 @@
                     <div class="text-center bg-dark rounded p-3 mb-3">
                         <img src=".assets/img/header.jpg" height="100px" alt="">
                     </div>
-                    <div class="form-group">
-                        <input type="file" name="" id="" class="form-control border-0" placeholder="" aria-describedby="helpId">
-                        <small id="helpId" class="text-muted">*Image Only</small>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-success disabled">Upload</button>
-                    </div>
+                    <form id="uploadHeader" method="post" enctype="multipart/form-data">
+
+                        <div class="form-group">
+                            <input type="file" name="header" class="form-control border-0" placeholder="" aria-describedby="helpId">
+                            <small id="helpId" class="text-muted">*Image Only</small>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success">Upload</button>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -52,17 +59,73 @@
                 <textarea class="form-control" maxlength="450" name="invoice_desc" rows="3"></textarea>
             </div>
             <div class="form-group">
-                <button class="btn btn-success disabled">Update</button>
+                <button class="btn btn-success update_user">Update</button>
             </div>
         </div>
     </div>
 </div>
 <script>
     $(document).ready(function () {
+
+        $("#uploadLogo").submit(function (e) {
+            e.preventDefault();
+            var fd = new FormData();
+            var files = $('[name="logo"]')[0].files;
+
+            // Check file selected or not
+            if (files.length > 0) {
+                fd.append('file', files[0]);
+                $.ajax({ url: './api/fileUpload.php', type: 'post', data: fd, contentType: false, processData: false }).done(function (response) {
+                    if (response.image.status) {
+                        $('.alert-holder').html(b_alert('success', 'Image Uploaded Successfully'));
+                        location.reload();
+                    } else {
+                        $('.alert-holder').html(b_alert('danger', 'Upload Failed'));
+                    }
+                });
+            } else {
+                alert("Please select a file.");
+            }
+        });
+        $("#uploadHeader").submit(function (e) {
+            e.preventDefault();
+            var fd = new FormData();
+            var files = $('[name="header"]')[0].files;
+
+            // Check file selected or not
+            if (files.length > 0) {
+                fd.append('file', files[0]);
+                $.ajax({ url: './api/fileUpload.php', type: 'post', data: fd, contentType: false, processData: false }).done(function (response) {
+                    if (response.image.status) {
+                        $('.alert-holder').html(b_alert('success', 'Image Uploaded Successfully'));
+                        location.reload();
+                    } else {
+                        $('.alert-holder').html(b_alert('danger', 'Upload Failed'));
+                    }
+                });
+
+            } else {
+                alert("Please select a file.");
+            }
+        });
+
+        $('.update_user').click(function () {
+            $.ajax({
+                method: 'POST', url: './api/table.php?update=system_users', data: { column: { invoice_desc: $('[name="invoice_desc"]').val() }, where: { username: 'admin' } }, asysnc: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+                console.log(response);
+                if (response.query.status) {
+                    $('.alert-holder').html(b_alert('success', 'Invoice Description Updated'));
+                } else {
+                    $('.alert-holder').html(b_alert('danger', 'Error'));
+                }
+            })
+        })
+
         $.ajax({
-            method: 'GET', url: './api/connect.php?get', asysnc: false, cache: false, dataType: 'json'
+            method: 'POST', url: './api/table.php?select=system_users', data: { where: { username: 'admin' } }, asysnc: false, cache: false, dataType: 'json'
         }).done(function (response) {
-            $('[name="invoice_desc"]').text(response.user.invoice_desc);
+            $('[name="invoice_desc"]').text(response.query.data[0].invoice_desc);
         })
     })
 </script>
