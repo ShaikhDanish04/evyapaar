@@ -451,9 +451,7 @@
                 if (confirm('Are You Ready To Lock Invoice ?')) {
                     alert('Invoice Locked');
                     if ($('[name="invoice_id"]').val() == 'new') {
-                        $.ajax({
-                            type: "GET", url: './api/table.php?getMax=id&from=purchase', dataType: 'json',
-                        }).done(function (response) {
+                        $.ajax({ type: "GET", url: './api/table.php?getMax=id&from=purchase', dataType: 'json', }).done(function (response) {
                             // console.log(response);
 
                             data = {
@@ -472,13 +470,25 @@
                                     status: '1'
                                 }
                             }
+                            JSON.parse(data.column.products).forEach(el => {
+                                $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
+                                    // console.log(response.query.data[0]);
+                                    // console.log(el);
+                                    quantity = Number(response.query.data[0].quantity) + Number(el.unit);
+
+                                    $.ajax({ type: "POST", url: './api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
+                                        // console.log(response);
+                                    })
+                                })
+
+                            });
                             // console.log(data);
                             $.ajax({
                                 type: "POST", url: './api/table.php?insert=purchase&response', data: data, dataType: 'json',
                             }).done(function (response) {
                                 if (response.query.status) {
 
-                                    localStorage.setItem('invoice_id', response.query.data.id);
+                                    localStorage.setItem('invoice_id', data.column.id);
                                     if (localStorage.getItem("invoice_id") !== null) {
                                         console.log('ok');
                                         screen_loader('purchase/view');
@@ -508,6 +518,18 @@
                             where: { id: $('[name="invoice_id"]').val() }
                         }
                         // console.log(data);
+                        JSON.parse(data.column.products).forEach(el => {
+                            $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
+                                // console.log(response.query.data[0]);
+                                // console.log(el);
+                                quantity = Number(response.query.data[0].quantity) + Number(el.unit);
+
+                                $.ajax({ type: "POST", url: './api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
+                                    // console.log(response);
+                                })
+                            })
+
+                        });
                         $.ajax({
                             type: "POST", url: './api/table.php?update=purchase&response', data: data, dataType: 'json',
                         }).done(function (response) {
@@ -517,9 +539,9 @@
 
                                 if (localStorage.getItem("invoice_id") !== null) {
                                     console.log('ok');
-                                    // screen_loader('purchase/view');
+                                    screen_loader('purchase/view');
                                 } else {
-                                    // screen_loader('purchase/list');
+                                    screen_loader('purchase/list');
                                     console.log('error');
                                 }
                             } else {
