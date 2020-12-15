@@ -11,7 +11,17 @@ $domain = $_SESSION['domain'];
 foreach ($_GET as $key => $value) {
     $_GET[$key] = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $value);
 }
-$response->dump = $_SERVER['HTTP_REFERER'];
+
+// if ($_SERVER['HTTP_REFERER'] != $_ENV['HTTP_REFERER']) {
+//     $response->status = false;
+//     $response->request = 'failed';
+//     $response->reason = 'Access Not allowed for : ' . $_SERVER['HTTP_REFERER'];
+//     echo json_encode($response);
+//     exit;
+// }
+
+$response->dump = $_SERVER;
+
 if (isset($_GET['select'])) {
 
     $table_name = $_GET['select'];
