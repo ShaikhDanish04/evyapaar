@@ -28,7 +28,7 @@
         //         $_SESSION['admin_session'] = 'true';
         //     }
         // }
-        if ($_POST['email'] == 'admin' && $_POST['password'] == 'admin') {
+        if ($_POST['email'] == $_ENV['admin']['username'] && $_POST['password'] == $_ENV['admin']['password']) {
             $_SESSION['admin_session'] = 'true';
         }
     }
