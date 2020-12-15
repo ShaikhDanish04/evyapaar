@@ -1,8 +1,17 @@
 <script>
     function table_data() {
-
-        autoTable('.table', './api/customer_crud.php?crud=select', [], [], () => { });
-
+        $.ajax({
+            url: 'http://localhost/evyapaar/api/table.php?select=customer&desc=id',
+            type: "POST", async: false, cache: false, dataType: 'json'
+        }).done(function (response) {
+            data = response.query.data;
+            for (i = 0; i < data.length; i++) {
+                data[i] = Object.assign({ id: i + 1 }, data[i]);
+            }
+            autoTable('.table', data, ['domain'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-customer-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+                '<button class="btn btn-danger btn-sm text-nowrap" data-customer-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
+            ], () => { });
+        });
     }
 </script>
 
@@ -50,5 +59,4 @@
             }
         })
     })
-
 </script>

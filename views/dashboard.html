@@ -50,12 +50,13 @@
             bottom: 0px;
         }
     </style>
+
     <div class="row mb-3">
         <div class="col-6 col-lg-3 mb-3">
             <div class="card pan-block" style="background:linear-gradient(45deg,#ff8772,#ff6e97)">
                 <div class="card-body">
                     <p class="m-0">Products Available</p>
-                    <h3 class="m-0"><span data-count="./api/product_crud.php?crud=select">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/table.php?select=product">0</span></h3>
                 </div>
                 <a href="#" onclick="screen_loader('product/list')" class="card-foot btn">View More</a>
             </div>
@@ -64,7 +65,7 @@
             <div class="card pan-block" style="background:linear-gradient(45deg,#32c9c1,#18a9cb)">
                 <div class="card-body">
                     <p class="m-0">Purchased Invoice</p>
-                    <h3 class="m-0"><span data-count="./api/purchase_crud.php?crud=select">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/table.php?select=purchase">0</span></h3>
                 </div>
                 <a href="#" onclick="screen_loader('purchase/list')" class="card-foot btn">View More</a>
             </div>
@@ -73,7 +74,7 @@
             <div class="card pan-block" style="background:linear-gradient(45deg,#58a0df,#8084eb)">
                 <div class="card-body">
                     <p class="m-0">Available Vendors</p>
-                    <h3 class="m-0"><span data-count="./api/vendor_crud.php?crud=select">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/table.php?select=vendor">0</span></h3>
                 </div>
                 <a href="#" onclick="screen_loader('vendor/list')" class="card-foot btn">View More</a>
             </div>
@@ -82,91 +83,193 @@
             <div class="card pan-block" style="background:linear-gradient(45deg,#e879ed,#8b68e4)">
                 <div class="card-body">
                     <p class="m-0">Number of Customer </p>
-                    <h3 class="m-0"><span data-count="./api/customer_crud.php?crud=select">0</span></h3>
+                    <h3 class="m-0"><span data-count="./api/table.php?select=customer">0</span></h3>
                 </div>
                 <a href="#" onclick="screen_loader('customer/list')" class="card-foot btn">View More</a>
             </div>
         </div>
         <script>
             $(document).ready(function () {
+                var formatter = new Intl.NumberFormat('en-US', {
+                    currency: 'INR',
+                });
                 for (i = 0; i < $('[data-count]').length; i++) {
                     $.ajax({ type: "GET", url: $('[data-count]:eq(' + i + ')').attr('data-count'), async: false, cache: false, dataType: 'json' })
                         .done(function (response) {
-                            console.log(JSON.parse(response.data).length);
-                            $('[data-count]:eq(' + i + ')').html(JSON.parse(response.data).length);
+
+                            // console.log(response.query.data.length);
+                            $('[data-count]:eq(' + i + ')').html(response.query.data.length);
                         });
                 }
+                for (i = 0; i < $('[data-grand-total]').length; i++) {
+                    var total = 0;
+
+                    $.ajax({ type: "GET", url: $('[data-grand-total]:eq(' + i + ')').attr('data-grand-total'), async: false, cache: false, dataType: 'json' })
+                        .done(function (response) {
+                            total = 0;
+
+                            response.query.data.forEach(el => {
+                                // el.grand_total;
+                                var grand_total = document.createElement("div");
+                                grand_total.innerHTML = el.grand_total;
+                                total = Number(grand_total.innerText) + total;
+                            });
+                            $('[data-grand-total]:eq(' + i + ')').text(formatter.format(total));
+                            $('[data-grand-total]:eq(' + i + ')').attr('data-val', total);
+                        });
+                }
+                for (i = 0; i < $('[data-due-total]').length; i++) {
+                    var total = 0;
+
+                    $.ajax({ type: "POST", url: $('[data-due-total]:eq(' + i + ')').attr('data-due-total'), data: { where: { type: $('[data-due-total]:eq(' + i + ')').attr('data-due-type'), status: '0' } }, async: false, cache: false, dataType: 'json' })
+                        .done(function (response) {
+                            total = 0;
+                            console.log(response);
+
+                            response.query.data.forEach(el => {
+                                // el.grand_total;
+                                var due_total = document.createElement("div");
+                                due_total.innerHTML = el.due_amount;
+                                total = Number(due_total.innerText) + total;
+                            });
+                            $('[data-due-total]:eq(' + i + ')').text(formatter.format(total));
+                            $('[data-due-total]:eq(' + i + ')').attr('data-val', total);
+                        });
+                }
+                var myDoughnutChart = new Chart(document.getElementById('purchaseChart'), {
+                    type: 'pie',
+                    data: {
+                        datasets: [{
+                            data: [$('.purchase_total').attr('data-val'), $('.purchase_due').attr('data-val')],
+                            backgroundColor: [
+                                '#4e73de', '#e64a3b'
+                            ]
+                        }],
+
+                        // These labels appear in the legend and in the tooltips when hovering different arcs
+                        labels: [
+                            'Purchase',
+                            'Due'
+                        ]
+                    }
+                });
+                var myDoughnutChart = new Chart(document.getElementById('checkoutChart'), {
+                    type: 'pie',
+                    data: {
+                        datasets: [{
+                            data: [$('.checkout_total').attr('data-val'), $('.checkout_due').attr('data-val')],
+                            backgroundColor: [
+                                '#1cc88a', '#f6c23e'
+                            ]
+                        }],
+
+                        // These labels appear in the legend and in the tooltips when hovering different arcs
+                        labels: [
+                            'Checkout',
+                            'Due'
+                        ]
+                    }
+                });
+
             })
         </script>
-        <div class="col-6">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual) </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ 0</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Due Amount </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ 0</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="row">
         <!-- Area Chart -->
         <div class="col-xl-8 col-lg-7">
-            <div class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
-                <div class="card-head p-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                    <div class="dropdown no-arrow">
-                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                             aria-labelledby="dropdownMenuLink">
-                            <div class="dropdown-header">Dropdown Header:</div>
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-primary text-uppercase mb-1">Purchase <span class="text-xs">(Total Earnings) </span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span class="purchase_total" data-grand-total="./api/table.php?select=purchase"></span></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Card Body -->
-                <div class="card-body">
-                    <div class="chart-area">
-                        <div class="chartjs-size-monitor">
-                            <div class="chartjs-size-monitor-expand">
-                                <div class=""></div>
-                            </div>
-                            <div class="chartjs-size-monitor-shrink">
-                                <div class=""></div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-success text-uppercase mb-1">Checkout <span class="text-xs">(Total Earnings) </span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span class="checkout_total" data-grand-total="./api/table.php?select=checkout"></span></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
-                        <canvas id="myAreaChart" width="544" height="366" class="chartjs-render-monitor"
-                                style="display: block; height: 320px; width: 475px;"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-danger text-uppercase mb-1">Purchase <span class="text-xs">(Total Due) </span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span class="purchase_due" data-due-total="./api/table.php?select=due" data-due-type="purchase"></span></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="font-weight-bold text-warning text-uppercase mb-1">Checkout <span class="text-xs">(Total Due) </span></div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span class="checkout_due" data-due-total="./api/table.php?select=due" data-due-type="checkout"></span></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+
+                    <div class="card shadow mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-head p-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Purchase Overview</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <canvas id="purchaseChart" width="200" height="200"></canvas>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-head p-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Checkout Overview</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <canvas id="checkoutChart" width="200" height="200"></canvas>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
         <style>
             .master-controls .btn-icon-split {
@@ -180,7 +283,8 @@
         </style>
         <!-- Pie Chart -->
         <div class="col-xl-4 col-lg-5">
-            <div class="card shadow mb-4 master-controls">
+
+            <div class="card shadow mb-4 master-controls mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-head p-3 d-flex flex-row align-items-center justify-content-between border-bottom">
                     <h6 class="m-0 font-weight-bold text-primary">Master Controls</h6>
@@ -195,12 +299,10 @@
                         </a>
                     </div>
                     <div class="w-100 mb-3">
-                        <a href="#" onclick="localStorage.setItem('invoice_id','new'); screen_loader('purchase/invoice')" class="btn btn-success btn-icon-split w-100 ">
-                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
+                        <a href="#" onclick="localStorage.setItem('invoice_id','new'); screen_loader('purchase/invoice')" class="btn btn-success btn-icon-split w-100 "><span class="btn-circle icon text-white-50 d-flex align-items-center">
                                 <i class="fa fas fa-credit-card"></i>
                             </span>
-                            <span class="text h-100 d-flex align-items-center">Product Purchase</span>
-                        </a>
+                            <span class="text h-100 d-flex align-items-center">Product Purchase</span></a>
                     </div>
                     <div class="w-100 mb-3">
                         <a href="#" onclick="b_input_modal('Add Vendor', 'views/product/add.html')" class="btn btn-info btn-icon-split w-100 ">
@@ -219,19 +321,19 @@
                         </a>
                     </div>
                     <div class="w-100 mb-3">
-                        <a href="#" class="btn btn-danger btn-icon-split w-100 ">
+                        <a href="#" onclick="screen_loader('due/list')" class="btn btn-danger btn-icon-split w-100 ">
                             <span class="btn-circle icon text-white-50 d-flex align-items-center">
                                 <i class="fa fas fa-book"></i>
                             </span>
-                            <span class="text h-100 d-flex align-items-center">View Billing</span>
+                            <span class="text h-100 d-flex align-items-center">Due Amount</span>
                         </a>
                     </div>
                     <div class="w-100 mb-3">
-                        <a href="#" class="btn btn-warning btn-icon-split w-100 ">
-                            <span class="btn-circle icon text-white-50 d-flex align-items-center">
-                                <i class="fa fas fa-chart-area"></i>
+                        <a href="#" onclick="screen_loader('setting')" class=" btn btn-warning btn-icon-split w-100 ">
+                            <span class=" btn-circle icon text-white-50 d-flex align-items-center">
+                                <i class="fa fas fa-cogs"></i>
                             </span>
-                            <span class="text h-100 d-flex align-items-center">Generate Report</span>
+                            <span class="text h-100 d-flex align-items-center">Settings</span>
                         </a>
                     </div>
                 </div>
@@ -239,6 +341,3 @@
         </div>
     </div>
 </div>
-<!-- Page level custom scripts -->
-<script src=".assets/js/demo/chart-area-demo.js"></script>
-<!-- <script src=".assets/js/demo/chart-pie-demo.js"></script> -->

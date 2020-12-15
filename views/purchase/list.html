@@ -1,22 +1,53 @@
 <script>
     function table_data() {
+        $.ajax({
+            url: 'http://localhost/evyapaar/api/table.php',
+            type: "POST", async: false, cache: false, dataType: 'json',
+            data: { join: { table1: 'purchase', table2: 'vendor', id1: 'vendor_id', id2: 'id', order: 'purchase.datetime desc', seq: 'purchase.id,vendor.name as vendor_name,purchase.products as products_count,purchase.*' } }
+        }).done(function (response) {
+            data = response.query.data;
+            
+            if (data != null) {
+                data.forEach(el => {
+                    // console.log(product);
+                    const datetime = new Date(Date.parse(el.datetime));
+                    let [month, day, year] = datetime.toLocaleDateString("en-US").split("/");
+                    let [hour, minute, second] = datetime.toLocaleTimeString("en-US").split(/:| /);
 
-        autoTable('.table', './api/purchase_crud.php?crud=select&desc', ['products', 'vendor_id'],
-            [
-                '<button class="btn btn-primary btn-sm text-nowrap mr-1" data-invoice-view-id="$@id@"><i class="fa fa-eye"></i> View</button>',
-                '<button class="btn btn-warning btn-sm text-nowrap mr-1" data-invoice-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
-                '<button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
-            ], () => { });
+                    el.datetime = '<p class="m-0 text-right">' + day + ' / ' + month + ' / ' + year + ' - ' + hour + ':' + minute + ':' + second + '</p>';
 
-        $.each($('.status'), function () {
-            if ($(this).text() == '1') {
-                console.log($(this).closest('tr').find('[data-invoice-edit-id],[data-vendor-delete-id]').attr('disabled', 'true'));
+                    el.sgst_amount = '<p class="m-0 text-right">' + el.sgst_amount + '</p>';
+                    el.cgst_amount = '<p class="m-0 text-right">' + el.cgst_amount + '</p>';
+                    el.sub_total = '<p class="m-0 text-right">' + el.sub_total + '</p>';
+                    el.discount = '<p class="m-0 text-right">' + el.discount + ' %</p>';
+                    el.net_total = '<p class="m-0 text-right">' + el.net_total + '</p>';
+                    el.grand_total = '<p class="m-0 text-right">' + el.grand_total + '</p>';
+                    el.status = '<span class="status">' + el.status + '</span>';
+
+                });
+
+                autoTable('.table', data, ['domain','products_count', 'products', 'vendor_id'],
+                    [
+                        '<button class="btn btn-primary btn-sm text-nowrap mr-1" data-invoice-view-id="$@id@"><i class="fa fa-eye"></i> View</button>',
+                        '<button class="btn btn-warning btn-sm text-nowrap mr-1" data-invoice-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+                        '<button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
+                    ], () => {
+                        $.each($('.status'), function () {
+                            if ($(this).text() == '1') {
+                                $(this).closest('tr').find('[data-invoice-edit-id],[data-vendor-delete-id]').attr('disabled', 'true');
+                            }
+                            $(this).html(($(this).text() == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>');
+                        });
+                    })
+            } else {
+                $('.table').html('<p class="h4 d-flex align-items-center justify-content-center" style="height:300px">No Data Available</p>')
             }
-            $(this).html(($(this).text() == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>');
-        })
+
+        });
 
     }
 </script>
+
 <div class="container-fluid">
     <div class="d-flex align-items-center justify-content-between">
         <p class="h3 m-0">Product Purchase</p>
@@ -31,6 +62,7 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
         table_data();

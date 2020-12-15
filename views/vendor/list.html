@@ -1,9 +1,35 @@
 <script>
     function table_data() {
 
-        autoTable('.table', './api/vendor_crud.php?crud=select', [], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-vendor-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
-            '<button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
-        ], () => { });
+        $.ajax({
+            url: 'http://localhost/evyapaar/api/table.php?select=vendor&desc=id',
+            type: "POST", async: false, cache: false, dataType: 'json'
+        }).done(function (response) {
+            data = response.query.data;
+
+            data.forEach(el => {
+                el.total_invoice = 0;
+                el.total_purchase = 0;
+
+                $.ajax({
+                    url: 'http://localhost/evyapaar/api/table.php?select=purchase',
+                    type: "POST", async: false, cache: false, dataType: 'json',
+                    data: { where: { vendor_id: el.id } }
+                }).done(function (response) {
+                    if (response.query.data.length <= 0) el.total_invoice = '<p class="m-0 text-center"><span class="badge badge-dark py-2 px-3">' + response.query.data.length + '</span></p>';
+                    else el.total_invoice = '<p class="m-0 text-center"><span class="badge badge-primary py-2 px-3">' + response.query.data.length + '</span></p>';
+
+                    response.query.data.forEach(el2 => el.total_purchase = el.total_purchase + Number(el2.grand_total));
+                    el.total_purchase = '<p class="m-0 text-right">' + el.total_purchase + '</p>';
+                });
+            });
+
+            autoTable('.table', data, ['domain','address'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-vendor-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+                '<button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
+            ], () => { });
+
+        });
+
 
     }
 </script>
@@ -33,7 +59,7 @@
         table_data();
 
         $('.modal').on('hide.bs.modal', function () {
-            table_data();
+            if (localStorage.screen == 'vendor/list') table_data();
         })
 
         $(document).on('click', '[data-vendor-edit-id]', function () {

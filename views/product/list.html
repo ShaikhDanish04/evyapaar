@@ -1,20 +1,37 @@
 <script>
     function table_data() {
+        $.ajax({
+            url: 'http://localhost/evyapaar/api/table.php?common',
+            type: "POST", async: false, cache: false, dataType: 'json',
+            data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent', order: 'product.id desc' } }
+        }).done(function (response) {
+            data = response.query.data;
 
-        autoTable('.table', './api/product_crud.php?crud=select&desc', ['gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
-            '<button class="btn btn-danger btn-sm text-nowrap" data-product-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
-        ], () => {
-            $('.barcode_in').each(function () {
-                code = $(this).text();
-                if (code != '0') {
-                    $(this).html($('<p class="m-0"></p>'));
-                } else {
-                    $(this).html($('<p class="m-0"><canvas></p>'));
-                    $(this).find('canvas').JsBarcode(code, {
-                        height: 30,
-                        margin: 2
-                    });
-                }
+            data.forEach(product => {
+                product.hsn = '<p class="m-0 text-center">' + product.hsn + '</p>';
+                if (product.quantity <= 0) product.quantity = '<p class="m-0 text-center"><span class="badge badge-dark py-2 px-3">' + product.quantity + '</span></p>';
+                else product.quantity = '<p class="m-0 text-center"><span class="badge badge-primary py-2 px-3">' + product.quantity + '</span></p>';
+                product.selling_cost = '<p class="m-0 text-right">' + product.selling_cost + '</p>';
+
+                product.barcode = '<p class="m-0 text-center barcode_in">' + product.barcode + '</p>';
+                product.tax_percent = '<p class="m-0 text-center">' + product.tax_percent + ' %</p>';
+            });
+
+            autoTable('.table', data, ['domain', 'gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+                '<button class="btn btn-danger btn-sm text-nowrap" data-product-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
+            ], () => {
+                $('.barcode_in').each(function () {
+                    code = $(this).text();
+                    if (code == '0') {
+                        $(this).html($('<p class="m-0">No Barcode</p>'));
+                    } else {
+                        $(this).html($('<p class="m-0"><canvas></p>'));
+                        $(this).find('canvas').JsBarcode(code, {
+                            height: 30,
+                            margin: 2
+                        });
+                    }
+                });
             });
         });
     }
@@ -36,6 +53,7 @@
                 <table class="table table-bordered"></table>
             </div>
         </div>
+
     </div>
 </div>
 <script>
@@ -44,7 +62,7 @@
         table_data();
 
         $('.modal').on('hide.bs.modal', function () {
-            table_data();
+            if (localStorage.screen == 'product/list') table_data();
         })
 
         $(document).on('click', '[data-product-edit-id]', function () {

@@ -15,6 +15,7 @@ if ($result == TRUE) {
         $response->login_status = true;
         $user = $result->fetch_assoc();
         $user['password'] = '';
+        $_SESSION['domain'] = $user['domain'];
         $_SESSION['user_in'] = $user['username'];
         $response->user = $user;
     } else {
