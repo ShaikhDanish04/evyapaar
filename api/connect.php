@@ -30,6 +30,7 @@ if (isset($_POST['logout'])) {
     echo json_encode($response);
 }
 
+
 if (isset($_GET['get'])) {
     if (isset($_SESSION['user_in'])) {
         $response->session_established = true;
@@ -40,6 +41,8 @@ if (isset($_GET['get'])) {
     }
     echo json_encode($response);
 }
+$domain = $_SESSION['domain'];
+
 
 function status($status)
 {

@@ -117,10 +117,18 @@
             console.log('Row ' + $(this).closest("tr").index());
             console.log('Column ' + $(this).closest("td").index());
         });
+        $.ajax({
+            method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
+        }).done(function (response) {
+            // console.log(response);
+            data = response.query.data[0];
+            $('.brand-logo').attr('src', 'upload/' + data.domain + '/logo.' + data.logo_ext + '?' + (Math.random() * 1000000))
+            $('.brand-header').attr('src', 'upload/' + data.domain + '/header.' + data.header_ext + '?' + (Math.random() * 1000000))
+        })
     });
 </script>
 <input type="hidden" name="invoice_id">
-<img class="mb-3" src=".assets/img/header.jpg?new2711" width="100%" alt="">
+<img class="brand-header mb-3" src=".assets/img/header.jpg?new2711" width="100%" alt="">
 <table id="my_table" cellspacing=0 cellpadding=0 style="border-collapse:collapse;border:none;">
     <tbody>
         <tr>

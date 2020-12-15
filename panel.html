@@ -54,6 +54,16 @@
                     $('.loading-content').fadeOut();
                     $('[view-href]').removeClass('disabled');
                 })
+
+            $.ajax({
+                method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+                // console.log(response);
+                data = response.query.data[0];
+                $('.brand-logo').attr('src', 'upload/' + data.domain + '/logo.' + data.logo_ext + '?' + (Math.random() * 1000000))
+                $('.brand-header').attr('src', 'upload/' + data.domain + '/header.' + data.header_ext + '?' + (Math.random() * 1000000))
+            })
+
         }
     }
 
@@ -120,7 +130,7 @@
     <div id="wrapper">
         <ul class="navbar-nav sidebar sidebar-dark accordion shadow toggled" id="accordionSidebar" style="z-index: 1;background: linear-gradient(45deg, #007bff,#04c8b3);">
             <a class="sidebar-brand p-0 d-flex align-items-center justify-content-center bg-light" href="" view-href="dashboard">
-                <img src=".assets/img/logo.png?new" height="100%" alt="">
+                <img class="brand-logo" src=".assets/img/logo.png?new" height="100%" alt="">
             </a>
 
             <div class="json-menu"></div>

@@ -352,7 +352,7 @@
                 method: 'GET', url: './api/connect.php?get', asysnc: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 $('.page').hide();
-                console.log(response);
+                // console.log(response);
                 if (response.env) {
                     if (response.session_established) {
                         $('.page').fadeIn().load('panel.html', 'f' + (Math.random() * 1000000))

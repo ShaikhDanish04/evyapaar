@@ -10,7 +10,7 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center bg-dark rounded p-3 mb-3">
-                        <img src=".assets/img/logo.png" height="100px" alt="">
+                        <img class="brand-logo" src=".assets/img/logo.png" height="100px" alt="">
                     </div>
                     <form id="uploadLogo" method="post" enctype="multipart/form-data">
                         <div class="form-group">
@@ -32,7 +32,7 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center bg-dark rounded p-3 mb-3">
-                        <img src=".assets/img/header.jpg" height="100px" alt="">
+                        <img class="brand-header" src=".assets/img/header.jpg" height="100px" alt="">
                     </div>
                     <form id="uploadHeader" method="post" enctype="multipart/form-data">
 
@@ -75,7 +75,9 @@
             // Check file selected or not
             if (files.length > 0) {
                 fd.append('file', files[0]);
+                fd.append('filename', 'logo');
                 $.ajax({ url: './api/fileUpload.php', type: 'post', data: fd, contentType: false, processData: false }).done(function (response) {
+                    console.log(response);
                     if (response.image.status) {
                         $('.alert-holder').html(b_alert('success', 'Image Uploaded Successfully'));
                         location.reload();
@@ -95,7 +97,10 @@
             // Check file selected or not
             if (files.length > 0) {
                 fd.append('file', files[0]);
+                fd.append('filename', 'header');
+
                 $.ajax({ url: './api/fileUpload.php', type: 'post', data: fd, contentType: false, processData: false }).done(function (response) {
+                    console.log(response);
                     if (response.image.status) {
                         $('.alert-holder').html(b_alert('success', 'Image Uploaded Successfully'));
                         location.reload();
@@ -126,8 +131,11 @@
         $.ajax({
             method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
         }).done(function (response) {
-            console.log(response);
+            // console.log(response);
             $('[name="invoice_desc"]').text(response.query.data[0].invoice_desc);
+            $('.brand-logo').attr('src', 'upload/' + data.domain + '/logo.' + data.logo_ext + '?' + (Math.random() * 1000000))
+            $('.brand-header').attr('src', 'upload/' + data.domain + '/header.' + data.header_ext + '?' + (Math.random() * 1000000))
+
         })
     })
 </script>

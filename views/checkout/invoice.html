@@ -204,7 +204,7 @@
         if (this.value.length == 10) {
             input.attr('disabled', 'true')
             $.ajax({
-                type: "GET", url: './api/table.php?select=customer', data: { where: { id: input.val() } }, async: false, cache: false, dataType: 'json'
+                type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: input.val() } }, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 // data = JSON.parse(response.data);
                 data = response.query.data[0];
@@ -383,8 +383,33 @@
 
         scrollTo(0, 0);
         if ($('[name="customer[mobile]"]').val() != '') {
+            $.ajax({
+                type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: $('[name="customer[mobile]"]').val() } }, async: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+                // data = JSON.parse(response.data);
+                data = response.query.data[0];
+                console.log(data);
+
+                if (data == null) {
+                    customer_data = {
+                        column: {
+                            mobile: $('[name="customer[mobile]"]').val(),
+                            name: $('[name="customer[fullname]"]').val(),
+                            email: $('[name="customer[email]"]').val(),
+                            address: $('[name="customer[address]"]').val(),
+                        }
+                    };
+                    $.ajax({
+                        type: "POST", url: './api/table.php?insert=customer', data: customer_data, async: false, cache: false, dataType: 'json'
+                    }).done(function (response) {
+                        console.log(response)
+                    })
+                }
+            })
+
             if (form.serializeObject().products != null) {
                 if ($('[name="invoice_id"]').val() == 'new') {
+
                     $.ajax({
                         type: "GET", url: './api/table.php?getMax=id&from=checkout', dataType: 'json',
                     }).done(function (response) {
@@ -463,6 +488,30 @@
 
     $('.lock_invoice').click(function () {
         if ($('[name="customer[mobile]"]').val() != '') {
+            $.ajax({
+                type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: $('[name="customer[mobile]"]').val() } }, async: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+                // data = JSON.parse(response.data);
+                data = response.query.data[0];
+                console.log(data);
+
+                if (data == null) {
+                    customer_data = {
+                        column: {
+                            mobile: $('[name="customer[mobile]"]').val(),
+                            name: $('[name="customer[fullname]"]').val(),
+                            email: $('[name="customer[email]"]').val(),
+                            address: $('[name="customer[address]"]').val(),
+                        }
+                    };
+                    $.ajax({
+                        type: "POST", url: './api/table.php?insert=customer', data: customer_data, async: false, cache: false, dataType: 'json'
+                    }).done(function (response) {
+                        console.log(response)
+                    })
+                }
+            })
+
             form = $('#save_invoice');
             if (form.serializeObject().products != null) {
                 if (confirm('Are You Ready To Lock Invoice ?')) {
