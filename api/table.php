@@ -4,8 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header("Content-type: application/json; charset=utf-8");
 
 require('connect.php');
-
-$domain = $_SESSION['domain'];
 // $domain = 'admin';
 
 foreach ($_GET as $key => $value) {

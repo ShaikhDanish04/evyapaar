@@ -42,6 +42,7 @@ if (isset($_GET['get'])) {
     }
     echo json_encode($response);
 }
+
 if (isset($_SESSION['domain'])) {
     $domain = $_SESSION['domain'];
 }
