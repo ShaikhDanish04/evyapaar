@@ -9,7 +9,17 @@ require('connect.php');
 foreach ($_GET as $key => $value) {
     $_GET[$key] = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $value);
 }
-$response->dump = $domain;
+
+if ($_SERVER['HTTP_HOST'] != $_ENV['HTTP_HOST']) {
+    $response->status = false;
+    $response->request = 'failed';
+    $response->reason = 'Access Not allowed for : ' . $_SERVER['HTTP_HOST'];
+    echo json_encode($response);
+    exit;
+}
+
+$response->dump = $_SERVER;
+
 if (isset($_GET['select'])) {
 
     $table_name = $_GET['select'];
