@@ -202,11 +202,26 @@ if (isset($_GET['insert'])) {
     $response->query['sample'] = "INSERT INTO $table_name $col VALUES $value";
     // $response->query['sample'] = "INSERT INTO $table_name $col VALUES ('2', '3', '2', '1', '4', '1', '2')";
 
-    // if ($result == TRUE) {
-    //     $response->query['status'] = true;
-    // } else {
-    // $response->query['status'] = false;
-    // $response->query['error'] = $conn->error;
-    // }
+    $result = $conn->query("INSERT INTO $table_name $col VALUES $value");
+    if ($result == TRUE) {
+        $response->query['status'] = true;
+        if (isset($_GET['response'])) {
+            $cols = '*';
+            if ($_GET['response'] == 'selected') {
+                $cols = '';
+                $length = count($_POST['column']);
+                $i = 0;
+                foreach ($_POST['column'] as $key => $val) {
+                    $cols .= ' `' . $key . '` ';
+                    $i++;
+                    if ($i < $length) $cols .= ',';
+                }
+            }
+            $response->query['data'] = $conn->query("SELECT $cols FROM $table_name $where")->fetch_assoc();
+        }
+    } else {
+        $response->query['status'] = false;
+        $response->query['error'] = $conn->error;
+    }
 }
 echo json_encode($response);

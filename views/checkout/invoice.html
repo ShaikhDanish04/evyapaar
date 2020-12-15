@@ -382,28 +382,46 @@
         $formObj = $('#save_invoice').serializeObject();
 
         if ($('[name="customer[mobile]"]').val() != '') {
-            if ($('[name="invoice_id"]').val() == 'new') {
-                if (form.serializeObject().products != null) {
+            if (form.serializeObject().products != null) {
+                if ($('[name="invoice_id"]').val() == 'new') {
                     $.ajax({
-                        type: "POST",
-                        url: './api/checkout_crud.php?crud=insert',
-                        data: form.serialize(), // serializes the form's elements.
-                        dataType: 'json',
+                        type: "GET", url: './api/table.php?getMax=id&from=checkout', dataType: 'json',
                     }).done(function (response) {
-                        if (response.status) {
-                            localStorage.removeItem('invoice_id');
-                            if (localStorage.getItem("invoice_id") === null) {
-                                screen_loader('checkout/list');
-                            } else {
-                                console.log('error');
+                        console.log(response);
+                        data = {
+                            column: {
+                                id: Number(response.query.data) + 1,
+                                sub_total: $('[name="sub_total"]').val(),
+                                discount: $('[name="discount"]').val(),
+                                customer: $('[name="customer[mobile]"]').val(),
+                                products: JSON.stringify(form.serializeObject().products),
+                                net_total: $('[name="net_total"]').val(),
+                                sgst_amount: $('[name="sgst_amount"]').val(),
+                                cgst_amount: $('[name="cgst_amount"]').val(),
+                                grand_total: $('[name="grand_total"]').val(),
+                                due_amount: $('[name="due_amount"]').val(),
+                                datetime: getDatetime(),
                             }
-                        } else {
-                            $('.alert-holder').html(b_alert('danger', 'Error'));
                         }
+                        // console.log(data);
+                        $.ajax({
+                            type: "POST", url: './api/table.php?insert=checkout', data: data, dataType: 'json',
+                        }).done(function (response) {
+                            console.log(response);
+
+                            if (response.query.status) {
+                                localStorage.removeItem('invoice_id');
+                                if (localStorage.getItem("invoice_id") === null) {
+                                    screen_loader('checkout/list');
+                                } else {
+                                    console.log('error');
+                                }
+                            } else {
+                                $('.alert-holder').html(b_alert('danger', 'Error'));
+                            }
+                        });
                     });
-                }
-            } else {
-                if (form.serializeObject().products != null) {
+                } else {
                     data = {
                         column: {
                             sub_total: $('[name="sub_total"]').val(),
@@ -429,7 +447,10 @@
                             $('.alert-holder').html(b_alert('danger', 'Error'));
                         }
                     });
+
                 }
+            } else {
+                alert('Please Add Products');
             }
         } else {
             alert('Select Add Customer');
