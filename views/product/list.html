@@ -1,7 +1,7 @@
 <script>
     function table_data() {
         $.ajax({
-            url: 'http://localhost/evyapaar/api/table.php',
+            url: 'http://localhost/evyapaar/api/table.php?common',
             type: "POST", async: false, cache: false, dataType: 'json',
             data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent', order: 'product.id desc' } }
         }).done(function (response) {
@@ -17,7 +17,7 @@
                 product.tax_percent = '<p class="m-0 text-center">' + product.tax_percent + ' %</p>';
             });
 
-            autoTable('.table', data, ['domain','gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
+            autoTable('.table', data, ['domain', 'gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
                 '<button class="btn btn-danger btn-sm text-nowrap" data-product-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
             ], () => {
                 $('.barcode_in').each(function () {

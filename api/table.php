@@ -74,7 +74,11 @@ if (isset($_POST['join'])) {
     $seq = '*';
 
     // $where = '';
-    $where = ' WHERE ' . $table1 . '.domain = \'' . $domain . '\'';
+    if (isset($_GET['common'])) {
+        $where = ' WHERE ' . $table1 . '.domain = \'' . $domain . '\'';
+    } else {
+        $where = ' WHERE ' . $table1 . '.domain = \'' . $domain . '\' AND '  . $table2 . '.domain = \'' . $domain . '\'';
+    }
 
     if (isset($_POST['join']['seq'])) {
         $seq = $_POST['join']['seq'];

@@ -153,7 +153,7 @@
             }
             $('#product_table tbody').find('.no-data').remove()
             $.ajax({
-                url: './api/table.php',
+                url: './api/table.php?common',
                 type: "POST", async: false, cache: false, dataType: 'json',
                 data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent' }, where: { 'product.id': product_id } }
             }).done(function (response) {
