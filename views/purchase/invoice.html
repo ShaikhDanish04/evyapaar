@@ -109,16 +109,16 @@
                     <p class="h5">In Words : </p>
                     <p> <span class="form-control amount-in-words text-capitalize" readonly></span></p>
                 </div>
-                <!-- <hr>
-                <div class="form-group">
-                    <label for="">Cash In Advance</label>
-                    <input type="text" name="" class="form-control">
-                </div> -->
-                <!-- <hr> -->
-                <!-- <div class="d-flex align-items-center justify-content-between h5 m-0">
+                <hr>
+                <div class="d-flex mb-3 form-inline justify-content-between align-items-center">
+                    <label for="">Cash In Advance : </label>
+                    <p class="m-0 d-flex align-items-center"><input type="text" value="" name="cash_in_advance" class="form-control text-right"></p>
+                </div>
+                <hr>
+                <div class="d-flex align-items-center justify-content-between h5 m-0">
                     <p class="m-0">Balance Amount : </p>
-                    <p class="m-0">₹ <span class="grand_total">0</span></p>
-                </div> -->
+                    <p class="m-0 d-flex align-items-center"> <input type="text" readonly name="balance_amount" class="form-control text-right font-weight-bold balance_amount" value="0.00"></p>
+                </div>
             </div>
         </div>
         <hr>
@@ -277,8 +277,12 @@
                         $('[name="cgst_amount"]').val(cgst.toFixed(2));
                         $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
                         $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
+                        $('[name="cash_in_advance"]').val(Number(data.cash_in_advance).toFixed(2))
 
                         $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+
+                        $('[name="balance_amount"]').val(Number($('[name="grand_total"]').val()) - Number($('[name="cash_in_advance"]').val()));
+
                     }
 
                 });
@@ -289,7 +293,7 @@
 </script>
 
 <script> //product table calulation
-    $(document).on('keyup', '[data-row-index] .form-control', function () {
+    $(document).on('keyup', '.form-control', function () {
         input = $(this);
         tr = $(this).closest('tr');
         i = $(this).closest('tr').attr('data-row-index');
@@ -328,20 +332,20 @@
         $('[name="grand_total"]').val((grand_total).toFixed(2));
         $('.grand_total').text((grand_total).toFixed(2));
 
+        $('[name="balance_amount"]').val(Number(grand_total).toFixed(2) - Number($('[name="cash_in_advance"]').val()));
+
         $('.amount-in-words').html(inWords(grand_total));
 
     })
 
-    $('.discount').keyup(function () {
-        console.log(percentage($(this).val(), $('[name="sub_total"]').val()))
-        $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
-        $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
+    // $('.discount').keyup(function () {
+    //     console.log(percentage($(this).val(), $('[name="sub_total"]').val()))
+    //     $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
+    //     $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
 
-        $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
-        $('.grand_total').text((grand_total).toFixed(2));
-
-
-    })
+    //     $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+    //     $('.grand_total').text((grand_total).toFixed(2));
+    // })
 </script>
 
 <script> // save invoice
@@ -370,7 +374,7 @@
                                 sgst_amount: $('[name="sgst_amount"]').val(),
                                 cgst_amount: $('[name="cgst_amount"]').val(),
                                 grand_total: $('[name="grand_total"]').val(),
-                                due_amount: $('[name="due_amount"]').val(),
+                                cash_in_advance: $('[name="cash_in_advance"]').val(),
                                 datetime: getDatetime(),
                             }
                         }
@@ -400,7 +404,7 @@
                             sgst_amount: $('[name="sgst_amount"]').val(),
                             cgst_amount: $('[name="cgst_amount"]').val(),
                             grand_total: $('[name="grand_total"]').val(),
-                            due_amount: $('[name="due_amount"]').val(),
+                            cash_in_advance: $('[name="cash_in_advance"]').val(),
                             // datetime: getDatetime(),
                         },
                         where: { id: $('[name="invoice_id"]').val() }
@@ -449,10 +453,29 @@
                                     sgst_amount: $('[name="sgst_amount"]').val(),
                                     cgst_amount: $('[name="cgst_amount"]').val(),
                                     grand_total: $('[name="grand_total"]').val(),
-                                    due_amount: $('[name="due_amount"]').val(),
+                                    cash_in_advance: $('[name="cash_in_advance"]').val(),
                                     datetime: getDatetime(),
                                     status: '1'
                                 }
+                            }
+                            if (Number($('[name="cash_in_advance"]').val()) > 0) {
+                                $.ajax({ type: "POST", url: './api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
+                                    console.log(response.query.data);
+
+                                    due_data = {
+                                        column: {
+                                            id: Number(response.query.data) + 1,
+                                            type: 'purchase',
+                                            invoice_id: data.column.id,
+                                            due_amount: $('[name="cash_in_advance"]').val(),
+                                            datetime: getDatetime(),
+                                            status: '0'
+                                        }
+                                    }
+                                    $.ajax({ type: "POST", url: './api/table.php?insert=due', data: due_data, dataType: 'json', }).done(function (response) {
+                                        console.log(response);
+                                    })
+                                })
                             }
                             JSON.parse(data.column.products).forEach(el => {
                                 $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
@@ -495,11 +518,30 @@
                                 sgst_amount: $('[name="sgst_amount"]').val(),
                                 cgst_amount: $('[name="cgst_amount"]').val(),
                                 grand_total: $('[name="grand_total"]').val(),
-                                due_amount: $('[name="due_amount"]').val(),
+                                cash_in_advance: $('[name="cash_in_advance"]').val(),
                                 // datetime: getDatetime(),
                                 status: '1'
                             },
                             where: { id: $('[name="invoice_id"]').val() }
+                        }
+                        if (Number($('[name="cash_in_advance"]').val()) > 0) {
+                            $.ajax({ type: "POST", url: './api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
+                                console.log(response.query.data);
+
+                                due_data = {
+                                    column: {
+                                        id: Number(response.query.data) + 1,
+                                        type: 'purchase',
+                                        invoice_id: $('[name="invoice_id"]').val(),
+                                        due_amount: $('[name="cash_in_advance"]').val(),
+                                        datetime: getDatetime(),
+                                        status: '0'
+                                    }
+                                }
+                                $.ajax({ type: "POST", url: './api/table.php?insert=due', data: due_data, dataType: 'json', }).done(function (response) {
+                                    console.log(response);
+                                })
+                            })
                         }
                         // console.log(data);
                         JSON.parse(data.column.products).forEach(el => {
