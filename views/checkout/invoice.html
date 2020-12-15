@@ -426,14 +426,14 @@
                         column: {
                             sub_total: $('[name="sub_total"]').val(),
                             discount: $('[name="discount"]').val(),
-                            customer: JSON.stringify(form.serializeObject().customer),
+                            customer: $('[name="customer[mobile]"]').val(),
                             products: JSON.stringify(form.serializeObject().products),
                             net_total: $('[name="net_total"]').val(),
                             sgst_amount: $('[name="sgst_amount"]').val(),
                             cgst_amount: $('[name="cgst_amount"]').val(),
                             grand_total: $('[name="grand_total"]').val(),
                             due_amount: $('[name="due_amount"]').val(),
-                            datetime: getDatetime(),
+                            // datetime: getDatetime(),
                         },
                         where: { id: $('[name="invoice_id"]').val() }
                     }
@@ -466,25 +466,104 @@
             if (form.serializeObject().products != null) {
                 if (confirm('Are You Ready To Lock Invoice ?')) {
                     alert('Invoice Locked');
-                    $.ajax({
-                        type: "POST",
-                        url: './api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-                        data: form.serialize(), // serializes the form's elements.
-                        dataType: 'json',
-                    }).done(function (response) {
-                        if (response.status) {
-                            localStorage.setItem('invoice_id', response.invoice_id);
-                            if (localStorage.getItem("invoice_id") !== null) {
-                                console.log('ok');
-                                screen_loader('checkout/view');
-                            } else {
-                                console.log('error');
+                    if ($('[name="invoice_id"]').val() == 'new') {
+                        $.ajax({ type: "GET", url: './api/table.php?getMax=id&from=checkout', dataType: 'json', }).done(function (response) {
+                            console.log(response);
+                            data = {
+                                column: {
+                                    id: Number(response.query.data) + 1,
+                                    sub_total: $('[name="sub_total"]').val(),
+                                    discount: $('[name="discount"]').val(),
+                                    customer: $('[name="customer[mobile]"]').val(),
+                                    products: JSON.stringify(form.serializeObject().products),
+                                    net_total: $('[name="net_total"]').val(),
+                                    sgst_amount: $('[name="sgst_amount"]').val(),
+                                    cgst_amount: $('[name="cgst_amount"]').val(),
+                                    grand_total: $('[name="grand_total"]').val(),
+                                    due_amount: $('[name="due_amount"]').val(),
+                                    datetime: getDatetime(),
+                                    status: '1'
+                                }
                             }
-                        } else {
-                            $('.alert-holder').html(b_alert('danger', 'Error'));
+                            JSON.parse(data.column.products).forEach(el => {
+                                $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
+                                    // console.log(response.query.data[0]);
+                                    // console.log(el);
+                                    quantity = Number(response.query.data[0].quantity) - Number(el.unit);
+
+                                    $.ajax({ type: "POST", url: './api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
+                                        // console.log(response);
+                                    })
+                                })
+
+                            });
+                            // console.log(data);
+                            $.ajax({
+                                type: "POST", url: './api/table.php?insert=checkout', data: data, dataType: 'json',
+                            }).done(function (response) {
+                                console.log(response);
+
+                                if (response.query.status) {
+                                    localStorage.setItem('invoice_id', data.column.id);
+                                    if (localStorage.getItem("invoice_id") !== null) {
+                                        console.log('ok');
+                                        screen_loader('checkout/view');
+                                    } else {
+                                        console.log('error');
+                                    }
+                                } else {
+                                    $('.alert-holder').html(b_alert('danger', 'Error'));
+                                }
+                            });
+                        });
+                    } else {
+                        data = {
+                            column: {
+                                sub_total: $('[name="sub_total"]').val(),
+                                discount: $('[name="discount"]').val(),
+                                customer: $('[name="customer[mobile]"]').val(),
+                                products: JSON.stringify(form.serializeObject().products),
+                                net_total: $('[name="net_total"]').val(),
+                                sgst_amount: $('[name="sgst_amount"]').val(),
+                                cgst_amount: $('[name="cgst_amount"]').val(),
+                                grand_total: $('[name="grand_total"]').val(),
+                                due_amount: $('[name="due_amount"]').val(),
+                                // datetime: getDatetime(),
+                                status: '1'
+                            },
+                            where: { id: $('[name="invoice_id"]').val() }
                         }
-                        // screen_loader('checkout/list');
-                    });
+                        JSON.parse(data.column.products).forEach(el => {
+                            $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
+                                // console.log(response.query.data[0]);
+                                // console.log(el);
+                                quantity = Number(response.query.data[0].quantity) - Number(el.unit);
+
+                                $.ajax({ type: "POST", url: './api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
+                                    // console.log(response);
+                                })
+                            })
+
+                        });
+                        // console.log(data);
+                        $.ajax({
+                            type: "POST", url: './api/table.php?update=checkout&response', data: data, dataType: 'json',
+                        }).done(function (response) {
+                            if (response.query.status) {
+                                localStorage.setItem('invoice_id', response.query.data.id);
+                                if (localStorage.getItem("invoice_id") !== null) {
+                                    console.log('ok');
+                                    screen_loader('checkout/view');
+                                } else {
+                                    console.log('error');
+                                }
+                                // $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
+                            } else {
+                                $('.alert-holder').html(b_alert('danger', 'Error'));
+                            }
+                        });
+
+                    }
                 }
             } else {
                 alert('Please Add Products');
