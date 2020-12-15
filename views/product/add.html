@@ -40,7 +40,7 @@
 
 
         $.ajax({
-            type: "POST", url: './api/table.php?getMax=id&from=product', dataType: 'json'
+            type: "POST", url: 'api/table.php?getMax=id&from=product', dataType: 'json'
         }).done(function (response) {
             console.log(response);
             data = {
@@ -54,7 +54,7 @@
                 }
             }
             $.ajax({
-                type: "POST", url: './api/table.php?insert=product', data: data, dataType: 'json'
+                type: "POST", url: 'api/table.php?insert=product', data: data, dataType: 'json'
             }).done(function (response) {
                 console.log(response);
                 if (response.query.status) {
@@ -74,7 +74,7 @@
     // this is the id of the form
     $(document).ready(function () {
         $.ajax({
-            type: "GET", url: './api/table.php?select=gst_slab&common', cache: false, dataType: 'json'
+            type: "GET", url: 'api/table.php?select=gst_slab&common', cache: false, dataType: 'json'
         }).done(function (response) {
             data = response.query.data;
             data.forEach(value => {

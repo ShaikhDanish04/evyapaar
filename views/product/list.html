@@ -73,7 +73,7 @@
             if (confirm('Are Your Sure Your Want To Delete The Product')) {
                 $.ajax({
                     type: "GET",
-                    url: './api/product_crud.php?crud=delete&id=' + $(this).attr('data-product-delete-id'),
+                    url: 'api/product_crud.php?crud=delete&id=' + $(this).attr('data-product-delete-id'),
                     dataType: 'json',
                 }).done(function (response) {
                     console.log(response); // show response from the php script.

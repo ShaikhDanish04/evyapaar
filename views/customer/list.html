@@ -46,7 +46,7 @@
             if (confirm('Are Your Sure Your Want To Delete The vendor')) {
                 $.ajax({
                     type: "GET",
-                    url: './api/vendor_crud.php?crud=delete&id=' + $(this).attr('data-vendor-delete-id'),
+                    url: 'api/vendor_crud.php?crud=delete&id=' + $(this).attr('data-vendor-delete-id'),
                     dataType: 'json',
                 }).done(function (response) {
                     console.log(response); // show response from the php script.

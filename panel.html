@@ -56,7 +56,7 @@
                 })
 
             $.ajax({
-                method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
+                method: 'POST', url: 'api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 // console.log(response);
                 data = response.query.data[0];
@@ -118,7 +118,7 @@
     $(document).on('click', '[name="logout"]', function (e) {
         e.preventDefault();
 
-        $.ajax({ method: 'POST', url: './api/connect.php', cache: false, dataType: 'json', data: { logout: true } })
+        $.ajax({ method: 'POST', url: 'api/connect.php', cache: false, dataType: 'json', data: { logout: true } })
             .done(function (response) {
                 $('.page').fadeOut()
                 location.reload();

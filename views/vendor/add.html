@@ -83,7 +83,7 @@
 
 
         $.ajax({
-            type: "POST", url: './api/table.php?getMax=id&from=vendor', dataType: 'json'
+            type: "POST", url: 'api/table.php?getMax=id&from=vendor', dataType: 'json'
         }).done(function (response) {
             console.log(response);
             data = {
@@ -99,7 +99,7 @@
                 }
             }
             $.ajax({
-                type: "POST", url: './api/table.php?insert=vendor', data: data, dataType: 'json'
+                type: "POST", url: 'api/table.php?insert=vendor', data: data, dataType: 'json'
             }).done(function (response) {
                 console.log(response);
                 if (response.query.status) {

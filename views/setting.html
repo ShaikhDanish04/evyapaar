@@ -76,7 +76,7 @@
             if (files.length > 0) {
                 fd.append('file', files[0]);
                 fd.append('filename', 'logo');
-                $.ajax({ url: './api/fileUpload.php', type: 'post', data: fd, contentType: false, processData: false }).done(function (response) {
+                $.ajax({ url: 'api/fileUpload.php', type: 'post', data: fd, contentType: false, processData: false }).done(function (response) {
                     console.log(response);
                     if (response.image.status) {
                         $('.alert-holder').html(b_alert('success', 'Image Uploaded Successfully'));
@@ -99,7 +99,7 @@
                 fd.append('file', files[0]);
                 fd.append('filename', 'header');
 
-                $.ajax({ url: './api/fileUpload.php', type: 'post', data: fd, contentType: false, processData: false }).done(function (response) {
+                $.ajax({ url: 'api/fileUpload.php', type: 'post', data: fd, contentType: false, processData: false }).done(function (response) {
                     console.log(response);
                     if (response.image.status) {
                         $('.alert-holder').html(b_alert('success', 'Image Uploaded Successfully'));
@@ -116,7 +116,7 @@
 
         $('.update_user').click(function () {
             $.ajax({
-                method: 'POST', url: './api/table.php?update=system_users', data: { column: { invoice_desc: $('[name="invoice_desc"]').val() }, where: { username: 'admin' } }, asysnc: false, cache: false, dataType: 'json'
+                method: 'POST', url: 'api/table.php?update=system_users', data: { column: { invoice_desc: $('[name="invoice_desc"]').val() }, where: { username: 'admin' } }, asysnc: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 console.log(response);
                 if (response.query.status) {
@@ -129,7 +129,7 @@
 
 
         $.ajax({
-            method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
+            method: 'POST', url: 'api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
         }).done(function (response) {
             // console.log(response);
             $('[name="invoice_desc"]').text(response.query.data[0].invoice_desc);

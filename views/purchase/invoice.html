@@ -131,21 +131,21 @@
 
 <script> //vendor details
     $(document).ready(function () {
-        $('[name="vendor_id"]').html(options('./api/table.php?select=vendor'))
-        $('.product_id_in').html(options('./api/table.php?select=product'))
+        $('[name="vendor_id"]').html(options('api/table.php?select=vendor'))
+        $('.product_id_in').html(options('api/table.php?select=product'))
     })
     $('.modal').on('hide.bs.modal', function () {
-        $('[name="vendor_id"]').html(options('./api/table.php?select=vendor'))
-        $('.product_id_in').html(options('./api/table.php?select=product'))
+        $('[name="vendor_id"]').html(options('api/table.php?select=vendor'))
+        $('.product_id_in').html(options('api/table.php?select=product'))
     })
 
     // $(document).on('mousedown', '[name="vendor_id"]', function () {
-    //     if ($('[name="vendor_id"]').html() != options('./api/vendor_crud.php?crud=select')) $('[name="vendor_id"]').html(options('./api/vendor_crud.php?crud=select'))
+    //     if ($('[name="vendor_id"]').html() != options('api/vendor_crud.php?crud=select')) $('[name="vendor_id"]').html(options('api/vendor_crud.php?crud=select'))
     // })
     $('[name="vendor_id"]').change(function () {
         id = $(this).val();
         $.ajax({
-            type: "POST", url: './api/table.php?select=vendor', data: { where: { id: id } }, cache: false, dataType: 'json'
+            type: "POST", url: 'api/table.php?select=vendor', data: { where: { id: id } }, cache: false, dataType: 'json'
         }).done(function (response) {
             // vendor = JSON.parse(response.data);
             vendor = response.query.data[0];
@@ -159,7 +159,7 @@
 
 <script> //product table update
     // $(document).on('mousedown', '.product_id_in', function () {
-    //     if ($('.product_id_in').html() != options('./api/product_crud.php?crud=select')) $('.product_id_in').html(options('./api/product_crud.php?crud=select'))
+    //     if ($('.product_id_in').html() != options('api/product_crud.php?crud=select')) $('.product_id_in').html(options('api/product_crud.php?crud=select'))
     // })
 
     $('.product_id_in').change(function () {
@@ -172,7 +172,7 @@
             $('#product_table tbody').find('.no-data').remove();
 
             $.ajax({
-                url: './api/table.php?common',
+                url: 'api/table.php?common',
                 type: "POST", async: false, cache: false, dataType: 'json',
                 data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent' }, where: { 'product.id': product_id } }
             }).done(function (response) {
@@ -221,7 +221,7 @@
             if ($('[name="invoice_id"]') != 'new') {
                 id = $('[name="invoice_id"]').val();
                 $.ajax({
-                    type: "POST", url: './api/table.php?select=purchase', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
+                    type: "POST", url: 'api/table.php?select=purchase', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
 
                     data = response.query.data[0];
@@ -229,7 +229,7 @@
                     if (data != null) {
 
                         $.ajax({
-                            type: "POST", url: './api/table.php?select=vendor', data: { where: { id: data.vendor_id } }, async: false, cache: false, dataType: 'json'
+                            type: "POST", url: 'api/table.php?select=vendor', data: { where: { id: data.vendor_id } }, async: false, cache: false, dataType: 'json'
                         }).done(function (response) {
 
                             vendor = response.query.data[0];
@@ -359,7 +359,7 @@
             if (form.serializeObject().products != null) {
                 if ($('[name="invoice_id"]').val() == 'new') {
                     $.ajax({
-                        type: "GET", url: './api/table.php?getMax=id&from=purchase', dataType: 'json',
+                        type: "GET", url: 'api/table.php?getMax=id&from=purchase', dataType: 'json',
                     }).done(function (response) {
                         // console.log(response);
 
@@ -380,7 +380,7 @@
                         }
                         // console.log(data);
                         $.ajax({
-                            type: "POST", url: './api/table.php?insert=purchase', data: data, dataType: 'json',
+                            type: "POST", url: 'api/table.php?insert=purchase', data: data, dataType: 'json',
                         }).done(function (response) {
                             if (response.query.status) {
                                 localStorage.removeItem('invoice_id');
@@ -411,7 +411,7 @@
                     }
                     // console.log(data);
                     $.ajax({
-                        type: "POST", url: './api/table.php?update=purchase', data: data, dataType: 'json',
+                        type: "POST", url: 'api/table.php?update=purchase', data: data, dataType: 'json',
                     }).done(function (response) {
                         if (response.query.status) {
                             $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
@@ -439,7 +439,7 @@
                 if (confirm('Are You Ready To Lock Invoice ?')) {
                     alert('Invoice Locked');
                     if ($('[name="invoice_id"]').val() == 'new') {
-                        $.ajax({ type: "GET", url: './api/table.php?getMax=id&from=purchase', dataType: 'json', }).done(function (response) {
+                        $.ajax({ type: "GET", url: 'api/table.php?getMax=id&from=purchase', dataType: 'json', }).done(function (response) {
                             // console.log(response);
 
                             data = {
@@ -459,7 +459,7 @@
                                 }
                             }
                             if (Number($('[name="cash_in_advance"]').val()) > 0) {
-                                $.ajax({ type: "POST", url: './api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
+                                $.ajax({ type: "POST", url: 'api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
                                     console.log(response.query.data);
 
                                     due_data = {
@@ -472,18 +472,18 @@
                                             status: '0'
                                         }
                                     }
-                                    $.ajax({ type: "POST", url: './api/table.php?insert=due', data: due_data, dataType: 'json', }).done(function (response) {
+                                    $.ajax({ type: "POST", url: 'api/table.php?insert=due', data: due_data, dataType: 'json', }).done(function (response) {
                                         console.log(response);
                                     })
                                 })
                             }
                             JSON.parse(data.column.products).forEach(el => {
-                                $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
+                                $.ajax({ type: "POST", url: 'api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
                                     // console.log(response.query.data[0]);
                                     // console.log(el);
                                     quantity = Number(response.query.data[0].quantity) + Number(el.unit);
 
-                                    $.ajax({ type: "POST", url: './api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
+                                    $.ajax({ type: "POST", url: 'api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
                                         // console.log(response);
                                     })
                                 })
@@ -491,7 +491,7 @@
                             });
                             // console.log(data);
                             $.ajax({
-                                type: "POST", url: './api/table.php?insert=purchase&response', data: data, dataType: 'json',
+                                type: "POST", url: 'api/table.php?insert=purchase&response', data: data, dataType: 'json',
                             }).done(function (response) {
                                 if (response.query.status) {
 
@@ -525,7 +525,7 @@
                             where: { id: $('[name="invoice_id"]').val() }
                         }
                         if (Number($('[name="cash_in_advance"]').val()) > 0) {
-                            $.ajax({ type: "POST", url: './api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
+                            $.ajax({ type: "POST", url: 'api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
                                 console.log(response.query.data);
 
                                 due_data = {
@@ -538,26 +538,26 @@
                                         status: '0'
                                     }
                                 }
-                                $.ajax({ type: "POST", url: './api/table.php?insert=due', data: due_data, dataType: 'json', }).done(function (response) {
+                                $.ajax({ type: "POST", url: 'api/table.php?insert=due', data: due_data, dataType: 'json', }).done(function (response) {
                                     console.log(response);
                                 })
                             })
                         }
                         // console.log(data);
                         JSON.parse(data.column.products).forEach(el => {
-                            $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
+                            $.ajax({ type: "POST", url: 'api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
                                 // console.log(response.query.data[0]);
                                 // console.log(el);
                                 quantity = Number(response.query.data[0].quantity) + Number(el.unit);
 
-                                $.ajax({ type: "POST", url: './api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
+                                $.ajax({ type: "POST", url: 'api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
                                     // console.log(response);
                                 })
                             })
 
                         });
                         $.ajax({
-                            type: "POST", url: './api/table.php?update=purchase&response', data: data, dataType: 'json',
+                            type: "POST", url: 'api/table.php?update=purchase&response', data: data, dataType: 'json',
                         }).done(function (response) {
                             if (response.query.status) {
                                 console.log(response);

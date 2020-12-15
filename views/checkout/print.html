@@ -4,13 +4,13 @@
     if ($('[name="invoice_id"]') != 'new') {
         if (localStorage.getItem('screen') == "checkout/view") {
 
-            $.ajax({ method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json' }).done(function (response) {
+            $.ajax({ method: 'POST', url: 'api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json' }).done(function (response) {
                 $('.invoice_desc').text(response.query.data[0].invoice_desc);
             })
 
             id = $('[name="invoice_id"]').val();
             $.ajax({
-                type: "POST", url: './api/table.php?select=checkout', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
+                type: "POST", url: 'api/table.php?select=checkout', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
 
                 data = response.query.data[0];
@@ -19,7 +19,7 @@
 
                 id = data.customer.id;
                 $.ajax({
-                    type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: id } }, async: false, cache: false, dataType: 'json'
+                    type: "POST", url: 'api/table.php?select=customer', data: { where: { mobile: id } }, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
 
                     customer = response.query.data[0];
@@ -118,7 +118,7 @@
             console.log('Column ' + $(this).closest("td").index());
         });
         $.ajax({
-            method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
+            method: 'POST', url: 'api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
         }).done(function (response) {
             // console.log(response);
             data = response.query.data[0];

@@ -93,7 +93,7 @@
             if (Number(amount) <= Number(current_due.text())) {
                 if (Number(amount) == Number(current_due.text())) {
                     $.ajax({
-                        url: './api/table.php?update=due',
+                        url: 'api/table.php?update=due',
                         type: "POST", data: { column: { due_amount: amount, status: '1' }, where: { id: id } }, async: false, cache: false, dataType: 'json'
                     }).done(function (response) {
                         table_data();
@@ -101,14 +101,14 @@
                     })
                 } else {
                     $.ajax({
-                        url: './api/table.php?update=due&response',
+                        url: 'api/table.php?update=due&response',
                         type: "POST", data: { column: { due_amount: amount, status: '1' }, where: { id: id } }, async: false, cache: false, dataType: 'json'
                     }).done(function (response) {
 
                         table_data();
                         // console.log(response.query.data);
                         old_data = response.query.data;
-                        $.ajax({ type: "POST", url: './api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
+                        $.ajax({ type: "POST", url: 'api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
                             data = response.query.data;
 
                             due_data = {
@@ -122,7 +122,7 @@
                                 }
                             }
                             // console.log(due_data);
-                            $.ajax({ type: "POST", url: './api/table.php?insert=due', data: due_data, dataType: 'json', async: false }).done(function (response) {
+                            $.ajax({ type: "POST", url: 'api/table.php?insert=due', data: due_data, dataType: 'json', async: false }).done(function (response) {
                                 // console.log(response);
                                 table_data();
                             })

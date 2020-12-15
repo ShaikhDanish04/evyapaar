@@ -53,7 +53,7 @@
             where: { id: $('[name="product_id"').val() }
         }
         $.ajax({
-            type: "POST", url: './api/table.php?update=product&response', data: data, dataType: 'json'
+            type: "POST", url: 'api/table.php?update=product&response', data: data, dataType: 'json'
         }).done(function (response) {
             console.log(response);
             if (response.query.status) {
@@ -74,7 +74,7 @@
     $(document).ready(function () {
 
         $.ajax({
-            type: "GET", url: './api/table.php?select=gst_slab&common', cache: false, async: false, dataType: 'json'
+            type: "GET", url: 'api/table.php?select=gst_slab&common', cache: false, async: false, dataType: 'json'
         }).done(function (response) {
             console.log(response)
             response.query.data.forEach(value => {
@@ -85,7 +85,7 @@
         });
 
         $.ajax({
-            type: "POST", url: './api/table.php?select=product', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
+            type: "POST", url: 'api/table.php?select=product', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
         }).done(function (response) {
 
             // product = JSON.parse(response.data);

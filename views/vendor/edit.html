@@ -99,7 +99,7 @@
             where: { id: $('[name="vendor_id"').val() }
         }
         $.ajax({
-            type: "POST", url: './api/table.php?update=vendor&response', data: data, dataType: 'json'
+            type: "POST", url: 'api/table.php?update=vendor&response', data: data, dataType: 'json'
         }).done(function (response) {
             console.log(response);
             if (response.query.status) {
@@ -120,7 +120,7 @@
     $(document).ready(function () {
 
         $.ajax({
-            type: "POST", url: './api/table.php?select=vendor', data: { where: { id: id } }, cache: false, dataType: 'json'
+            type: "POST", url: 'api/table.php?select=vendor', data: { where: { id: id } }, cache: false, dataType: 'json'
         }).done(function (response) {
 
             // vendor = JSON.parse(response.data);
