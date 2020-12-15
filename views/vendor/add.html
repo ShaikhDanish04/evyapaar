@@ -1,22 +1,22 @@
-<form id="vendor_add_form" action="./api/vendor_crud.php?crud=insert" class="p-3" method="post">
+<form id="vendor_add_form" class="p-3" method="post">
     <div class="form-group">
         <label for="">Vendor Name</label>
-        <input type="text" name="name" class="form-control" required>
+        <input type="text" name="name" class="form-control" require>
         <small class="text-muted">*Mandatory</small>
     </div>
     <div class="form-group">
         <label for="">Contact</label>
-        <input type="text" name="contact" maxlength="10" class="form-control" required>
+        <input type="text" name="contact" maxlength="10" class="form-control" require>
         <small class="text-muted">*Mandatory</small>
     </div>
     <div class="form-group">
         <label for="">Email</label>
-        <input type="email" name="email" class="form-control" required>
+        <input type="email" name="email" class="form-control" require>
         <small class="text-muted">*Mandatory</small>
     </div>
     <div class="form-group">
         <label for="">State</label>
-        <select name="state" class="form-control" required>
+        <select name="state" class="form-control" require>
             <option value="">--- Select State ---</option>
             <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
             <option value="Andhra Pradesh">Andhra Pradesh</option>
@@ -59,7 +59,7 @@
     </div>
     <div class="form-group">
         <label for="">Address</label>
-        <textarea name="address" class="form-control" required rows="3"></textarea>
+        <textarea name="address" class="form-control" require rows="3"></textarea>
         <small class="text-muted">*Mandatory</small>
     </div>
     <div class="form-group">
@@ -72,3 +72,47 @@
         <button class="btn btn-primary">Add Vendor</button>
     </div>
 </form>
+<script>
+    $(document).on('submit', "#vendor_add_form", function (e) {
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        $(this).find('button').attr('disabled', 'true');
+        var form = $(this);
+
+        // console.log(form.serializeObject());
+
+
+        $.ajax({
+            type: "POST", url: './api/table.php?getMax=id&from=vendor', data: data, dataType: 'json'
+        }).done(function (response) {
+            console.log(response);
+            data = {
+                column: {
+                    id: Number(response.query.data) + 1,
+                    name: $('[name="name"]').val(),
+                    contact: $('[name="contact"]').val(),
+                    email: $('[name="email"]').val(),
+                    state: $('[name="state"]').val(),
+                    address: $('[name="address"]').val(),
+                    gst_number: $('[name="gst_number"]').val(),
+
+                },
+                where: { id: $('[name="vendor_id"').val() }
+            }
+            $.ajax({
+                type: "POST", url: './api/table.php?insert=vendor', data: data, dataType: 'json'
+            }).done(function (response) {
+                console.log(response);
+                if (response.query.status) {
+                    $('#input_modal .modal-body').prepend(b_alert('success', 'Task Successfully'));
+                    form.find('button').removeAttr('disabled');
+                    $('#input_modal').modal('hide');
+                } else {
+                    $('#input_modal .modal-body').prepend(b_alert('danger', 'Operation Error !!! Task Failed, Try Again'));
+                }
+            }).fail(function () {
+                $('#input_modal .modal-body').prepend(b_alert('danger', 'Connection Error !!! Try Again'));
+            });
+        })
+    });
+</script>
