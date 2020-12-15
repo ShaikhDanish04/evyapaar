@@ -544,7 +544,7 @@
                                             id: Number(response.query.data) + 1,
                                             type: 'checkout',
                                             invoice_id: data.column.id,
-                                            due_amount: $('[name="cash_in_advance"]').val(),
+                                            due_amount: $('[name="balance_amount"]').val(),
                                             datetime: getDatetime(),
                                             status: '0'
                                         }
@@ -611,7 +611,7 @@
                                         id: Number(response.query.data) + 1,
                                         type: 'checkout',
                                         invoice_id: $('[name="invoice_id"]').val(),
-                                        due_amount: $('[name="cash_in_advance"]').val(),
+                                        due_amount: $('[name="balance_amount"]').val(),
                                         datetime: getDatetime(),
                                         status: '0'
                                     }
