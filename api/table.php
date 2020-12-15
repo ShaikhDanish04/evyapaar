@@ -15,7 +15,7 @@ foreach ($_GET as $key => $value) {
 if ($_SERVER['HTTP_HOST'] != $_ENV['HTTP_HOST']) {
     $response->status = false;
     $response->request = 'failed';
-    $response->reason = 'Access Not allowed for : ' . $_SERVER['HTTP_REFERER'];
+    $response->reason = 'Access Not allowed for : ' . $_SERVER['HTTP_HOST'];
     echo json_encode($response);
     exit;
 }
