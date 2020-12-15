@@ -4,6 +4,10 @@
     if ($('[name="invoice_id"]') != 'new') {
         if (localStorage.getItem('screen') == "purchase/view") {
 
+            $.ajax({ method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json' }).done(function (response) {
+                $('.invoice_desc').text(response.query.data[0].invoice_desc);
+            })
+
             id = $('[name="invoice_id"]').val();
             $.ajax({
                 type: "POST", url: './api/table.php?select=purchase', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
@@ -212,8 +216,8 @@
         </tr>
 
         <tr style="height:17.85pt">
-            <td colspan=7 rowspan=3 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
-                <p style="margin-bottom:0in;line-height:9.5pt"><span style="font-size:7.0pt">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit.</span><span style="font-size:9.0pt"> </span></p>
+            <td colspan=7 rowspan=3 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:17.85pt;vertical-align: baseline;">
+                <p style="margin-bottom:0in;line-height:9.5pt"><span style="font-size:7.0pt" class="invoice_desc">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit.</span><span style="font-size:9.0pt"> </span></p>
             </td>
             <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Sub Total :</span></p>
