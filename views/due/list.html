@@ -1,0 +1,141 @@
+<script>
+    function table_data() {
+
+        $.ajax({
+            url: 'http://localhost/evyapaar/api/table.php?select=due',
+            type: "POST", data: { desc: 'status ASC, id' }, async: false, cache: false, dataType: 'json'
+        }).done(function (response) {
+            data = response.query.data;
+            console.log(response);
+            data.forEach(el => {
+                el.due_amount = '<span class="current_due">' + el.due_amount + '</span>';
+                el.type = (el.type == 'checkout') ? '<span class="badge badge-info px-3 py-2 ">Checkout</span>' : '<span class="badge badge-dark px-3 py-2">Purchase</span>';
+                el.status = (el.status == '0') ? '<span class="badge badge-warning px-3 py-2" data-status="0">Pending</span>' : '<span class="badge badge-success px-3 py-2" data-status="1">Cleared</span>';
+            });
+
+            autoTable('.table', data, ['domain'], [
+                `
+                <form class="due_form">
+                    <input class="form-control form-control-sm mb-1 text-right"/>
+                    <button class="btn btn-primary btn-sm w-100 text-nowrap mr-1" data-due-pay-id="$@id@"><i class="fa fa-money"></i> Pay</button>
+                </form>
+                `
+            ], () => {
+
+                $('[data-status]').each(function () {
+                    tr = $(this).closest('tr');
+                    pay = $(this).attr('data-status');
+                    if (pay == '1') {
+                        tr.find('input').remove();
+                        tr.find('[data-due-pay-id]').attr('disabled', 'true')
+                    }
+                });
+            });
+
+        });
+
+
+
+    }
+</script>
+
+<style>
+    .table td {
+        vertical-align: middle;
+    }
+</style>
+
+<div class="container-fluid">
+    <p class="h3 m-0">Due List</p>
+    <hr>
+    <div class="card">
+        <div class="card-head p-3 d-flex align-items-center justify-content-between border-bottom">
+            <p class="h5 m-0"><i class="fa fa-list-alt"></i> Due List</p>
+            <div class="d-flex">
+                <button class="btn btn-primary" onclick="location.reload()"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class=" table-responsive">
+                <table class="table data-table table-bordered " style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+
+        table_data();
+
+        $(document).on('keyup', '.due_form input', function () {
+
+            tr = $(this).closest('tr');
+            input = tr.find('input');
+            current_due = tr.find('.current_due');
+
+            if (Number(input.val()) > Number(current_due.text())) {
+                tr.find('[data-due-pay-id]').attr('disabled', 'true')
+            } else {
+                tr.find('[data-due-pay-id]').removeAttr('disabled')
+            }
+
+        })
+
+        $(document).on('submit', '.due_form', function (e) {
+            e.preventDefault()
+
+            tr = $(this).closest('tr');
+            amount = $(this).find('input').val();
+            current_due = tr.find('.current_due');
+
+            id = $(this).find('[data-due-pay-id]').attr('data-due-pay-id');
+            if (Number(amount) <= Number(current_due.text())) {
+                if (Number(amount) == Number(current_due.text())) {
+                    $.ajax({
+                        url: './api/table.php?update=due',
+                        type: "POST", data: { column: { due_amount: amount, status: '1' }, where: { id: id } }, async: false, cache: false, dataType: 'json'
+                    }).done(function (response) {
+                        table_data();
+                        console.log(response)
+                    })
+                } else {
+                    $.ajax({
+                        url: './api/table.php?update=due&response',
+                        type: "POST", data: { column: { due_amount: amount, status: '1' }, where: { id: id } }, async: false, cache: false, dataType: 'json'
+                    }).done(function (response) {
+
+                        table_data();
+                        // console.log(response.query.data);
+                        old_data = response.query.data;
+                        $.ajax({ type: "POST", url: './api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
+                            data = response.query.data;
+
+                            due_data = {
+                                column: {
+                                    id: Number(response.query.data) + 1,
+                                    type: old_data.type,
+                                    invoice_id: old_data.invoice_id,
+                                    due_amount: Number(current_due.text()) - Number(amount),
+                                    datetime: getDatetime(),
+                                    status: '0'
+                                }
+                            }
+                            // console.log(due_data);
+                            $.ajax({ type: "POST", url: './api/table.php?insert=due', data: due_data, dataType: 'json', async: false }).done(function (response) {
+                                // console.log(response);
+                                table_data();
+                            })
+                        })
+                    })
+                }
+            }
+        })
+
+
+
+
+
+    })
+
+</script>

@@ -1,13 +1,3 @@
-<style>
-    .form-control[readonly],
-    .form-control[readonly]:focus {
-        background: transparent;
-        outline: 0;
-        border: 0;
-        box-shadow: 0 0 0;
-        min-width: 100px;
-    }
-</style>
 <div class="container-fluid">
     <form id="save_invoice" action="" method="post">
         <div class="d-flex align-items-center justify-content-between">
@@ -18,7 +8,6 @@
                 </span>
             </div>
             <div class="d-flex">
-                <button class="btn btn-success mr-2 save_invoice" type="button"><i class="fa fa-save"></i> Save Changes</button>
                 <button class="btn btn-danger exit_invoice" type="button"><i class="fa fa-times"></i></button>
             </div>
         </div>
@@ -53,41 +42,6 @@
                     <textarea name="customer[address]" class="form-control" rows="2" autocomplete="off"></textarea>
                 </div>
             </div>
-
-            <script>
-                $('[name="customer[mobile]"]').keyup(function () {
-                    input = $(this);
-                    $('[name="customer[fullname]"]').val('');
-                    $('[name="customer[email]"]').val('');
-                    $('[name="customer[address]"]').val('');
-                    $('[name="customer[fullname]"]').removeAttr('readonly');
-                    $('[name="customer[email]"]').removeAttr('readonly');
-                    $('[name="customer[address]"]').removeAttr('readonly');
-
-                    if (this.value.length == 10) {
-                        input.attr('disabled', 'true')
-                        $.ajax({
-                            type: "GET", url: './api/customer_crud.php?crud=select&id=' + input.val(), async: false, cache: false, dataType: 'json'
-                        }).done(function (response) {
-                            data = JSON.parse(response.data);
-                            console.log(data);
-
-                            if (data != null) {
-                                // console.log(data.name);
-                                $('[name="customer[fullname]"]').val(data.name);
-                                $('[name="customer[email]"]').val(data.email);
-                                $('[name="customer[address]"]').val(data.address);
-
-                                $('[name="customer[fullname]"]').attr('readonly', 'true');
-                                $('[name="customer[email]"]').attr('readonly', 'true');
-                                $('[name="customer[address]"]').attr('readonly', 'true');
-                            }
-
-                            input.removeAttr('disabled');
-                        })
-                    }
-                })
-            </script>
         </div>
         <div class="card mb-3">
             <div class="card-body">
@@ -121,17 +75,12 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- <tr>
-                                <td colspan="11" class="text-center no-data">No Products Added</td>
-                            </tr> -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
         </div>
         <div class="card">
-
             <div class="card-body">
                 <div class="d-flex mb-3 align-items-center justify-content-between">
                     <p class="m-0">Sub Total : </p>
@@ -164,16 +113,28 @@
                     <p> <span class="form-control amount-in-words text-capitalize" readonly></span></p>
                 </div>
                 <hr>
-                <div class="d-flex justify-content-end align-items-center">
-                    <button class="btn btn-success lock_invoice" type="button"><i class="fa fa-shopping-cart"></i> Checkout</button>
+                <div class="d-flex mb-3 form-inline justify-content-between align-items-center">
+                    <label for="">Cash In Advance : </label>
+                    <p class="m-0 d-flex align-items-center"><input type="text" value="" name="cash_in_advance" class="form-control text-right"></p>
+                </div>
+                <hr>
+                <div class="d-flex align-items-center justify-content-between h5 m-0">
+                    <p class="m-0">Balance Amount : </p>
+                    <p class="m-0 d-flex align-items-center"> <input type="text" readonly name="balance_amount" class="form-control text-right font-weight-bold balance_amount" value="0.00"></p>
+                </div>
+                <hr>
+                <div class="d-flex align-items-center justify-content-between">
+                    <button class=" btn btn-dark mr-2 save_invoice"><i class="fa fa-save"></i> Save Draft</button>
+                    <button class="btn btn-success lock_invoice" type="button"><i class="fa fa-lock"></i> Checkout</button>
                 </div>
             </div>
+        </div>
     </form>
 </div>
 
 <script> // Initial
     $(document).ready(function () {
-        $('.product_id_in').html(options('./api/product_crud.php?crud=select'));
+        $('.product_id_in').html(options('./api/table.php?select=product'));
 
     })
 </script>
@@ -192,9 +153,12 @@
             }
             $('#product_table tbody').find('.no-data').remove()
             $.ajax({
-                type: "GET", url: './api/product_crud.php?crud=select&id=' + product_id, async: false, cache: false, dataType: 'json'
+                url: './api/table.php?common',
+                type: "POST", async: false, cache: false, dataType: 'json',
+                data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent' }, where: { 'product.id': product_id } }
             }).done(function (response) {
-                data = JSON.parse(response.data);
+                // data = JSON.parse(response.data);
+                data = response.query.data[0];
                 console.log(data);
 
                 $('#product_table tbody').append(`
@@ -216,6 +180,8 @@
                         <td><button class="btn btn-sm btn-danger rounded-circle delete-row" type="button"><i class="fa fa-times"></i></button></td>
                     </tr>
                 `);
+
+                $(`.form-control`).keyup()
             });
         }
     })
@@ -223,6 +189,42 @@
         $(this).closest('tr').remove();
         if ($('#product_table tbody tr').length == 1) {
             // $('#product_table tbody').html('<tr><td colspan="9" class="text-center no-data">No Products Added</td></tr>')
+        }
+    })
+</script>
+
+<script> // get customer details
+    $('[name="customer[mobile]"]').keyup(function () {
+        input = $(this);
+        $('[name="customer[fullname]"]').val('');
+        $('[name="customer[email]"]').val('');
+        $('[name="customer[address]"]').val('');
+        $('[name="customer[fullname]"]').removeAttr('readonly');
+        $('[name="customer[email]"]').removeAttr('readonly');
+        $('[name="customer[address]"]').removeAttr('readonly');
+
+        if (this.value.length == 10) {
+            input.attr('disabled', 'true')
+            $.ajax({
+                type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: input.val() } }, async: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+                // data = JSON.parse(response.data);
+                data = response.query.data[0];
+                console.log(data);
+
+                if (data != null) {
+                    // console.log(data.name);
+                    $('[name="customer[fullname]"]').val(data.name);
+                    $('[name="customer[email]"]').val(data.email);
+                    $('[name="customer[address]"]').val(data.address);
+
+                    $('[name="customer[fullname]"]').attr('readonly', 'true');
+                    $('[name="customer[email]"]').attr('readonly', 'true');
+                    $('[name="customer[address]"]').attr('readonly', 'true');
+                }
+
+                input.removeAttr('disabled');
+            })
         }
     })
 </script>
@@ -238,32 +240,39 @@
                 id = $('[name="invoice_id"]').val();
 
                 $.ajax({
-                    type: "GET", url: './api/checkout_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                    type: "POST", url: './api/table.php?select=checkout', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
-                    data = JSON.parse(response.data);
+                    // data = JSON.parse(response.data);
+                    data = response.query.data[0];
                     console.log(data);
 
-                    // invoice = response.data;
-                    customer = JSON.parse(data.customer);
-                    if (customer != null) {
-                        $('[name="customer[mobile]"]').attr('readonly', 'true');
-                        $('[name="customer[fullname]"]').attr('readonly', 'true');
-                        $('[name="customer[email]"]').attr('readonly', 'true');
-                        $('[name="customer[address]"]').attr('readonly', 'true');
+                    if (data != null) {
+                        $.ajax({
+                            type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: data.customer } }, async: false, cache: false, dataType: 'json'
+                        }).done(function (response) {
+                            // invoice = response.data;
+                            // customer = JSON.parse(data.customer);
+                            customer = response.query.data[0];
+                            if (customer != null) {
+                                $('[name="customer[mobile]"]').attr('readonly', 'true');
+                                $('[name="customer[fullname]"]').attr('readonly', 'true');
+                                $('[name="customer[email]"]').attr('readonly', 'true');
+                                $('[name="customer[address]"]').attr('readonly', 'true');
 
-                        $('[name="customer[fullname]"]').val(customer.name);
-                        $('[name="customer[email]"]').val(customer.email);
-                        $('[name="customer[mobile]"]').val(customer.mobile);
-                        $('[name="customer[address]"]').val(customer.address);
-                    }
+                                $('[name="customer[fullname]"]').val(customer.name);
+                                $('[name="customer[email]"]').val(customer.email);
+                                $('[name="customer[mobile]"]').val(customer.mobile);
+                                $('[name="customer[address]"]').val(customer.address);
+                            }
+                        })
 
 
-                    if (data.products != null) {
-                        $('#product_table tbody').html('');
+                        if (data.products != null) {
+                            $('#product_table tbody').html('');
 
-                        JSON.parse(data.products).forEach(data => {
-                            i = $('#product_table tbody tr').length;
-                            $('#product_table tbody').append(`
+                            data.products.forEach(data => {
+                                i = $('#product_table tbody tr').length;
+                                $('#product_table tbody').append(`
                                 <tr data-row-index="${i}">
                                     <td class="text-nowrap">
                                         <input type="hidden" class="form-control" name="products[${i}][id]" value="${data.id}" readonly>
@@ -281,26 +290,32 @@
                                     <td><button class="btn btn-sm btn-danger rounded-circle delete-row" type="button"><i class="fa fa-times"></i></button></td>
                                 </tr>
                             `);
-                        });
+                            });
+                        }
+
+
+                        sub_total = 0;
+                        sgst = 0;
+                        cgst = 0;
+
+                        $.each($('table .total_price'), function () { sub_total = sub_total + Number($(this).val()) })
+                        $.each($('table .total_gst'), function () { sgst = sgst + (Number($(this).val()) / 2) })
+                        $.each($('table .total_gst'), function () { cgst = cgst + (Number($(this).val()) / 2) })
+
+                        $('[name="discount"]').val(data.discount);
+                        $('[name="sub_total"]').val(sub_total.toFixed(2));
+                        $('[name="sgst_amount"]').val(sgst.toFixed(2));
+                        $('[name="cgst_amount"]').val(cgst.toFixed(2));
+                        $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
+                        $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
+
+                        $('[name="cash_in_advance"]').val(Number(data.cash_in_advance).toFixed(2))
+
+                        $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+
+                        $('[name="balance_amount"]').val(Number($('[name="grand_total"]').val()) - Number($('[name="cash_in_advance"]').val()));
                     }
 
-
-                    sub_total = 0;
-                    sgst = 0;
-                    cgst = 0;
-
-                    $.each($('table .total_price'), function () { sub_total = sub_total + Number($(this).val()) })
-                    $.each($('table .total_gst'), function () { sgst = sgst + (Number($(this).val()) / 2) })
-                    $.each($('table .total_gst'), function () { cgst = cgst + (Number($(this).val()) / 2) })
-
-                    $('[name="discount"]').val(data.discount);
-                    $('[name="sub_total"]').val(sub_total.toFixed(2));
-                    $('[name="sgst_amount"]').val(sgst.toFixed(2));
-                    $('[name="cgst_amount"]').val(cgst.toFixed(2));
-                    $('[name="net_total"]').val(sub_total - percentage($('[name="discount"]').val(), sub_total));
-                    $('[name="grand_total"]').val(Number($('[name="net_total"]').val()) + sgst + cgst);
-
-                    $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
                 });
             }
         }
@@ -308,7 +323,7 @@
 </script>
 
 <script> // Product Table Calculation
-    $(document).on('keyup', 'table .form-control', function () {
+    $(document).on('keyup', '.form-control', function () {
         input = $(this);
         tr = $(this).closest('tr');
         i = $(this).closest('tr').attr('data-row-index');
@@ -347,63 +362,123 @@
         $('[name="grand_total"]').val((grand_total).toFixed(2));
         $('.grand_total').text((grand_total).toFixed(2));
 
+        $('[name="balance_amount"]').val(Number(grand_total).toFixed(2) - Number($('[name="cash_in_advance"]').val()));
+
         $('.amount-in-words').html(inWords(grand_total));
 
-        $('.discount').keyup(function () {
-            $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
-            $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
+        // $('.discount').keyup(function () {
+        //     $('[name="net_total"]').val(Number($('[name="sub_total"]').val()) - percentage($(this).val(), $('[name="sub_total"]').val()).toFixed(2))
+        //     $('[name="grand_total"]').val((Number($('[name="net_total"]').val()) + Number($('[name="sgst_amount"]').val()) + Number($('[name="sgst_amount"]').val())).toFixed(2))
 
-            $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
-            $('.grand_total').text((grand_total).toFixed(2));
+        //     $('.amount-in-words').html(inWords($('[name="grand_total"]').val()));
+        //     $('.grand_total').text((grand_total).toFixed(2));
 
-        })
+        // })
     })
 </script>
 
 <script> // Save Invoice
     $('.save_invoice').click(function (e) {
         e.preventDefault();
-
         form = $('#save_invoice');
-
         $formObj = $('#save_invoice').serializeObject();
 
+        scrollTo(0, 0);
         if ($('[name="customer[mobile]"]').val() != '') {
-            if ($('[name="invoice_id"]').val() == 'new') {
-                if (form.serializeObject().products != null) {
-                    $.ajax({
-                        type: "POST",
-                        url: './api/checkout_crud.php?crud=insert',
-                        data: form.serialize(), // serializes the form's elements.
-                        dataType: 'json',
-                    }).done(function (response) {
-                        if (response.status) {
-                            localStorage.removeItem('invoice_id');
-                            if (localStorage.getItem("invoice_id") === null) {
-                                screen_loader('checkout/list');
-                            } else {
-                                console.log('error');
-                            }
-                        } else {
-                            $('.alert-holder').html(b_alert('danger', 'Error'));
+            $.ajax({
+                type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: $('[name="customer[mobile]"]').val() } }, async: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+                // data = JSON.parse(response.data);
+                data = response.query.data[0];
+                console.log(data);
+
+                if (data == null) {
+                    customer_data = {
+                        column: {
+                            mobile: $('[name="customer[mobile]"]').val(),
+                            name: $('[name="customer[fullname]"]').val(),
+                            email: $('[name="customer[email]"]').val(),
+                            address: $('[name="customer[address]"]').val(),
                         }
-                    });
-                }
-            } else {
-                if (form.serializeObject().products != null) {
+                    };
                     $.ajax({
-                        type: "POST",
-                        url: './api/checkout_crud.php?crud=update&id=' + $('[name="invoice_id"]').val(),
-                        data: form.serialize(), // serializes the form's elements.
-                        dataType: 'json',
+                        type: "POST", url: './api/table.php?insert=customer', data: customer_data, async: false, cache: false, dataType: 'json'
                     }).done(function (response) {
-                        if (response.status) {
+                        console.log(response)
+                    })
+                }
+            })
+
+            if (form.serializeObject().products != null) {
+                if ($('[name="invoice_id"]').val() == 'new') {
+
+                    $.ajax({
+                        type: "GET", url: './api/table.php?getMax=id&from=checkout', dataType: 'json',
+                    }).done(function (response) {
+                        console.log(response);
+                        data = {
+                            column: {
+                                id: Number(response.query.data) + 1,
+                                sub_total: $('[name="sub_total"]').val(),
+                                discount: $('[name="discount"]').val(),
+                                customer: $('[name="customer[mobile]"]').val(),
+                                products: JSON.stringify(form.serializeObject().products),
+                                net_total: $('[name="net_total"]').val(),
+                                sgst_amount: $('[name="sgst_amount"]').val(),
+                                cgst_amount: $('[name="cgst_amount"]').val(),
+                                grand_total: $('[name="grand_total"]').val(),
+                                cash_in_advance: $('[name="cash_in_advance"]').val(),
+                                datetime: getDatetime(),
+                            }
+                        }
+                        // console.log(data);
+                        $.ajax({
+                            type: "POST", url: './api/table.php?insert=checkout', data: data, dataType: 'json',
+                        }).done(function (response) {
+                            console.log(response);
+
+                            if (response.query.status) {
+                                localStorage.removeItem('invoice_id');
+                                if (localStorage.getItem("invoice_id") === null) {
+                                    screen_loader('checkout/list');
+                                } else {
+                                    console.log('error');
+                                }
+                            } else {
+                                $('.alert-holder').html(b_alert('danger', 'Error'));
+                            }
+                        });
+                    });
+                } else {
+                    data = {
+                        column: {
+                            sub_total: $('[name="sub_total"]').val(),
+                            discount: $('[name="discount"]').val(),
+                            customer: $('[name="customer[mobile]"]').val(),
+                            products: JSON.stringify(form.serializeObject().products),
+                            net_total: $('[name="net_total"]').val(),
+                            sgst_amount: $('[name="sgst_amount"]').val(),
+                            cgst_amount: $('[name="cgst_amount"]').val(),
+                            grand_total: $('[name="grand_total"]').val(),
+                            cash_in_advance: $('[name="cash_in_advance"]').val(),
+                            // datetime: getDatetime(),
+                        },
+                        where: { id: $('[name="invoice_id"]').val() }
+                    }
+                    // console.log(data);
+                    $.ajax({
+                        type: "POST", url: './api/table.php?update=checkout', data: data, dataType: 'json',
+                    }).done(function (response) {
+                        if (response.query.status) {
                             $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
                         } else {
                             $('.alert-holder').html(b_alert('danger', 'Error'));
                         }
                     });
+
                 }
+            } else {
+                alert('Please Add Products');
             }
         } else {
             alert('Select Add Customer');
@@ -415,29 +490,170 @@
 
     $('.lock_invoice').click(function () {
         if ($('[name="customer[mobile]"]').val() != '') {
+            $.ajax({
+                type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: $('[name="customer[mobile]"]').val() } }, async: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+                // data = JSON.parse(response.data);
+                data = response.query.data[0];
+                console.log(data);
+
+                if (data == null) {
+                    customer_data = {
+                        column: {
+                            mobile: $('[name="customer[mobile]"]').val(),
+                            name: $('[name="customer[fullname]"]').val(),
+                            email: $('[name="customer[email]"]').val(),
+                            address: $('[name="customer[address]"]').val(),
+                        }
+                    };
+                    $.ajax({
+                        type: "POST", url: './api/table.php?insert=customer', data: customer_data, async: false, cache: false, dataType: 'json'
+                    }).done(function (response) {
+                        console.log(response)
+                    })
+                }
+            })
+
             form = $('#save_invoice');
             if (form.serializeObject().products != null) {
                 if (confirm('Are You Ready To Lock Invoice ?')) {
                     alert('Invoice Locked');
-                    $.ajax({
-                        type: "POST",
-                        url: './api/checkout_crud.php?crud=lock&id=' + $('[name="invoice_id"]').val(),
-                        data: form.serialize(), // serializes the form's elements.
-                        dataType: 'json',
-                    }).done(function (response) {
-                        if (response.status) {
-                            localStorage.setItem('invoice_id', response.invoice_id);
-                            if (localStorage.getItem("invoice_id") !== null) {
-                                console.log('ok');
-                                screen_loader('checkout/view');
-                            } else {
-                                console.log('error');
+                    if ($('[name="invoice_id"]').val() == 'new') {
+                        $.ajax({ type: "GET", url: './api/table.php?getMax=id&from=checkout', dataType: 'json', }).done(function (response) {
+                            console.log(response);
+                            data = {
+                                column: {
+                                    id: Number(response.query.data) + 1,
+                                    sub_total: $('[name="sub_total"]').val(),
+                                    discount: $('[name="discount"]').val(),
+                                    customer: $('[name="customer[mobile]"]').val(),
+                                    products: JSON.stringify(form.serializeObject().products),
+                                    net_total: $('[name="net_total"]').val(),
+                                    sgst_amount: $('[name="sgst_amount"]').val(),
+                                    cgst_amount: $('[name="cgst_amount"]').val(),
+                                    grand_total: $('[name="grand_total"]').val(),
+                                    cash_in_advance: $('[name="cash_in_advance"]').val(),
+                                    datetime: getDatetime(),
+                                    status: '1'
+                                }
                             }
-                        } else {
-                            $('.alert-holder').html(b_alert('danger', 'Error'));
+                            if (Number($('[name="cash_in_advance"]').val()) > 0) {
+                                $.ajax({ type: "POST", url: './api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
+                                    console.log(response.query.data);
+
+                                    due_data = {
+                                        column: {
+                                            id: Number(response.query.data) + 1,
+                                            type: 'checkout',
+                                            invoice_id: data.column.id,
+                                            due_amount: $('[name="balance_amount"]').val(),
+                                            datetime: getDatetime(),
+                                            status: '0'
+                                        }
+                                    }
+                                    $.ajax({ type: "POST", url: './api/table.php?insert=due', data: due_data, dataType: 'json', }).done(function (response) {
+                                        console.log(response);
+                                    })
+                                })
+                            }
+                            JSON.parse(data.column.products).forEach(el => {
+                                $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
+                                    // console.log(response.query.data[0]);
+                                    // console.log(el);
+                                    quantity = Number(response.query.data[0].quantity) - Number(el.unit);
+
+                                    $.ajax({ type: "POST", url: './api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
+                                        // console.log(response);
+                                    })
+                                })
+
+                            });
+                            // console.log(data);
+                            $.ajax({
+                                type: "POST", url: './api/table.php?insert=checkout', data: data, dataType: 'json',
+                            }).done(function (response) {
+                                console.log(response);
+
+                                if (response.query.status) {
+                                    localStorage.setItem('invoice_id', data.column.id);
+                                    if (localStorage.getItem("invoice_id") !== null) {
+                                        console.log('ok');
+                                        screen_loader('checkout/view');
+                                    } else {
+                                        console.log('error');
+                                    }
+                                } else {
+                                    $('.alert-holder').html(b_alert('danger', 'Error'));
+                                }
+                            });
+                        });
+                    } else {
+                        data = {
+                            column: {
+                                sub_total: $('[name="sub_total"]').val(),
+                                discount: $('[name="discount"]').val(),
+                                customer: $('[name="customer[mobile]"]').val(),
+                                products: JSON.stringify(form.serializeObject().products),
+                                net_total: $('[name="net_total"]').val(),
+                                sgst_amount: $('[name="sgst_amount"]').val(),
+                                cgst_amount: $('[name="cgst_amount"]').val(),
+                                grand_total: $('[name="grand_total"]').val(),
+                                cash_in_advance: $('[name="cash_in_advance"]').val(),
+                                // datetime: getDatetime(),
+                                status: '1'
+                            },
+                            where: { id: $('[name="invoice_id"]').val() }
                         }
-                        // screen_loader('checkout/list');
-                    });
+                        if (Number($('[name="cash_in_advance"]').val()) > 0) {
+                            $.ajax({ type: "POST", url: './api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
+                                console.log(response.query.data);
+
+                                due_data = {
+                                    column: {
+                                        id: Number(response.query.data) + 1,
+                                        type: 'checkout',
+                                        invoice_id: $('[name="invoice_id"]').val(),
+                                        due_amount: $('[name="balance_amount"]').val(),
+                                        datetime: getDatetime(),
+                                        status: '0'
+                                    }
+                                }
+                                $.ajax({ type: "POST", url: './api/table.php?insert=due', data: due_data, dataType: 'json', }).done(function (response) {
+                                    console.log(response);
+                                })
+                            })
+                        }
+                        JSON.parse(data.column.products).forEach(el => {
+                            $.ajax({ type: "POST", url: './api/table.php?select=product', data: { where: { id: el.id } }, dataType: 'json', async: false }).done(function (response) {
+                                // console.log(response.query.data[0]);
+                                // console.log(el);
+                                quantity = Number(response.query.data[0].quantity) - Number(el.unit);
+
+                                $.ajax({ type: "POST", url: './api/table.php?update=product', data: { column: { quantity: quantity }, where: { id: el.id } }, dataType: 'json', }).done(function (response) {
+                                    // console.log(response);
+                                })
+                            })
+
+                        });
+                        // console.log(data);
+                        $.ajax({
+                            type: "POST", url: './api/table.php?update=checkout&response', data: data, dataType: 'json',
+                        }).done(function (response) {
+                            if (response.query.status) {
+                                localStorage.setItem('invoice_id', response.query.data.id);
+                                if (localStorage.getItem("invoice_id") !== null) {
+                                    console.log('ok');
+                                    screen_loader('checkout/view');
+                                } else {
+                                    console.log('error');
+                                }
+                                // $('.alert-holder').html(b_alert('success', 'Invoice Updated'));
+                            } else {
+                                $('.alert-holder').html(b_alert('danger', 'Error'));
+                            }
+                        });
+
+                    }
                 }
             } else {
                 alert('Please Add Products');

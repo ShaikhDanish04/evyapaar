@@ -30,14 +30,19 @@ if (isset($_POST['logout'])) {
     echo json_encode($response);
 }
 
+
 if (isset($_GET['get'])) {
     if (isset($_SESSION['user_in'])) {
         $response->session_established = true;
+        $user = $conn->query("SELECT username,sidebar,invoice_desc FROM `system_users` WHERE `username`='" . $_SESSION['user_in'] . "'")->fetch_assoc();
+        $response->user = $user;
     } else {
         $response->session_established = false;
     }
     echo json_encode($response);
 }
+$domain = $_SESSION['domain'];
+
 
 function status($status)
 {

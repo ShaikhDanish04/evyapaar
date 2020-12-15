@@ -18,7 +18,16 @@
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.3/JsBarcode.all.min.js"></script>
 
-
+    <style>
+        .form-control[readonly],
+        .form-control[readonly]:focus {
+            background: transparent;
+            outline: 0;
+            border: 0;
+            box-shadow: 0 0 0;
+            min-width: 100px;
+        }
+    </style>
 </head>
 <script> //form serialize object script
     (function ($) {
@@ -152,13 +161,14 @@
                     init: function (api, node, config) {
                         $(node).removeClass('btn-secondary')
                     },
-                }, {
-                    extend: 'print',
-                    className: 'btn-sm',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                }
+                },
+                    // {
+                    //     extend: 'print',
+                    //     className: 'btn-sm',
+                    //     exportOptions: {
+                    //         columns: ':visible'
+                    //     }
+                    // }
                 ],
                 initComplete: function () {
                     this.api().columns().every(function () {
@@ -219,6 +229,24 @@
                 </div>`
     }
 
+    function getDatetime() {
+
+        var today = new Date();
+        var n = today.toLocaleTimeString();
+        var dd = today.getDate();
+
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        return yyyy + '-' + mm + '-' + dd + ' ' + n;
+    }
+
     function percentage(a, b) {
         return (Number(a) / 100) * Number(b);
     }
@@ -228,7 +256,7 @@
         $.ajax({
             type: "GET", url: url, async: false, cache: false, dataType: 'json',
         }).done(function (response) {
-            JSON.parse(response.data).forEach(value => {
+            response.query.data.forEach(value => {
                 options += `<option value="${value.id}">${value.name}</option>`;
             });
             // $(select).html(options)
@@ -238,76 +266,72 @@
         return options;
     }
 
-    function autoTable(table_selector, query, skip_header, button_array, proc) {
+    function autoTable(table_selector, data, skip_header, button_array, proc) {
         $(table_selector).html('');
 
-        $.ajax({ type: "GET", url: query, async: false, cache: false, dataType: 'json' })
-            .done(function (response) {
+        tableData = data;
+        // console.log(tableData);
 
-                tableData = JSON.parse(response.data);
-                console.log(tableData);
+        header_array = [];
+        for (header in tableData[0]) {
+            header_array.push(header);
+        }
 
-                header_array = [];
-                for (header in tableData[0]) {
-                    header_array.push(header);
+        header_array = (header_array.filter(value => !skip_header.includes(value)))
+
+
+        var table = document.querySelector(table_selector);
+        var header = table.createTHead();
+        var body = table.createTBody();
+        var row = header.insertRow(0);
+
+        // console.log(header_array);
+        i = 0;
+        header_array.forEach(header => {
+            var cell = row.insertCell(i);
+            cell.innerHTML = `<span class="text-capitalize font-weight-bold">${header.replace('_', ' ')}</span>`;
+            i++;
+        })
+        if (button_array.length > 0) {
+            var cell = row.insertCell(i);
+            cell.innerHTML = `<span class="text-capitalize font-weight-bold">Action</span>`;
+        }
+
+        for (row in tableData) {
+            i = 0;
+            for (col in tableData[row]) {
+                if (i == 0) {
+                    $(table_selector + ' tbody').append($('<tr data-row-id="' + tableData[row][header_array[0]] + '">'));
                 }
+                if (tableData[row][header_array[i]] != null) {
+                    // console.log(tableData[row][header_array[0]]);
+                    if (i == 0) {
+                        $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>${Number(row) + 1}</td>`);
+                    } else {
 
-                header_array = (header_array.filter(value => !skip_header.includes(value)))
-
-
-                var table = document.querySelector(table_selector);
-                var header = table.createTHead();
-                var body = table.createTBody();
-                var row = header.insertRow(0);
-
-                // console.log(header_array);
-                i = 0;
-                header_array.forEach(header => {
-                    var cell = row.insertCell(i);
-                    cell.innerHTML = `<span class="text-capitalize font-weight-bold">${header.replace('_', ' ')}</span>`;
-                    i++;
-                })
-                if (button_array.length > 0) {
-                    var cell = row.insertCell(i);
-                    cell.innerHTML = `<span class="text-capitalize font-weight-bold">Action</span>`;
-                }
-
-                for (row in tableData) {
-                    i = 0;
-                    for (col in tableData[row]) {
-                        if (i == 0) {
-                            $(table_selector + ' tbody').append($('<tr data-row-id="' + tableData[row][header_array[0]] + '">'));
-                        }
-                        if (tableData[row][header_array[i]] != null) {
-                            // console.log(tableData[row][header_array[0]]);
-                            if (i == 0) {
-                                $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>${Number(row) + 1}</td>`);
-                            } else {
-
-                                $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td class="text-nowrap">${tableData[row][header_array[i]]}</td>`);
-                            }
-                        }
-                        i++;
+                        $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td class="text-nowrap">${tableData[row][header_array[i]]}</td>`);
                     }
-                    if (button_array.length > 0) {
-                        buttonHTML = "";
-                        button_array.forEach(button => {
-                            var search = button.match(/\$@(.*)@/);
-                            if (search.length > 0) {
-                                button = button.replace('$@' + search[1] + '@', tableData[row][search[1]]);
-                            }
-                            buttonHTML += button;
-                        })
-                        $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>
+                }
+                i++;
+            }
+            if (button_array.length > 0) {
+                buttonHTML = "";
+                button_array.forEach(button => {
+                    var search = button.match(/\$@(.*)@/);
+                    if (search.length > 0) {
+                        button = button.replace('$@' + search[1] + '@', tableData[row][search[1]]);
+                    }
+                    buttonHTML += button;
+                })
+                $(table_selector + ' tbody tr:eq(' + row + ')').append(`<td>
                             <div class="text-nowrap">${buttonHTML}</div>
                         </td>`);
-                    }
-                }
+            }
+        }
 
-                $(table_selector + '').addClass('data-table');
-                proc();
-                dt();
-            })
+        $(table_selector + '').addClass('data-table');
+        proc();
+        dt();
     }
 
 
@@ -328,7 +352,7 @@
                 method: 'GET', url: './api/connect.php?get', asysnc: false, cache: false, dataType: 'json'
             }).done(function (response) {
                 $('.page').hide();
-                console.log(response);
+                // console.log(response);
                 if (response.env) {
                     if (response.session_established) {
                         $('.page').fadeIn().load('panel.html', 'f' + (Math.random() * 1000000))
@@ -365,30 +389,6 @@
                         $('#input_modal').modal('show');
                     })
             }
-
-            $(document).on('submit', "#input_modal form", function (e) {
-                e.preventDefault(); // avoid to execute the actual submit of the form.
-
-                $(this).find('button').attr('disabled', 'true');
-                var form = $(this);
-                var action = $(this).attr('action');
-
-                $.ajax({
-                    type: "POST", url: action, data: form.serialize(), dataType: 'json'
-                }).done(function (response) {
-                    if (response.queryStatus) {
-                        $('#input_modal .modal-body').prepend(b_alert('success', 'Task Successfully'));
-                        form.find('button').removeAttr('disabled');
-                        $('#input_modal').modal('hide');
-                        // table_data();
-                    } else {
-                        $('#input_modal .modal-body').prepend(b_alert('danger', 'Operation Error !!! Task Failed, Try Again'));
-                    }
-                }).fail(function () {
-                    $('#input_modal .modal-body').prepend(b_alert('danger', 'Connection Error !!! Try Again'));
-                });
-            });
-
         </script>
         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">

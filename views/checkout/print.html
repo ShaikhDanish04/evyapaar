@@ -4,32 +4,50 @@
     if ($('[name="invoice_id"]') != 'new') {
         if (localStorage.getItem('screen') == "checkout/view") {
 
+            $.ajax({ method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json' }).done(function (response) {
+                $('.invoice_desc').text(response.query.data[0].invoice_desc);
+            })
+
             id = $('[name="invoice_id"]').val();
             $.ajax({
-                type: "GET", url: './api/checkout_crud.php?crud=select&id=' + id, async: false, cache: false, dataType: 'json'
+                type: "POST", url: './api/table.php?select=checkout', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
             }).done(function (response) {
 
-                data = JSON.parse(response.data);
-                // console.log(data);
-
-                customer = JSON.parse(data.customer);
-                // console.log(customer);
-
+                data = response.query.data[0];
+                console.log(data);
                 $('.invoice_number').text(data.id);
-                $('#vendor_name').text(customer.name);
-                $('#vendor_address').text(customer.address);
-                $('#vendor_contact').text(customer.contact);
-                $('#vendor_email').text(customer.email);
-                $('.IN_date').text(data.date);
-                $('.IN_time').text(data.time);
+
+                id = data.customer.id;
+                $.ajax({
+                    type: "POST", url: './api/table.php?select=customer', data: { where: { mobile: id } }, async: false, cache: false, dataType: 'json'
+                }).done(function (response) {
+
+                    customer = response.query.data[0];
+                    // console.log(customer);
+
+                    $('#vendor_name').text(customer.name);
+                    $('#vendor_address').text(customer.address);
+                    $('#vendor_contact').text(customer.contact);
+                    $('#vendor_email').text(customer.email);
+                })
+
+                const datetime = new Date(Date.parse(data.datetime));
+                let [month, day, year] = datetime.toLocaleDateString("en-US").split("/");
+                let [hour, minute, second] = datetime.toLocaleTimeString("en-US").split(/:| /)
+
+                $('.IN_date').text(day + '-' + month + '-' + year);
+                $('.IN_time').text(hour + ':' + minute + ':' + second);
 
                 $('.sub_total').text(Number(data.sub_total).toFixed(2));
-                $('.discount').text(Number(data.discount).toFixed(2));
+                $('.discount').text(Number(data.discount).toFixed() + ' %');
                 $('.net_total').text(Number(data.net_total).toFixed(2));
                 $('.sgst').text(Number(data.sgst_amount).toFixed(2));
                 $('.cgst').text(Number(data.cgst_amount).toFixed(2));
                 $('.gst_total').text((Number(data.cgst_amount) + Number(data.sgst_amount)).toFixed(2));
+
                 $('.grand_total').text(Number(data.grand_total).toFixed(2));
+                $('.cash_in_advance').text(Number(data.cash_in_advance).toFixed(2));
+                $('.balance_amount').text(Number(Number(data.grand_total).toFixed(2) - Number(data.cash_in_advance).toFixed(2)).toFixed(2));
 
                 $('.in_words').text(inWords(Number(data.grand_total)));
 
@@ -44,7 +62,7 @@
                     { tax: 28, tax_amount: 0, gst_amount: 0 }
                 ];
 
-                JSON.parse(data.products).forEach(product => {
+                data.products.forEach(product => {
                     // console.log(product);
                     gst_slab.forEach(g => {
                         if (Number(product.tax_percent) == Number(g.tax)) {
@@ -94,20 +112,25 @@
 
 </script>
 <script type="text/javascript">
-
     $(document).ready(function () {
         $('table').on('click', 'td', function () {
             console.log('Row ' + $(this).closest("tr").index());
             console.log('Column ' + $(this).closest("td").index());
         });
+        $.ajax({
+            method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
+        }).done(function (response) {
+            // console.log(response);
+            data = response.query.data[0];
+            $('.brand-logo').attr('src', 'upload/' + data.domain + '/logo.' + data.logo_ext + '?' + (Math.random() * 1000000))
+            $('.brand-header').attr('src', 'upload/' + data.domain + '/header.' + data.header_ext + '?' + (Math.random() * 1000000))
+        })
     });
-
 </script>
 <input type="hidden" name="invoice_id">
-<img class="mb-3" src=".assets/img/header.jpg?new2711" width="100%" alt="">
+<img class="brand-header mb-3" src=".assets/img/header.jpg?new2711" width="100%" alt="">
 <table id="my_table" cellspacing=0 cellpadding=0 style="border-collapse:collapse;border:none;">
     <tbody>
-
         <tr>
             <td colspan=11 style="width:750pt;border:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt">
                 <p style="margin-bottom:0in;text-align:center;line-height:normal"><span style="font-size:14.0pt;font-weight:600">TAX INVOICE</span></p>
@@ -141,25 +164,29 @@
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Time : <span class="IN_time"> </span></span></p>
+                    <span style="font-size:9.0pt">Time : <span class="IN_time"> </span></span>
+                </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Challan No :<span class="invoice_number"> </span></span></p>
+                    <span style="font-size:9.0pt">Challan No :<span class="invoice_number"> </span></span>
+                </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">P.O. No. :<span> </span></span></p>
+                    <span style="font-size:9.0pt">P.O. No. :<span> </span></span>
+                </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Vehicle No. :<span> </span> </span></p>
+                    <span style="font-size:9.0pt">Vehicle No. :<span> </span> </span>
+                </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
@@ -193,8 +220,8 @@
         </tr>
 
         <tr style="height:17.85pt">
-            <td colspan=7 rowspan=3 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
-                <p style="margin-bottom:0in;line-height:9.5pt"><span style="font-size:7.0pt">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit.</span><span style="font-size:9.0pt"> </span></p>
+            <td colspan=7 rowspan=3 style="width:319.15pt;border:solid windowtext 1.0pt;border-top:none;padding:0in 5.4pt 0in 5.4pt;height:17.85pt;vertical-align: baseline;">
+                <p style="margin-bottom:0in;line-height:9.5pt"><span style="font-size:7.0pt" class="invoice_desc">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quas illo culpa suscipit quae dolore reprehenderit molestiae nobis ea repellat! Cumque, eos magnam. Ad porro, praesentium alias ratione iste veritatis suscipit.</span><span style="font-size:9.0pt"> </span></p>
             </td>
             <td colspan=2 style="width:85.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid white 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:17.85pt">
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Sub Total :</span></p>
@@ -398,7 +425,7 @@
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Cash In Advance :</span></p>
             </td>
             <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
-                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt">0.00</span></p>
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="cash_in_advance">0.00</span></p>
             </td>
         </tr>
         <tr style="height:13.0pt">
@@ -409,7 +436,7 @@
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Balance Amount :</span></p>
             </td>
             <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
-                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="grand_total">0.00</span></p>
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="balance_amount">0.00</span></p>
             </td>
         </tr>
         <tr style="height:13.0pt">
@@ -421,5 +448,4 @@
             </td>
         </tr>
     </tbody>
-
 </table>
