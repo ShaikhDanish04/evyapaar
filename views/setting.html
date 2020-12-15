@@ -122,9 +122,11 @@
             })
         })
 
+
         $.ajax({
-            method: 'POST', url: './api/table.php?select=system_users', data: { where: { username: 'admin' } }, asysnc: false, cache: false, dataType: 'json'
+            method: 'POST', url: './api/table.php?select=system_users', asysnc: false, cache: false, dataType: 'json'
         }).done(function (response) {
+            console.log(response);
             $('[name="invoice_desc"]').text(response.query.data[0].invoice_desc);
         })
     })

@@ -5,13 +5,17 @@ header("Content-type: application/json; charset=utf-8");
 
 require('connect.php');
 
+$domain = $_SESSION['domain'];
+
 foreach ($_GET as $key => $value) {
     $_GET[$key] = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $value);
 }
+$response->dump = $domain;
 if (isset($_GET['select'])) {
 
     $table_name = $_GET['select'];
-    $where = '';
+    // $where = '';
+    $where = ' WHERE domain = \'' . $domain . '\'';
     $orderby = '';
     $limit = '';
     $response->query['query'] = $_REQUEST;
@@ -24,7 +28,8 @@ if (isset($_GET['select'])) {
         $length = count($_POST['where']);
         $i = 0;
         foreach ($_POST['where'] as $key => $val) {
-            if ($i == 0) $where .= ' WHERE';
+            if ($i == 0) $where .= ' AND';
+            // if ($i == 0) $where .= ' WHERE';
 
             $where .= ' `' . $key . '`=\'' . $val . '\' ';
             $i++;
@@ -63,7 +68,8 @@ if (isset($_POST['join'])) {
     $order = (isset($_POST['join']['order'])) ? ' ORDER BY ' . $_POST['join']['order'] : '';
     $seq = '*';
 
-    $where = '';
+    // $where = '';
+    $where = ' WHERE ' . $table1 . '.domain = \'' . $domain . '\'';
 
     if (isset($_POST['join']['seq'])) {
         $seq = $_POST['join']['seq'];
@@ -73,7 +79,8 @@ if (isset($_POST['join'])) {
         $length = count($_POST['where']);
         $i = 0;
         foreach ($_POST['where'] as $key => $val) {
-            if ($i == 0) $where .= ' WHERE';
+            // if ($i == 0) $where .= ' WHERE';
+            if ($i == 0) $where .= ' AND';
 
             $where .= ' ' . $key . '=\'' . $val . '\' ';
             $i++;
@@ -209,5 +216,9 @@ if (isset($_GET['insert'])) {
         $response->query['status'] = false;
         $response->query['error'] = $conn->error;
     }
+}
+
+if (isset($_GET['session'])) {
+    $response->session = $_SESSION;
 }
 echo json_encode($response);
