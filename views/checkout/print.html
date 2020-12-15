@@ -31,16 +31,19 @@
                 let [month, day, year] = datetime.toLocaleDateString("en-US").split("/");
                 let [hour, minute, second] = datetime.toLocaleTimeString("en-US").split(/:| /)
 
-                $('.IN_date').text(day + ' / ' + month + ' / ' + year);
-                $('.IN_time').text(hour + ' : ' + minute + ' : ' + second);
+                $('.IN_date').text(day + '-' + month + '-' + year);
+                $('.IN_time').text(hour + ':' + minute + ':' + second);
 
                 $('.sub_total').text(Number(data.sub_total).toFixed(2));
-                $('.discount').text(Number(data.discount).toFixed(2));
+                $('.discount').text(Number(data.discount).toFixed() + ' %');
                 $('.net_total').text(Number(data.net_total).toFixed(2));
                 $('.sgst').text(Number(data.sgst_amount).toFixed(2));
                 $('.cgst').text(Number(data.cgst_amount).toFixed(2));
                 $('.gst_total').text((Number(data.cgst_amount) + Number(data.sgst_amount)).toFixed(2));
+
                 $('.grand_total').text(Number(data.grand_total).toFixed(2));
+                $('.cash_in_advance').text(Number(data.cash_in_advance).toFixed(2));
+                $('.balance_amount').text(Number(Number(data.grand_total).toFixed(2) - Number(data.cash_in_advance).toFixed(2)).toFixed(2));
 
                 $('.in_words').text(inWords(Number(data.grand_total)));
 
@@ -149,25 +152,29 @@
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Time : <span class="IN_time"> </span></span></p>
+                    <span style="font-size:9.0pt">Time : <span class="IN_time"> </span></span>
+                </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Challan No :<span class="invoice_number"> </span></span></p>
+                    <span style="font-size:9.0pt">Challan No :<span class="invoice_number"> </span></span>
+                </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">P.O. No. :<span> </span></span></p>
+                    <span style="font-size:9.0pt">P.O. No. :<span> </span></span>
+                </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Vehicle No. :<span> </span> </span></p>
+                    <span style="font-size:9.0pt">Vehicle No. :<span> </span> </span>
+                </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
@@ -406,7 +413,7 @@
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Cash In Advance :</span></p>
             </td>
             <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
-                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt">0.00</span></p>
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="cash_in_advance">0.00</span></p>
             </td>
         </tr>
         <tr style="height:13.0pt">
@@ -417,7 +424,7 @@
                 <p style="margin-bottom:0in;line-height:normal"><span style="font-size:9.0pt">Balance Amount :</span></p>
             </td>
             <td colspan=2 style="width:90.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.0pt">
-                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="grand_total">0.00</span></p>
+                <p style="margin-bottom:0in;text-align:right;line-height:normal"><span style="font-size:9.0pt" class="balance_amount">0.00</span></p>
             </td>
         </tr>
         <tr style="height:13.0pt">

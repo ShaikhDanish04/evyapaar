@@ -2,8 +2,8 @@
     function table_data() {
 
         $.ajax({
-            url: 'http://localhost/evyapaar/api/table.php?select=due&desc=id',
-            type: "POST", async: false, cache: false, dataType: 'json'
+            url: 'http://localhost/evyapaar/api/table.php?select=due',
+            type: "POST", data: { desc: 'id' }, async: false, cache: false, dataType: 'json'
         }).done(function (response) {
             data = response.query.data;
 
