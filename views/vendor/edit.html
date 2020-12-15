@@ -119,7 +119,6 @@
     id = $('[data-edit-id]').attr('data-edit-id');
     $(document).ready(function () {
 
-
         $.ajax({
             type: "POST", url: './api/table.php?select=vendor', data: { where: { id: id } }, cache: false, dataType: 'json'
         }).done(function (response) {

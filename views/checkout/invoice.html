@@ -1,13 +1,3 @@
-<style>
-    .form-control[readonly],
-    .form-control[readonly]:focus {
-        background: transparent;
-        outline: 0;
-        border: 0;
-        box-shadow: 0 0 0;
-        min-width: 100px;
-    }
-</style>
 <div class="container-fluid">
     <form id="save_invoice" action="" method="post">
         <div class="d-flex align-items-center justify-content-between">
@@ -53,42 +43,6 @@
                     <textarea name="customer[address]" class="form-control" rows="2" autocomplete="off"></textarea>
                 </div>
             </div>
-
-            <script>
-                $('[name="customer[mobile]"]').keyup(function () {
-                    input = $(this);
-                    $('[name="customer[fullname]"]').val('');
-                    $('[name="customer[email]"]').val('');
-                    $('[name="customer[address]"]').val('');
-                    $('[name="customer[fullname]"]').removeAttr('readonly');
-                    $('[name="customer[email]"]').removeAttr('readonly');
-                    $('[name="customer[address]"]').removeAttr('readonly');
-
-                    if (this.value.length == 10) {
-                        input.attr('disabled', 'true')
-                        $.ajax({
-                            type: "GET", url: './api/table.php?select=customer', data: { where: { id: input.val() } }, async: false, cache: false, dataType: 'json'
-                        }).done(function (response) {
-                            // data = JSON.parse(response.data);
-                            data = response.query.data[0];
-                            console.log(data);
-
-                            if (data != null) {
-                                // console.log(data.name);
-                                $('[name="customer[fullname]"]').val(data.name);
-                                $('[name="customer[email]"]').val(data.email);
-                                $('[name="customer[address]"]').val(data.address);
-
-                                $('[name="customer[fullname]"]').attr('readonly', 'true');
-                                $('[name="customer[email]"]').attr('readonly', 'true');
-                                $('[name="customer[address]"]').attr('readonly', 'true');
-                            }
-
-                            input.removeAttr('disabled');
-                        })
-                    }
-                })
-            </script>
         </div>
         <div class="card mb-3">
             <div class="card-body">
@@ -122,17 +76,12 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- <tr>
-                                <td colspan="11" class="text-center no-data">No Products Added</td>
-                            </tr> -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
         </div>
         <div class="card">
-
             <div class="card-body">
                 <div class="d-flex mb-3 align-items-center justify-content-between">
                     <p class="m-0">Sub Total : </p>
@@ -169,6 +118,7 @@
                     <button class="btn btn-success lock_invoice" type="button"><i class="fa fa-shopping-cart"></i> Checkout</button>
                 </div>
             </div>
+        </div>
     </form>
 </div>
 
@@ -227,6 +177,42 @@
         $(this).closest('tr').remove();
         if ($('#product_table tbody tr').length == 1) {
             // $('#product_table tbody').html('<tr><td colspan="9" class="text-center no-data">No Products Added</td></tr>')
+        }
+    })
+</script>
+
+<script> // get customer details
+    $('[name="customer[mobile]"]').keyup(function () {
+        input = $(this);
+        $('[name="customer[fullname]"]').val('');
+        $('[name="customer[email]"]').val('');
+        $('[name="customer[address]"]').val('');
+        $('[name="customer[fullname]"]').removeAttr('readonly');
+        $('[name="customer[email]"]').removeAttr('readonly');
+        $('[name="customer[address]"]').removeAttr('readonly');
+
+        if (this.value.length == 10) {
+            input.attr('disabled', 'true')
+            $.ajax({
+                type: "GET", url: './api/table.php?select=customer', data: { where: { id: input.val() } }, async: false, cache: false, dataType: 'json'
+            }).done(function (response) {
+                // data = JSON.parse(response.data);
+                data = response.query.data[0];
+                console.log(data);
+
+                if (data != null) {
+                    // console.log(data.name);
+                    $('[name="customer[fullname]"]').val(data.name);
+                    $('[name="customer[email]"]').val(data.email);
+                    $('[name="customer[address]"]').val(data.address);
+
+                    $('[name="customer[fullname]"]').attr('readonly', 'true');
+                    $('[name="customer[email]"]').attr('readonly', 'true');
+                    $('[name="customer[address]"]').attr('readonly', 'true');
+                }
+
+                input.removeAttr('disabled');
+            })
         }
     })
 </script>

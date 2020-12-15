@@ -15,7 +15,6 @@
 
                 product.barcode = '<p class="m-0 text-center barcode_in">' + product.barcode + '</p>';
                 product.tax_percent = '<p class="m-0 text-center">' + product.tax_percent + ' %</p>';
-
             });
 
             autoTable('.table', data, ['gst_id'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-product-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
@@ -64,7 +63,6 @@
 
         $('.modal').on('hide.bs.modal', function () {
             if (localStorage.screen == 'product/list') table_data();
-
         })
 
         $(document).on('click', '[data-product-edit-id]', function () {

@@ -105,20 +105,17 @@
 
 </script>
 <script type="text/javascript">
-
     $(document).ready(function () {
         $('table').on('click', 'td', function () {
             console.log('Row ' + $(this).closest("tr").index());
             console.log('Column ' + $(this).closest("td").index());
         });
     });
-
 </script>
 <input type="hidden" name="invoice_id">
 <img class="mb-3" src=".assets/img/header.jpg?new2711" width="100%" alt="">
 <table id="my_table" cellspacing=0 cellpadding=0 style="border-collapse:collapse;border:none;">
     <tbody>
-
         <tr>
             <td colspan=11 style="width:750pt;border:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt">
                 <p style="margin-bottom:0in;text-align:center;line-height:normal"><span style="font-size:14.0pt;font-weight:600">TAX INVOICE</span></p>
@@ -432,5 +429,4 @@
             </td>
         </tr>
     </tbody>
-
 </table>

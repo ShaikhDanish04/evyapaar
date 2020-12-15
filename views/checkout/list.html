@@ -23,9 +23,7 @@
                 el.net_total = '<p class="m-0 text-right">' + el.net_total + '</p>';
                 el.grand_total = '<p class="m-0 text-right">' + el.grand_total + '</p>';
                 el.status = '<span class="status">' + el.status + '</span>';
-
             });
-
         });
 
         autoTable('.table', data, ['customer', 'products'],
@@ -33,14 +31,13 @@
                 '<button class="btn btn-primary btn-sm text-nowrap mr-1" data-invoice-view-id="$@id@"><i class="fa fa-eye"></i> View</button>',
                 '<button class="btn btn-warning btn-sm text-nowrap mr-1" data-invoice-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
                 '<button class="btn btn-danger btn-sm text-nowrap" data-vendor-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
-            ], () => { });
+            ], () => {
+                $.each($('.status'), function () {
+                    if ($(this).text() == '1') $(this).closest('tr').find('[data-invoice-edit-id],[data-vendor-delete-id]').attr('disabled', 'true');
 
-        $.each($('.status'), function () {
-            if ($(this).text() == '1') $(this).closest('tr').find('[data-invoice-edit-id],[data-vendor-delete-id]').attr('disabled', 'true');
-
-            $(this).html(($(this).text() == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>');
-        })
-
+                    $(this).html(($(this).text() == '1') ? '<span class="badge badge-pill badge-success p-2" style="min-width:80px">Locked</span>' : '<span class="badge badge-pill badge-dark p-2" style="min-width:80px">Open</span>');
+                })
+            });
     }
 </script>
 <div class="container-fluid">
@@ -57,11 +54,10 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
         table_data();
-
-
 
         $('.create_invoice').click(function () {
             localStorage.setItem('invoice_id', 'new');

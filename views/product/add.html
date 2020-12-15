@@ -33,18 +33,14 @@
 <script>
     // this is the id of the form
     $(document).ready(function () {
-
         $.ajax({
             type: "GET", url: './api/table.php?select=gst_slab', cache: false, dataType: 'json'
         }).done(function (response) {
             data = response.query.data;
             data.forEach(value => {
                 $('[name="gst"]').append(`<option value="${value.id}">${value.tax_percent}% GST</option>`)
-
             });
-            console.log(response); // show response from the php script.
+            // console.log(response); // show response from the php script.
         });
-
-
     })
 </script>

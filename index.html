@@ -18,7 +18,16 @@
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.3/JsBarcode.all.min.js"></script>
 
-
+    <style>
+        .form-control[readonly],
+        .form-control[readonly]:focus {
+            background: transparent;
+            outline: 0;
+            border: 0;
+            box-shadow: 0 0 0;
+            min-width: 100px;
+        }
+    </style>
 </head>
 <script> //form serialize object script
     (function ($) {

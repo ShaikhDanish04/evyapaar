@@ -41,8 +41,7 @@
         $(this).find('button').attr('disabled', 'true');
         var form = $(this);
 
-        console.log(form.serializeObject());
-
+        // console.log(form.serializeObject());
         data = {
             column: {
                 name: $('[name="name"]').val(),
@@ -99,9 +98,5 @@
             $('[name="barcode"]').val(product.barcode);
             console.log(product); // show response from the php script.
         });
-
-
     })
-
-
 </script>
