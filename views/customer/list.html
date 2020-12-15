@@ -1,7 +1,7 @@
 <script>
     function table_data() {
         $.ajax({
-            url: 'http://localhost/evyapaar/api/table.php?select=customer&desc=id',
+            url: 'api/table.php?select=customer&desc=id',
             type: "POST", async: false, cache: false, dataType: 'json'
         }).done(function (response) {
             data = response.query.data;

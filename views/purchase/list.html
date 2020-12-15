@@ -1,7 +1,7 @@
 <script>
     function table_data() {
         $.ajax({
-            url: 'http://localhost/evyapaar/api/table.php',
+            url: 'api/table.php',
             type: "POST", async: false, cache: false, dataType: 'json',
             data: { join: { table1: 'purchase', table2: 'vendor', id1: 'vendor_id', id2: 'id', order: 'purchase.datetime desc', seq: 'purchase.id,vendor.name as vendor_name,purchase.products as products_count,purchase.*' } }
         }).done(function (response) {

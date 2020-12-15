@@ -2,7 +2,7 @@
     function table_data() {
 
         $.ajax({
-            url: 'http://localhost/evyapaar/api/table.php?select=vendor&desc=id',
+            url: 'api/table.php?select=vendor&desc=id',
             type: "POST", async: false, cache: false, dataType: 'json'
         }).done(function (response) {
             data = response.query.data;
@@ -12,7 +12,7 @@
                 el.total_purchase = 0;
 
                 $.ajax({
-                    url: 'http://localhost/evyapaar/api/table.php?select=purchase',
+                    url: 'api/table.php?select=purchase',
                     type: "POST", async: false, cache: false, dataType: 'json',
                     data: { where: { vendor_id: el.id } }
                 }).done(function (response) {

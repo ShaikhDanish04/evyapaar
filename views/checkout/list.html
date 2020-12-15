@@ -2,7 +2,7 @@
     function table_data() {
 
         $.ajax({
-            url: 'http://localhost/evyapaar/api/table.php',
+            url: 'api/table.php',
             type: "POST", async: false, cache: false, dataType: 'json',
             data: { join: { table1: 'checkout', table2: 'customer', id1: 'customer', id2: 'mobile', order: 'checkout.id DESC', seq: 'checkout.id,customer.name as customer_name,customer as mobile,checkout.*' } }
         }).done(function (response) {

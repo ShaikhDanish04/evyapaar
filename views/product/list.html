@@ -1,7 +1,7 @@
 <script>
     function table_data() {
         $.ajax({
-            url: 'http://localhost/evyapaar/api/table.php?common',
+            url: 'api/table.php?common',
             type: "POST", async: false, cache: false, dataType: 'json',
             data: { join: { table1: 'product', table2: 'gst_slab', id1: 'gst_id', id2: 'id', seq: 'product.*,gst_slab.tax_percent', order: 'product.id desc' } }
         }).done(function (response) {
