@@ -18,7 +18,7 @@ if ($_SERVER['HTTP_HOST'] != $_ENV['HTTP_HOST']) {
     exit;
 }
 
-$response->dump = $_SERVER;
+// $response->dump = $_SERVER;
 
 if (isset($_GET['select'])) {
 
@@ -186,16 +186,21 @@ if (isset($_GET['getMax'])) {
     $column_name = $_GET['getMax'];
     $table_name = $_GET['from'];
 
-    $row = $conn->query("SELECT * FROM $table_name WHERE domain = '$domain' ORDER BY $column_name DESC LIMIT 1")->fetch_assoc();
-    if ($row[$column_name] == null) $data = 1;
-    else $data = $row[$column_name];
-
-    if ($row == TRUE) {
-        $response->query['data'] = $data;
+    if ($conn->query("SELECT * FROM $table_name WHERE domain = '$domain'")->num_rows == 0) {
         $response->query['status'] = true;
+        $response->query['data'] = 0;
     } else {
-        $response->query['status'] = false;
-        $response->query['error'] = $conn->error;
+
+        $row = $conn->query("SELECT * FROM $table_name WHERE domain = '$domain' ORDER BY $column_name DESC LIMIT 1")->fetch_assoc();
+        $data = $row[$column_name];
+
+        if ($row == TRUE) {
+            $response->query['data'] = $data;
+            $response->query['status'] = true;
+        } else {
+            $response->query['status'] = false;
+            $response->query['error'] = $conn->error;
+        }
     }
 }
 
