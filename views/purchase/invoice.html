@@ -458,7 +458,7 @@
                                     status: '1'
                                 }
                             }
-                            if (Number($('[name="cash_in_advance"]').val()) > 0) {
+                            if (Number($('[name="balance_amount"]').val()) > 0) {
                                 $.ajax({ type: "POST", url: 'api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
                                     console.log(response.query.data);
 
@@ -524,7 +524,7 @@
                             },
                             where: { id: $('[name="invoice_id"]').val() }
                         }
-                        if (Number($('[name="cash_in_advance"]').val()) > 0) {
+                        if (Number($('[name="balance_amount"]').val()) > 0) {
                             $.ajax({ type: "POST", url: 'api/table.php?getMax=id&from=due', dataType: 'json', async: false }).done(function (response) {
                                 console.log(response.query.data);
 
