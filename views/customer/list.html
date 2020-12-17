@@ -8,8 +8,8 @@
             for (i = 0; i < data.length; i++) {
                 data[i] = Object.assign({ id: i + 1 }, data[i]);
             }
-            autoTable('.table', data, ['domain'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-customer-edit-id="$@id@"><i class="fa fa-edit"></i> Edit</button>',
-                '<button class="btn btn-danger btn-sm text-nowrap" data-customer-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
+            autoTable('.table', data, ['domain'], ['<button class="btn btn-warning btn-sm text-nowrap mr-1" data-customer-edit-id="$@mobile@"><i class="fa fa-edit"></i> Edit</button>',
+                '<button class="btn btn-danger btn-sm text-nowrap" data-delete-id="$@id@"><i class="fa fa-times"></i> Delete</button>'
             ], () => { });
         });
     }
@@ -38,25 +38,25 @@
 
         table_data();
 
-        $(document).on('click', '[data-vendor-edit-id]', function () {
-            b_edit_modal($(this).attr('data-vendor-edit-id'), 'Edit vendor', 'views/vendor/edit.html')
+        $(document).on('click', '[data-customer-edit-id]', function () {
+            b_edit_modal($(this).attr('data-customer-edit-id'), 'Edit Customer', 'views/customer/edit.html')
         })
 
-        $(document).on('click', '[data-vendor-delete-id]', function () {
-            if (confirm('Are Your Sure Your Want To Delete The vendor')) {
-                $.ajax({
-                    type: "GET",
-                    url: 'api/vendor_crud.php?crud=delete&id=' + $(this).attr('data-vendor-delete-id'),
-                    dataType: 'json',
-                }).done(function (response) {
-                    console.log(response); // show response from the php script.
-                    if (response.deleted) {
-                        table_data();
-                    } else {
-                        console.log('error');
-                    }
-                });
-            }
-        })
+        // $(document).on('click', '[data-vendor-delete-id]', function () {
+        //     if (confirm('Are Your Sure Your Want To Delete The vendor')) {
+        //         $.ajax({
+        //             type: "GET",
+        //             url: 'api/vendor_crud.php?crud=delete&id=' + $(this).attr('data-vendor-delete-id'),
+        //             dataType: 'json',
+        //         }).done(function (response) {
+        //             console.log(response); // show response from the php script.
+        //             if (response.deleted) {
+        //                 table_data();
+        //             } else {
+        //                 console.log('error');
+        //             }
+        //         });
+        //     }
+        // })
     })
 </script>
