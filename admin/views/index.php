@@ -17,6 +17,50 @@
             $response = alert('danger', 'Failed !!! Error');
         }
     }
+    if (isset($_GET['empty'])) {
+        $domain = $_GET['empty'];
+
+        if ($_GET['empty'] == '') {
+            echo '<script>location.href=\'?\'</script>';
+        } else {
+            $resultcustomer = $conn->query("DELETE FROM `customer` WHERE `domain` = '$domain'");
+            if ($resultcustomer = true) {
+                $response .= alert('success', 'All the Data From <b>customer table</b> of Domain : <b>' . $domain . '</b> is Deleted');
+            } else {
+                $response .= alert('danger', 'Failed to Delete Data of Domain : <b>' . $doamin . '</b>');
+            }
+            $resultcheckout = $conn->query("DELETE FROM `checkout` WHERE `domain` = '$domain'");
+            if ($resultcheckout = true) {
+                $response .= alert('success', 'All the Data From <b>checkout table</b> of Domain : <b>' . $domain . '</b> is Deleted');
+            } else {
+                $response .= alert('danger', 'Failed to Delete Data of Domain : <b>' . $doamin . '</b>');
+            }
+            $resultdue = $conn->query("DELETE FROM `due` WHERE `domain` = '$domain'");
+            if ($resultdue = true) {
+                $response .= alert('success', 'All the Data From <b>due table</b> of Domain : <b>' . $domain . '</b> is Deleted');
+            } else {
+                $response .= alert('danger', 'Failed to Delete Data of Domain : <b>' . $doamin . '</b>');
+            }
+            $resultproduct = $conn->query("DELETE FROM `product` WHERE `domain` = '$domain'");
+            if ($resultproduct = true) {
+                $response .= alert('success', 'All the Data From <b>product table</b> of Domain : <b>' . $domain . '</b> is Deleted');
+            } else {
+                $response .= alert('danger', 'Failed to Delete Data of Domain : <b>' . $doamin . '</b>');
+            }
+            $resultpurchase = $conn->query("DELETE FROM `purchase` WHERE `domain` = '$domain'");
+            if ($resultpurchase = true) {
+                $response .= alert('success', 'All the Data From <b>purchase table</b> of Domain : <b>' . $domain . '</b> is Deleted');
+            } else {
+                $response .= alert('danger', 'Failed to Delete Data of Domain : <b>' . $doamin . '</b>');
+            }
+            $resultvendor = $conn->query("DELETE FROM `vendor` WHERE `domain` = '$domain'");
+            if ($resultvendor = true) {
+                $response .= alert('success', 'All the Data From <b>vendor table</b> of Domain : <b>' . $domain . '</b> is Deleted');
+            } else {
+                $response .= alert('danger', 'Failed to Delete Data of Domain : <b>' . $doamin . '</b>');
+            }
+        }
+    }
     if (isset($_POST['edit_user'])) {
         // print_r($_POST);
         $domain = $_POST['domain'];
@@ -62,8 +106,9 @@
                                             '<td>' . $row['domain'] . '</td>' .
                                             '<td>' . $row['username'] . '</td>' .
                                             '<td>' . $row['password'] . '</td>' .
-                                            '<td>' .
+                                            '<td class="text-nowrap">' .
                                             '   <a href="?edit=' . $row['domain'] . '" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Edit</a>' .
+                                            '   <a href="?empty=' . $row['domain'] . '" onclick="return confirm(\'This action is irreversable !!! \nIt will delete all data of Domain : ' . $row['domain'] . '\nAre you sure?\')" class="btn btn-primary btn-sm"><i class="fa fa-trash"></i> Empty</a>' .
                                             '   <a href="?" class="btn btn-danger btn-sm disabled"><i class="fa fa-times"></i> Delete</a>' .
                                             '</td>' .
                                             '</tr>';
