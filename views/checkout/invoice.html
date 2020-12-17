@@ -196,14 +196,17 @@
 <script> // get customer details
     $('[name="customer[mobile]"]').keyup(function () {
         input = $(this);
-        $('[name="customer[fullname]"]').val('');
-        $('[name="customer[email]"]').val('');
-        $('[name="customer[address]"]').val('');
-        $('[name="customer[fullname]"]').removeAttr('readonly');
-        $('[name="customer[email]"]').removeAttr('readonly');
-        $('[name="customer[address]"]').removeAttr('readonly');
-
+        if (this.value.length < 10) {
+            $('[name="customer[fullname]"]').val('');
+            $('[name="customer[email]"]').val('');
+            $('[name="customer[address]"]').val('');
+            $('[name="customer[fullname]"]').removeAttr('readonly');
+            $('[name="customer[email]"]').removeAttr('readonly');
+            $('[name="customer[address]"]').removeAttr('readonly');
+        }
         if (this.value.length == 10) {
+
+
             input.attr('disabled', 'true')
             $.ajax({
                 type: "POST", url: 'api/table.php?select=customer', data: { where: { mobile: input.val() } }, async: false, cache: false, dataType: 'json'
