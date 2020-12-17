@@ -17,7 +17,7 @@
                 console.log(data);
                 $('.invoice_number').text(data.id);
 
-                id = data.customer.id;
+                id = data.customer;
                 $.ajax({
                     type: "POST", url: 'api/table.php?select=customer', data: { where: { mobile: id } }, async: false, cache: false, dataType: 'json'
                 }).done(function (response) {
