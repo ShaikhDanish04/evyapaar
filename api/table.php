@@ -187,7 +187,7 @@ if (isset($_GET['getMax'])) {
     $table_name = $_GET['from'];
 
     $row = $conn->query("SELECT * FROM $table_name WHERE domain = '$domain' ORDER BY $column_name DESC LIMIT 1")->fetch_assoc();
-    if ($row[$column_name] == null) $data = 0;
+    if ($row[$column_name] == null) $data = 1;
     else $data = $row[$column_name];
 
     if ($row == TRUE) {
