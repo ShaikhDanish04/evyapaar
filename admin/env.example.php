@@ -7,3 +7,8 @@ $_ENV['mysql'] = array(
 );
 
 $_ENV['HTTP_HOST'] = "localhost";
+
+$_ENV['admin'] = array(
+    "username" => 'admin',
+    "password" => "admin"
+);
