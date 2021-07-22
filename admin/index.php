@@ -8,9 +8,9 @@ if (isset($_GET['url'])) {
 } else {
     $url_request = '';
 }
-// if ($url_request == '') {
-//     $url_request = 'index';
-// }
+if ($url_request == '') {
+    $url_request = 'index';
+}
 $url_break = explode('/', $url_request);
 
 $space = count($url_break) + substr_count($_SERVER['REQUEST_URI'], "//");
