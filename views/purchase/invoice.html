@@ -15,6 +15,24 @@
         <div class="alert-holder"></div>
         <div class="card mb-3">
             <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center justify-content-between m-0">
+                            <p class="m-0">PO Number : </p>
+                            <p class="m-0 d-flex align-items-center"> <input type="text" name="po_number" class="form-control text-right font-weight-bold" value=""></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center justify-content-between m-0">
+                            <p class="m-0">Vehilce Number : </p>
+                            <p class="m-0 d-flex align-items-center"> <input type="text" name="vehicle_number" class="form-control text-right font-weight-bold" value=""></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
                 <div class="d-flex align-items-center vendor-select">
                     <div class="form-group w-100 mr-3">
                         <label for="">Select Vendor</label>
@@ -242,6 +260,9 @@
 
                         $('#product_table tbody').html('');
 
+                        $('[name="po_number"]').val(data.po_number);
+                        $('[name="vehicle_number"]').val(data.vehicle_number);
+
                         data.products.forEach(data => {
                             i = $('#product_table tbody tr').length;
                             $('#product_table tbody').append(`
@@ -375,6 +396,8 @@
                                 cgst_amount: $('[name="cgst_amount"]').val(),
                                 grand_total: $('[name="grand_total"]').val(),
                                 cash_in_advance: $('[name="cash_in_advance"]').val(),
+                                po_number: $('[name="po_number"]').val(),
+                                vehicle_number: $('[name="vehicle_number"]').val(),
                                 datetime: getDatetime(),
                             }
                         }
@@ -405,6 +428,9 @@
                             cgst_amount: $('[name="cgst_amount"]').val(),
                             grand_total: $('[name="grand_total"]').val(),
                             cash_in_advance: $('[name="cash_in_advance"]').val(),
+                            po_number: $('[name="po_number"]').val(),
+                            vehicle_number: $('[name="vehicle_number"]').val(),
+                                
                             // datetime: getDatetime(),
                         },
                         where: { id: $('[name="invoice_id"]').val() }
@@ -454,6 +480,8 @@
                                     cgst_amount: $('[name="cgst_amount"]').val(),
                                     grand_total: $('[name="grand_total"]').val(),
                                     cash_in_advance: $('[name="cash_in_advance"]').val(),
+                                    po_number: $('[name="po_number"]').val(),
+                                    vehicle_number: $('[name="vehicle_number"]').val(),
                                     datetime: getDatetime(),
                                     status: '1'
                                 }
@@ -519,6 +547,8 @@
                                 cgst_amount: $('[name="cgst_amount"]').val(),
                                 grand_total: $('[name="grand_total"]').val(),
                                 cash_in_advance: $('[name="cash_in_advance"]').val(),
+                                po_number: $('[name="po_number"]').val(),
+                                vehicle_number: $('[name="vehicle_number"]').val(),
                                 // datetime: getDatetime(),
                                 status: '1'
                             },

@@ -17,6 +17,8 @@
                 console.log(data);
 
                 $('.invoice_number').text(data.id);
+                $('.po_number').text(data.po_number);
+                $('.vehicle_number').text(data.vehicle_number);
                 id = data.vendor_id;
                 $.ajax({
                     type: "POST", url: 'api/table.php?select=vendor', data: { where: { id: id } }, async: false, cache: false, dataType: 'json'
@@ -182,14 +184,14 @@
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">P.O. No. :<span> </span></span>
+                    <span style="font-size:9.0pt">P.O. No. :<span class="po_number"> </span></span>
                 </p>
             </td>
         </tr>
         <tr style="height:13.9pt">
             <td colspan=4 style="width:175.5pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0in 5.4pt 0in 5.4pt;height:13.9pt">
                 <p style="margin-bottom:0in;line-height:normal">
-                    <span style="font-size:9.0pt">Vehicle No. :<span> </span> </span>
+                    <span style="font-size:9.0pt">Vehicle No. :<span class="vehicle_number"> </span> </span>
                 </p>
             </td>
         </tr>
